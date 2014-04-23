@@ -128,7 +128,6 @@ public class AbstractDecisionMakerRepositoryTest {
             verify(mockSessionFactory).getCurrentSession();
             assertNotNull(result);
             assertTrue(result.size() == 5);
-            // should expect an exception to get thrown
     }
 
     @SuppressWarnings("unchecked")
