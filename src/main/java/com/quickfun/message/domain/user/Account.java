@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import com.quickfun.message.domain.AbstractDecisionMakerObject;
 
 @Entity
-@Table(name = "account_jumbo")
+@Table(name = "dm_account_jumbo")
 public class Account extends AbstractDecisionMakerObject<Long> {
 	
 	/**

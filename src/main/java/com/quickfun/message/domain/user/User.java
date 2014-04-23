@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import com.quickfun.message.domain.AbstractDecisionMakerObject;
 
 @Entity
-@Table(name = "user")
+@Table(name = "dm_user")
 public class User extends AbstractDecisionMakerObject<Long> {
 
 	/**
