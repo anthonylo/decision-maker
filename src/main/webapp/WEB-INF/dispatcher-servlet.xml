@@ -10,9 +10,9 @@
        ">
 
 	<!-- Scan for spring annotated components -->
-	<context:component-scan base-package="com.quickfun.message.controller" />
-	<context:component-scan base-package="com.quickfun.message.repository" />
-	<context:component-scan base-package="com.quickfun.message.service" />
+	<context:component-scan base-package="com.decision.maker.controller" />
+	<context:component-scan base-package="com.decision.maker.repository" />
+	<context:component-scan base-package="com.decision.maker.service" />
 
 	<context:property-placeholder location="classpath:/application.properties" />
 
@@ -20,10 +20,10 @@
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${mysql.driver.name}" />
+		<property name="driverClassName" value="${mysql.jdbc.driver.name}" />
 		<property name="url" value="${mysql.jdbc.url}" />
 		<property name="username" value="${mysql.jdbc.username}" />
-		<property name="password" value="${{mysql.jdbc.password}" />
+		<property name="password" value="${mysql.jdbc.password}" />
 	</bean>
 
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
@@ -31,14 +31,19 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect.property}</prop>
+				<prop key="hibernate.dialect">${mysql.hibernate.dialect.property}</prop>
 				<prop key="hibernate.show_sql">${hibernate.display.sql}</prop>
 				<prop key="hibernate.hbm2ddl.auto">validate</prop>
 				<prop key="hibernate.connection.pool_size">3</prop>
 				<prop key="hibernate.connection.autocommit">true</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="com.quickfun.message.domain" />
+		<property name="packagesToScan" value="com.decision.maker.domain" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<!-- Process annotations on registered beans like @Autowired... -->
@@ -55,11 +60,6 @@
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
-	</bean>
-
-	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory"/>
-		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<!-- resources exclusions from servlet mapping -->

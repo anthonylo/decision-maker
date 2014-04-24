@@ -1,6 +1,7 @@
 -- Drop anything related to the Decision Maker application
 DROP TABLE dm_contact_info    CASCADE CONSTRAINTS;
 DROP TABLE dm_account_jumbo   CASCADE CONSTRAINTS;
+DROP TABLE dm_message_user    CASCADE CONSTRAINTS;
 DROP TABLE dm_message         CASCADE CONSTRAINTS;
 DROP TABLE dm_user            CASCADE CONSTRAINTS;
 
@@ -14,7 +15,7 @@ CREATE TABLE dm_contact_info (
 	contact_info_id       number(10) not null,
 	email_address		  varchar(50),
 	phone_number		  varchar(14),
-	primary key (contact_info_id)
+	constraint pk_dm_contact_info primary key (contact_info_id)
 );
 
 CREATE TABLE dm_account_jumbo (
@@ -23,7 +24,7 @@ CREATE TABLE dm_account_jumbo (
 	password		    varchar(30) not null,
 	secret_question     varchar(75) not null,
 	secret_answer	    varchar(50) not null,
-	primary key (account_id)
+	constraint pk_dm_account_jumbo primary key (account_id)
 );
 
 CREATE TABLE dm_user (
@@ -33,22 +34,37 @@ CREATE TABLE dm_user (
 	age				    number(4)   not null,
 	contact_info_id	    number(10),
 	account_id 		    number(10)  not null,
-	primary key (user_id),
-	foreign key (contact_info_id) 
+	constraint pk_dm_user primary key (user_id),
+	constraint fk1_dm_user
+		foreign key (contact_info_id) 
 		references dm_contact_info(contact_info_id) on delete set null,
-	foreign key (account_id) 
+	constraint fk2_dm_user
+		foreign key (account_id) 
 		references dm_account_jumbo(account_id) on delete cascade
 );
 
 CREATE TABLE dm_message (
+	message_id		number(10) 		not null,
+	message			varchar(140) 	not null,
+	date_posted		date default sysdate,
+	constraint pk_dm_message primary key (message_id)
+);
+
+CREATE TABLE dm_message_user (
 	message_id		number(10) not null,
 	user_id			number(10) not null,
 	friend_id		number(10) not null,
-	message			varchar(140) not null,
-	date_posted		date default sysdate,
-	primary key (message_id, user_id, friend_id),
-	foreign key (user_id) references dm_user(user_id) on delete cascade,
-	foreign key (friend_id) references dm_user(user_id) on delete cascade
+	constraint pk_dm_message_user 
+		primary key (message_id, user_id, friend_id),
+	constraint fk1_dm_message_user
+		foreign key (message_id)
+		references dm_message(message_id) on delete cascade,
+	constraint fk2_dm_message_user
+		foreign key (user_id)
+		references dm_user(user_id) on delete cascade,
+	constraint fk3_dm_message_user
+		foreign key (friend_id)
+		references dm_user(user_id) on delete cascade
 );
 
 -- Sequences
