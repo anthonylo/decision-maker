@@ -1,12 +1,16 @@
 package com.decision.maker.repository;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +22,9 @@ import com.decision.maker.exception.EntityDoesNotExistException;
 @SuppressWarnings("unchecked")
 public abstract class AbstractDecisionMakerRepository<T extends AbstractDecisionMakerObject<K>, K extends Serializable>
 	implements IRepository<T, K> {
+	
+	@Value("${target.database}")
+	private String targetDatabase;
 	
 	@Autowired
 	protected SessionFactory sessionFactory;
@@ -41,9 +48,11 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	}
 
 	@Override
-	public List<T> retrieveById(K id) throws EntityDoesNotExistException {
-		List<T> results = sessionFactory.getCurrentSession().createCriteria(clazz)
+	public Set<T> retrieveById(K id) throws EntityDoesNotExistException {
+		List<T> listResults = sessionFactory.getCurrentSession().createCriteria(clazz)
 			.add(Restrictions.eq("id", id)).list();
+		
+		Set<T> results = new LinkedHashSet<T>(listResults);
 		
 		if (results.size() == 0) {
 			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
@@ -89,15 +98,25 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 
 	@Override
 	public void updateEntity(T entity) {
-		sessionFactory.getCurrentSession().update(entity);
+		sessionFactory.getCurrentSession().merge(entity);
 	}
 
 	@Override
 	public void deleteEntityById(K id) throws EntityDoesNotExistException {
-		List<T> entities = retrieveById(id);
-		for (T entity : entities) {
-			sessionFactory.getCurrentSession().delete(entity);
+		Set<T> entities = retrieveById(id);
+		Iterator<T> iterator = entities.iterator();
+		
+		while (iterator.hasNext()) {
+			sessionFactory.getCurrentSession().delete(iterator.next());
 		}
+	}
+
+	public String getTargetDatabase() {
+		return targetDatabase;
+	}
+	
+	public void setTargetDatabase(String targetDatabase) {
+		this.targetDatabase = targetDatabase;
 	}
 	
 }

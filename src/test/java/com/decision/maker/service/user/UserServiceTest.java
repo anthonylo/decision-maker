@@ -9,6 +9,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,9 +23,9 @@ import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.ContactInfo;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
+import com.decision.maker.exception.EntityDoesNotExistException;
 import com.decision.maker.repository.user.IUserRepository;
 import com.decision.maker.repository.user.UserRepository;
-import com.decision.maker.service.user.UserService;
 
 public class UserServiceTest {
 
@@ -183,6 +187,68 @@ public class UserServiceTest {
 		assertFalse(StringUtils.isEmpty(mockContactInfo.getEmail()));
 		assertFalse(StringUtils.isEmpty(mockContactInfo.getPhoneNumber()));
 	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void should_retrieve_user_by_id() throws EntityDoesNotExistException, DecisionMakerException {
+		// Given
+		Set<User> users = mock(Set.class);
+		User user = new User();
+		Long targetId = 1L;
+		Iterator<User> iterator = mock(Iterator.class);
+		
+		// When
+		when(users.size()).thenReturn(1);
+		when(users.iterator()).thenReturn(iterator);
+		when(iterator.next()).thenReturn(user);
+
+		when(userRepository.retrieveById(targetId)).thenReturn(users);
+		
+		// Then
+		User result = userService.retrieveUserById(targetId);
+		assertNotNull(result);
+		assertTrue(result.equals(user));
+		
+		verify(userRepository).retrieveById(targetId);
+	}
+	
+	@Test(expected = DecisionMakerException.class)
+	public void should_retrieve_too_many_users_by_id() throws EntityDoesNotExistException, DecisionMakerException {
+		// Given
+		Set<User> users = new HashSet<User>();
+		User user = new User();
+		user.setFirstName("two");
+		
+		User user2 = new User();
+		user2.setFirstName("one");
+		
+		Long targetId = 1L;
+		
+		// When
+		users.add(user);
+		users.add(user2);
+		
+		when(userRepository.retrieveById(1L)).thenReturn(users);
+		
+		// Then
+		userService.retrieveUserById(targetId); 
+		
+		// Expect exception to be thrown because size > 1
+	}
+
+	@Test(expected = EntityDoesNotExistException.class)
+	@SuppressWarnings("unchecked")
+	public void should_retrieve_user_by_id_that_doesnt_exist() throws EntityDoesNotExistException, DecisionMakerException {
+		// Given
+		Long targetId = 1L;
+		
+		// When
+		when(userRepository.retrieveById(targetId)).thenThrow(EntityDoesNotExistException.class);
+		
+		// Then
+		userService.retrieveUserById(targetId);
+		verify(userRepository).retrieveById(targetId);
+	}
 	
 	@Test
 	public void should_retrieve_random_user() {
@@ -213,12 +279,6 @@ public class UserServiceTest {
 		assertNotNull(result);
 		assertEquals(result, count);
 	}
-	
-	@Test
-	public void should_retrieve_user_by_username() {
-		
-	}
-	
 	
 	@Test
 	public void check_if_user_exists_by_username() {

@@ -45,9 +45,13 @@ CREATE TABLE dm_user (
 
 CREATE TABLE dm_message (
 	message_id		number(10) 		not null,
+	user_id			number(10)      not null,
 	message			varchar(140) 	not null,
 	date_posted		date default sysdate,
-	constraint pk_dm_message primary key (message_id)
+	constraint pk_dm_message primary key (message_id, user_id),
+	constraint fk1_dm_message
+		foreign key (user_id)
+		references dm_user(user_id) on delete cascade
 );
 
 CREATE TABLE dm_message_user (

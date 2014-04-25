@@ -13,4 +13,8 @@ public abstract class AbstractDecisionMakerObject<K extends Serializable> implem
 	
 	public abstract void setId(K id);
 	
+	public abstract int hashCode();
+	
+	public abstract boolean equals(Object obj);
+	
 }

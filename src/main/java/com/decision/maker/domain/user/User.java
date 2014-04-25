@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
@@ -23,24 +24,25 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	private static final long serialVersionUID = 140145762237385729L;
 
 	@Id
-	@Column(name = "user_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "user_id", updatable = false, insertable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dm_user_seq")
+	@SequenceGenerator(name = "dm_user_seq", sequenceName = "dm_user_seq", initialValue = 1, allocationSize = 1)
 	private Long id;
 	
-	@Column(name = "first_name")
+	@Column(name = "first_name", nullable = false, updatable = true, insertable = true)
 	private String firstName;
 	
-	@Column(name = "last_name")
+	@Column(name = "last_name", nullable = false, updatable = true, insertable = true)
 	private String lastName;
 	
-	@Column(name = "age")
+	@Column(name = "age", nullable = false, updatable = true, insertable = true)
 	private Integer age;
 	
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, targetEntity = ContactInfo.class)
 	@JoinColumn(name = "contact_info_id", referencedColumnName = "contact_info_id")
 	private ContactInfo contactInfo;
 	
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, targetEntity = Account.class)
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private Account account;
 
@@ -112,17 +114,22 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		int result = 1;
 		result = prime * result + ((account == null) ? 0 : account.hashCode());
 		result = prime * result + ((age == null) ? 0 : age.hashCode());
-		result = prime * result + ((contactInfo == null) ? 0 : contactInfo.hashCode());
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((contactInfo == null) ? 0 : contactInfo.hashCode());
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;

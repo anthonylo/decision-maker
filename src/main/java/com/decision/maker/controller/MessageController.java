@@ -1,6 +1,6 @@
 package com.decision.maker.controller;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,8 +24,8 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value = "id/{id}")
-	public @ResponseBody List<Message> retrieveMessageById(@PathVariable Long id) throws EntityDoesNotExistException {
-		List<Message> message = messageRepository.retrieveById(id);
+	public @ResponseBody Set<Message> retrieveMessageById(@PathVariable Long id) throws EntityDoesNotExistException {
+		Set<Message> message = messageRepository.retrieveById(id);
 		return message;
 	}
 	

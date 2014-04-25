@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,260 +24,253 @@ import org.junit.Test;
 
 import com.decision.maker.domain.DummyObject;
 import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.repository.AbstractDecisionMakerRepository;
 
 public class AbstractDecisionMakerRepositoryTest {
-	
-    private AbstractDecisionMakerRepository<DummyObject, Long> repository;
-    private Class<DummyObject> targetClazz = DummyObject.class;
 
-    private SessionFactory mockSessionFactory;
-    private Session mockSession;
+	private AbstractDecisionMakerRepository<DummyObject, Long> repository;
+	private Class<DummyObject> targetClazz = DummyObject.class;
 
-    @Before
-    public void setUp() {
-            repository = new MockAbstractDecisionMakerRepository();
+	private SessionFactory mockSessionFactory;
+	private Session mockSession;
 
-            mockSessionFactory = mock(SessionFactory.class);
-            mockSession = mock(Session.class);
+	@Before
+	public void setUp() {
+		repository = new MockAbstractDecisionMakerRepository();
 
-            when(mockSessionFactory.getCurrentSession()).thenReturn(mockSession);
+		mockSessionFactory = mock(SessionFactory.class);
+		mockSession = mock(Session.class);
 
-            repository.setSessionFactory(mockSessionFactory);
-    }
+		when(mockSessionFactory.getCurrentSession()).thenReturn(mockSession);
 
-    @Test
-    public void should_save_object_to_database() {
-            // Given
-            DummyObject dummyObject = new DummyObject();
-            dummyObject.setId(1L);
+		repository.setSessionFactory(mockSessionFactory);
+	}
 
-            // When
-            repository.saveEntity(dummyObject);
+	@Test
+	public void should_save_object_to_database() {
+		// Given
+		DummyObject dummyObject = new DummyObject();
+		dummyObject.setId(1L);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
-            verify(mockSession).save(dummyObject);
-    }
+		// When
+		repository.saveEntity(dummyObject);
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void should_retrieve_entity_from_database_with_an_id() throws EntityDoesNotExistException {
-            // Given
-            Long target = 1L;
-            DummyObject dummyObject = new DummyObject();
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
+		verify(mockSession).save(dummyObject);
+	}
 
-            dummyObject.setId(target);
-            List<DummyObject> mockResults = mock(List.class);
-            Criteria mockCriteria = mock(Criteria.class);
+	@Test
+	public void should_retrieve_entity_from_database_with_an_id() throws EntityDoesNotExistException {
+		// Given
+		Long target = 1L;
+		DummyObject dummyObject = new DummyObject(target);
 
-            // When
-            when(mockResults.size()).thenReturn(1);
-            when(mockResults.get(0)).thenReturn(dummyObject);
+		dummyObject.setId(target);
+		List<DummyObject> mockList = new ArrayList<DummyObject>();
+		Criteria mockCriteria = mock(Criteria.class);
+		mockList.add(dummyObject);
 
-            when(mockSession.createCriteria(DummyObject.class)).thenReturn(mockCriteria);
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		// When
 
-            List<DummyObject> result = repository.retrieveById(target);
+		when(mockSession.createCriteria(DummyObject.class)).thenReturn(mockCriteria);
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockList);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
+		Set<DummyObject> result = repository.retrieveById(target);
 
-            assertEquals(result.get(0), dummyObject);
-    }
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
 
-    @SuppressWarnings("unchecked")
-    @Test(expected = EntityDoesNotExistException.class)
-    public void should_retrieve_entity_from_database_that_doesnt_exist() throws EntityDoesNotExistException {
-            // Given
-            Long target = 1L;
-            List<DummyObject> mockResults = mock(List.class);
-            Criteria mockCriteria = mock(Criteria.class);
+		assertEquals(result.iterator().next(), dummyObject);
+	}
 
-            // When
-            when(mockResults.size()).thenReturn(0);
+	@Test(expected = EntityDoesNotExistException.class)
+	public void should_retrieve_entity_from_database_that_doesnt_exist() throws EntityDoesNotExistException {
+		// Given
+		Long target = 1L;
+		List<DummyObject> mockResults = new ArrayList<DummyObject>();
+		Criteria mockCriteria = mock(Criteria.class);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		// When
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockResults);
 
-            repository.retrieveById(target);
+		repository.retrieveById(target);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
-            verify(mockSession).beginTransaction();
-            verify(mockCriteria).add((Criterion) anyObject());
-            // should expect an exception to get thrown
-    }
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
+		verify(mockCriteria).add((Criterion) anyObject());
+		// should expect an exception to get thrown
+	}
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void should_retrieve_all_rows_in_the_database() {
-            // Given
-            List<DummyObject> mockResults = mock(List.class);
-            Criteria mockCriteria = mock(Criteria.class);
+	@SuppressWarnings("unchecked")
+	@Test
+	public void should_retrieve_all_rows_in_the_database() {
+		// Given
+		List<DummyObject> mockResults = mock(List.class);
+		Criteria mockCriteria = mock(Criteria.class);
 
-            // When
-            when(mockResults.size()).thenReturn(5);
+		// When
+		when(mockResults.size()).thenReturn(5);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockResults);
 
-            List<DummyObject> result = repository.retrieveAll();
+		List<DummyObject> result = repository.retrieveAll();
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
-            assertNotNull(result);
-            assertTrue(result.size() == 5);
-    }
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
+		assertNotNull(result);
+		assertTrue(result.size() == 5);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void should_retrieve_subset_of_rows_in_the_database() {
-            // Given
-            int startIdx = 25;
-            int count = 25;
-            List<DummyObject> mockResults = mock(List.class);
-            Criteria mockCriteria = mock(Criteria.class);
+	@SuppressWarnings("unchecked")
+	@Test
+	public void should_retrieve_subset_of_rows_in_the_database() {
+		// Given
+		int startIdx = 25;
+		int count = 25;
+		List<DummyObject> mockResults = mock(List.class);
+		Criteria mockCriteria = mock(Criteria.class);
 
-            // When
-            when(mockResults.size()).thenReturn(15);
+		// When
+		when(mockResults.size()).thenReturn(15);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
-            when(mockCriteria.setFirstResult(startIdx)).thenReturn(mockCriteria);
-            when(mockCriteria.setMaxResults(count)).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockCriteria.setFirstResult(startIdx)).thenReturn(mockCriteria);
+		when(mockCriteria.setMaxResults(count)).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockResults);
 
-            List<DummyObject> result = repository.retrieveSubsetOfEndpoint(startIdx, count);
+		// Then
+		List<DummyObject> result = repository.retrieveSubsetOfEndpoint(startIdx, count);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
-            verify(mockCriteria).setFirstResult(startIdx);
-            verify(mockCriteria).setMaxResults(count);
+		verify(mockSessionFactory).getCurrentSession();
+		verify(mockCriteria).setFirstResult(startIdx);
+		verify(mockCriteria).setMaxResults(count);
 
-            assertNotNull(result);
-            assertTrue(result.size() == 15);
-            // should expect an exception to get thrown
-    }
+		assertNotNull(result);
+		assertTrue(result.size() == 15);
+		// should expect an exception to get thrown
+	}
 
-    @Test
-    public void should_check_that_an_existing_id_exists_in_the_database() {
-            // Given
-            Long target = 1L;
-            Object resultCount = 2L;
+	@Test
+	public void should_check_that_an_existing_id_exists_in_the_database() {
+		// Given
+		Long target = 1L;
+		Object resultCount = 2L;
 
-            Criteria mockCriteria = mock(Criteria.class);
+		Criteria mockCriteria = mock(Criteria.class);
 
-            // When
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.uniqueResult()).thenReturn(resultCount);
+		// When
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.uniqueResult()).thenReturn(resultCount);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
 
-            boolean result = repository.doesEntityExistById(target);
+		boolean result = repository.doesEntityExistById(target);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
 
-            assertTrue(result);
-    }
+		assertTrue(result);
+	}
 
-    @Test
-    public void should_check_if_a_non_existant_id_exists_in_the_database() {
-            // Given
-            Long target = 1L;
-            Object resultCount = 0L;
+	@Test
+	public void should_check_if_a_non_existant_id_exists_in_the_database() {
+		// Given
+		Long target = 1L;
+		Object resultCount = 0L;
 
-            Criteria mockCriteria = mock(Criteria.class);
+		Criteria mockCriteria = mock(Criteria.class);
 
-            // When
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.uniqueResult()).thenReturn(resultCount);
+		// When
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.uniqueResult()).thenReturn(resultCount);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
 
-            boolean result = repository.doesEntityExistById(target);
+		boolean result = repository.doesEntityExistById(target);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
 
-            assertFalse(result);
-    }
+		assertFalse(result);
+	}
 
-    @Test
-    public void should_retrieve_the_row_count_of_a_certain_table_in_the_database() {
-            // Given
-            Object resultCount =  15L;
+	@Test
+	public void should_retrieve_the_row_count_of_a_certain_table_in_the_database() {
+		// Given
+		Object resultCount = 15L;
 
-            Criteria mockCriteria = mock(Criteria.class);
+		Criteria mockCriteria = mock(Criteria.class);
 
-            // When
-            when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.uniqueResult()).thenReturn(resultCount);
+		// When
+		when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.uniqueResult()).thenReturn(resultCount);
 
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
 
-            Long result = repository.retrieveCount();
+		Long result = repository.retrieveCount();
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
 
-            assertEquals(Long.valueOf("15"), result);
-    }
+		assertEquals(Long.valueOf("15"), result);
+	}
 
-    @Test
-    public void should_update_entity_in_database() {
-            // Given
-            DummyObject obj = new DummyObject();
-            obj.setId(1L);
+	@Test
+	public void should_update_entity_in_database() {
+		// Given
+		DummyObject obj = new DummyObject();
+		obj.setId(1L);
 
-            // When
-            repository.updateEntity(obj);
+		// When
+		repository.updateEntity(obj);
 
-            // Then
-            verify(mockSessionFactory).getCurrentSession();
-            verify(mockSession).update(obj);
-    }
+		// Then
+		verify(mockSessionFactory).getCurrentSession();
+		verify(mockSession).update(obj);
+	}
 
-    @Test(expected = EntityDoesNotExistException.class)
-    public void should_throw_decision_exception_error_when_deleting_a_fake_id() throws EntityDoesNotExistException {
-            // Given
-            Criteria mockCriteria = mock(Criteria.class);
-            List<DummyObject> mockResults = new ArrayList<DummyObject>();
+	@Test(expected = EntityDoesNotExistException.class)
+	public void should_throw_decision_exception_error_when_deleting_a_fake_id() throws EntityDoesNotExistException {
+		// Given
+		Criteria mockCriteria = mock(Criteria.class);
+		List<DummyObject> mockResults = new ArrayList<DummyObject>();
 
-            // When
-            when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		// When
+		when(mockSession.createCriteria(targetClazz)).thenReturn(mockCriteria);
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockResults);
 
-            // Then
-            repository.deleteEntityById(15L);
-    }
+		// Then
+		repository.deleteEntityById(15L);
+	}
 
-    @Test
-    public void should_delete_five_rows_from_table() throws EntityDoesNotExistException {
-            // Given
-            DummyObject obj = new DummyObject();
-            Criteria mockCriteria = mock(Criteria.class);
-            List<DummyObject> mockResults = new ArrayList<DummyObject>();
-            int length = 5;
+	@Test
+	public void should_delete_five_rows_from_table() throws EntityDoesNotExistException {
+		// Given
+		Criteria mockCriteria = mock(Criteria.class);
+		List<DummyObject> mockResults = new ArrayList<DummyObject>();
+		int length = 5;
 
-            // When
-            for (int i = 0; i < length; i++) {
-                    mockResults.add(obj);
-            }
+		for (Long i = 0L; i < length; i++) {
+			DummyObject obj = new DummyObject(i);
+			mockResults.add(obj);
+		}
 
-            when(mockSession.createCriteria(repository.clazz)).thenReturn(mockCriteria);
-            when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-            when(mockCriteria.list()).thenReturn(mockResults);
+		// When
+		when(mockSession.createCriteria(repository.clazz)).thenReturn(mockCriteria);
+		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.list()).thenReturn(mockResults);
 
-            // Then
-            repository.deleteEntityById(1L);
+		// Then
+		repository.deleteEntityById(1L);
 
-            verify(mockSession, times(5)).delete((DummyObject) anyObject());
-    }
+		verify(mockSession, times(5)).delete((DummyObject) anyObject());
+	}
 
 }

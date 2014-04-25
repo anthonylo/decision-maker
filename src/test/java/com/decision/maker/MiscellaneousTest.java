@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 public class MiscellaneousTest {
-
+	
 	private Logger log = Logger.getLogger(MiscellaneousTest.class);
 	
 	@Test

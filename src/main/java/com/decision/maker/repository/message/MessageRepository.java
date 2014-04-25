@@ -5,13 +5,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.message.key.MessagePK;
 import com.decision.maker.repository.AbstractDecisionMakerRepository;
 
 @Repository
 @Transactional
 @Qualifier("messageRepository")
-public class MessageRepository extends AbstractDecisionMakerRepository<Message, MessagePK> 
+public class MessageRepository extends AbstractDecisionMakerRepository<Message, Long> 
 	implements IMessageRepository {
 
 	@Override

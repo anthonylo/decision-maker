@@ -24,6 +24,11 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	@RequestMapping(value = "count", method = RequestMethod.GET)
+	public @ResponseBody String retrieveCount() {
+		return "There are " + userService.retrieveCount() + " Users in " + userService.getTargetDatabase();
+	}
+	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.GET)
 	public @ResponseBody User retrieveUserById(@PathVariable Long id)
 			throws DecisionMakerException, EntityDoesNotExistException {
@@ -32,14 +37,51 @@ public class UserController {
 	
 	@RequestMapping(value = "username/{username:.+}", method = RequestMethod.GET)
 	public @ResponseBody User retrieveUserByUsername(@PathVariable String username)
-			throws DecisionMakerException {
+			throws EntityDoesNotExistException {
 		return userService.retrieveUserByUsername(username);
 	}
 	
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String createUser(@RequestBody User user) throws DecisionMakerException {
+	@RequestMapping(method = RequestMethod.POST)
+	public @ResponseBody String createUser(@RequestBody User user)
+			throws DecisionMakerException {
 		userService.saveUser(user);
 		return "The user '" + user.getAccount().getUsername() + "' has been created."; 
+	}
+	
+	@RequestMapping(value = "id/{id}", method = RequestMethod.PUT)
+	public @ResponseBody String updateUser(@PathVariable Long id, @RequestBody User user)
+			throws DecisionMakerException, EntityDoesNotExistException {
+		user.setId(id);
+		userService.updateUser(user);
+		return "The user " + id + ": '" + user.getAccount().getUsername() + "' has been updated.";
+	}
+	
+	@RequestMapping(value = "id/{id}", method = RequestMethod.DELETE)
+	public @ResponseBody String deleteUserById(@PathVariable Long id) throws EntityDoesNotExistException {
+		userService.deleteUserById(id);
+		return "User " + id + " has been deleted.";
+	}
+	
+	@RequestMapping(value = "username/{username:.+}", method = RequestMethod.DELETE)
+	public @ResponseBody String deleteUserByUsername(@PathVariable String username) throws EntityDoesNotExistException {
+		userService.deleteUserByUsername(username);
+		return "The user '" + username + "' has been deleted.";
+	}
+
+	@RequestMapping(value = "id/{id}", method = RequestMethod.HEAD)
+	public @ResponseBody String checkIfUserExistsById(@PathVariable Long id) {
+		boolean exists = userService.checkIfUserExistsById(id);
+		return "User " + id + ": " + generateExistString(exists);
+	}
+	
+	@RequestMapping(value = "username/{username:.+}", method = RequestMethod.HEAD)
+	public @ResponseBody String checkIfUserExistsByUsername(@PathVariable String username) {
+		boolean exists = userService.checkIfUserExistsByUsername(username);
+		return "User '" + username + "': " + generateExistString(exists);
+	}
+	
+	private String generateExistString(boolean exists) {
+		return (exists) ? "exists" : "does not exist";
 	}
 	
 }

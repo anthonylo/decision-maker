@@ -1,6 +1,7 @@
 package com.decision.maker.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -8,10 +9,12 @@ import com.decision.maker.exception.EntityDoesNotExistException;
 
 @Service
 public interface IRepository<T, K> {
+	
+	String getTargetDatabase();
 
 	void saveEntity(T entity);
 	
-	List<T> retrieveById(K id) throws EntityDoesNotExistException;
+	Set<T> retrieveById(K id) throws EntityDoesNotExistException;
 	
 	List<T> retrieveAll();
 	

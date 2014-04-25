@@ -11,11 +11,13 @@ import com.decision.maker.exception.EntityDoesNotExistException;
 @Service
 public interface IUserService {
 
+	String getTargetDatabase();
+	
 	void saveUser(User user) throws DecisionMakerException;
 	
 	User retrieveUserById(Long id) throws DecisionMakerException, EntityDoesNotExistException;
 	
-	User retrieveUserByUsername(String username) throws DecisionMakerException;
+	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
 	User retrieveRandomUser();
 	
@@ -27,9 +29,11 @@ public interface IUserService {
 	
 	boolean checkIfUserExistsByUsername(String username);
 
-	void updateUser(User user) throws DecisionMakerException;
+	void updateUser(User user) throws DecisionMakerException, EntityDoesNotExistException;
 	
 	void deleteUserById(Long id) throws EntityDoesNotExistException;
+
+	void deleteUserByUsername(String username) throws EntityDoesNotExistException;
 
 	
 }

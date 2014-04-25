@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
+import com.decision.maker.exception.EntityDoesNotExistException;
 import com.decision.maker.repository.AbstractDecisionMakerRepository;
 
 @Repository
@@ -16,7 +16,7 @@ import com.decision.maker.repository.AbstractDecisionMakerRepository;
 public class UserRepository extends AbstractDecisionMakerRepository<User, Long> implements IUserRepository {
 	
 	@Override
-	public User retrieveUserByUsername(String username) throws DecisionMakerException {
+	public User retrieveUserByUsername(String username) throws EntityDoesNotExistException {
 		User user = (User) sessionFactory.getCurrentSession()
 			.createCriteria(clazz)
 			.createAlias("account", "acc")
@@ -24,7 +24,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			.uniqueResult();
 		
 		if (user == null) {
-			throw new DecisionMakerException("The user " + username + " does not exist");
+			throw new EntityDoesNotExistException("The user " + username + " does not exist", clazz, user);
 		}
 		return user;
 	}
@@ -43,10 +43,17 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		String hql = "select u from User u order by rand()";
 		return (User) sessionFactory.getCurrentSession().createQuery(hql).setMaxResults(1).uniqueResult();
 	}
+
+	@Override
+	public void deleteEntityByUsername(String username) throws EntityDoesNotExistException {
+		User user = retrieveUserByUsername(username);
+		sessionFactory.getCurrentSession().delete(user);
+	}
 	
 	@Override
 	protected void setClazz() {
 		this.clazz = User.class;
 	}
+
 
 }

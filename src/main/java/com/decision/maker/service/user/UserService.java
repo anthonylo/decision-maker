@@ -1,6 +1,7 @@
 package com.decision.maker.service.user;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class UserService implements IUserService {
 	public void setUserRepository(IUserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
+	
+	@Override
+	public String getTargetDatabase() {
+		return userRepository.getTargetDatabase();
+	}
 
 	@Override
 	public void saveUser(User user) throws DecisionMakerException {
@@ -35,27 +41,31 @@ public class UserService implements IUserService {
 		}
 
 		ContactInfo contactInfo = user.getContactInfo();
-		if (contactInfo != null
-				&& StringUtils.isEmpty(contactInfo.getEmail()) 
+		if (contactInfo != null) {
+			contactInfo.setId(null);
+			if(StringUtils.isEmpty(contactInfo.getEmail()) 
 				&& StringUtils.isEmpty(contactInfo.getPhoneNumber())) {
-			user.setContactInfo(null);
+				user.setContactInfo(null);
+			}
 		}
+		account.setId(null);
+		user.setId(null);
 		userRepository.saveEntity(user);
 	}
 
 	@Override
 	public User retrieveUserById(Long id) throws DecisionMakerException, EntityDoesNotExistException {
-		List<User> result = userRepository.retrieveById(id);
+		Set<User> result = userRepository.retrieveById(id);
 		
 		if (result.size() > 1) {
 			throw new DecisionMakerException("There are too many users with ID " + id);
 		}
 		
-		return result.get(0);
+		return result.iterator().next();
 	}
 
 	@Override
-	public User retrieveUserByUsername(String username) throws DecisionMakerException {
+	public User retrieveUserByUsername(String username) throws EntityDoesNotExistException {
 		return userRepository.retrieveUserByUsername(username);
 	}
 
@@ -80,31 +90,39 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void updateUser(User user) throws DecisionMakerException {
+	public void updateUser(User user) throws DecisionMakerException, EntityDoesNotExistException {
 		if (checkIfUserExistsById(user.getId())) {
 			try {
 				User checkUser = retrieveUserByUsername(user.getAccount().getUsername());
-				if (checkUser.getId() == user.getId()) {
+				if (checkUser.getId().equals(user.getId())
+						|| checkUser == null) {
 					userRepository.updateEntity(user);
 				} else {
-					throw new DecisionMakerException("A user already exists with this username");
+					throw new DecisionMakerException("A user already exists with the username '" 
+							+ user.getAccount().getUsername() + "'.");
 				}
-			} catch (DecisionMakerException e) {
+			} catch (EntityDoesNotExistException e) {
 				userRepository.updateEntity(user);
 			}
 		} else {
-			throw new DecisionMakerException("User " + user.getId() + " does not exist");
+			saveUser(user);
 		}
 	}
-
-	@Override	
+	
+	@Override
 	public void deleteUserById(Long id) throws EntityDoesNotExistException {
 		userRepository.deleteEntityById(id);
 	}
 
 	@Override
+	public void deleteUserByUsername(String username) throws EntityDoesNotExistException {
+		userRepository.deleteEntityByUsername(username);
+	}
+	
+	@Override
 	public User retrieveRandomUser() {
 		return userRepository.retrieveRandom();
 	}
+
 	
 }

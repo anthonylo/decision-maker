@@ -21,6 +21,7 @@ import org.junit.Test;
 import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
+import com.decision.maker.exception.EntityDoesNotExistException;
 
 public class UserRepositoryTest {
 
@@ -45,7 +46,7 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void should_retrieve_a_user_by_username() throws DecisionMakerException {
+	public void should_retrieve_a_user_by_username() throws EntityDoesNotExistException {
 		// Given
 		String targetUsername = "test.user";
 		
@@ -78,8 +79,8 @@ public class UserRepositoryTest {
 		assertNull(result.getContactInfo());
 	}
 	
-	@Test(expected = DecisionMakerException.class)
-	public void try_to_retrieve_a_user_by_username_that_doesnt_exist() throws DecisionMakerException {
+	@Test(expected = EntityDoesNotExistException.class)
+	public void try_to_retrieve_a_user_by_username_that_doesnt_exist() throws EntityDoesNotExistException {
 		// Given
 		String targetUsername = "test.user";
 		
