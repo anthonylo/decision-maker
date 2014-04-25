@@ -3,6 +3,7 @@ package com.decision.maker.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
@@ -32,6 +33,8 @@ public class AbstractDecisionMakerRepositoryTest {
 
 	private SessionFactory mockSessionFactory;
 	private Session mockSession;
+	
+	private String mockDatabase = "fake";
 
 	@Before
 	public void setUp() {
@@ -45,6 +48,13 @@ public class AbstractDecisionMakerRepositoryTest {
 		repository.setSessionFactory(mockSessionFactory);
 	}
 
+	@Test
+	public void check_getter_and_setters_work() {
+		assertNull(repository.getTargetDatabase());
+		repository.setTargetDatabase(mockDatabase);
+		assertEquals(repository.getTargetDatabase(), mockDatabase);
+	}
+	
 	@Test
 	public void should_save_object_to_database() {
 		// Given
@@ -232,7 +242,7 @@ public class AbstractDecisionMakerRepositoryTest {
 
 		// Then
 		verify(mockSessionFactory).getCurrentSession();
-		verify(mockSession).update(obj);
+		verify(mockSession).merge(obj);
 	}
 
 	@Test(expected = EntityDoesNotExistException.class)

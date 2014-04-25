@@ -1,5 +1,6 @@
 package com.decision.maker.domain.message;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,6 +19,8 @@ import javax.persistence.Table;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
 import com.decision.maker.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "dm_message")
@@ -34,10 +37,15 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	@SequenceGenerator(name = "dm_message_seq", sequenceName = "dm_message_seq", initialValue = 1, allocationSize = 1)
 	private Long id;
 
+	@Column(name = "message", length = 140, insertable = true, updatable = false)
+	private String message;
+	
+	@Column(name = "date_posted")
+	private Date datePosted;
+	
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
 	private User primaryUser;
-
 	
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(name = "dm_message_user", 
@@ -50,14 +58,9 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 			@JoinColumn(name = "friend_id", 
 					referencedColumnName="user_id", insertable = false, updatable = false) }
 	)
+	@JsonInclude(Include.NON_EMPTY)
 	private Set<User> friendUser;
-//	
-//	@Column(name = "message", length = 140, insertable = true, updatable = false)
-//	private String message;
-//	
-//	@Column(name = "date_posted")
-//	private Date datePosted;
-//	
+	
 	public Message() {
 		
 	}

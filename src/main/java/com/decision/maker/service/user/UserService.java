@@ -94,8 +94,7 @@ public class UserService implements IUserService {
 		if (checkIfUserExistsById(user.getId())) {
 			try {
 				User checkUser = retrieveUserByUsername(user.getAccount().getUsername());
-				if (checkUser.getId().equals(user.getId())
-						|| checkUser == null) {
+				if (checkUser.getId().equals(user.getId())) {
 					userRepository.updateEntity(user);
 				} else {
 					throw new DecisionMakerException("A user already exists with the username '" 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hibernate.Criteria;
@@ -160,5 +161,37 @@ public class UserRepositoryTest {
 		assertEquals(result.getId(), mockUser.getId());
 		assertEquals(result.getAccount().getUsername(), mockAccount.getUsername());
 		assertNull(result.getContactInfo());
+	}
+
+	@Test(expected = EntityDoesNotExistException.class)
+	public void should_delete_a_user_by_username_that_doesnt_exist() throws EntityDoesNotExistException {
+		// Given
+		String username = "test";
+
+		// When
+		when(criteria.createAlias("account", "acc")).thenReturn(criteria);
+		when(criteria.add((Criterion) anyObject())).thenReturn(criteria);
+		when(criteria.uniqueResult()).thenReturn(null);
+		
+		// Then
+		repository.deleteEntityByUsername(username);
+		verify(criteria).uniqueResult();
+	}
+	
+	@Test
+	public void should_delete_a_user_by_username() throws EntityDoesNotExistException {
+		// Given
+		String username = "test";
+		User mockUser = mock(User.class);
+
+		// When
+		when(criteria.createAlias("account", "acc")).thenReturn(criteria);
+		when(criteria.add((Criterion) anyObject())).thenReturn(criteria);
+		when(criteria.uniqueResult()).thenReturn(mockUser);
+		
+		// Then
+		repository.deleteEntityByUsername(username);
+		verify(criteria).uniqueResult();
+		verify(session).delete(mockUser);
 	}
 }
