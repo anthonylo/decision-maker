@@ -75,6 +75,11 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	public User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException {
+		return userRepository.retrieveBareboneUserById(id);
+	}
+	
+	@Override
 	public Long retrieveCount() {
 		return userRepository.retrieveCount();
 	}
@@ -122,6 +127,5 @@ public class UserService implements IUserService {
 	public User retrieveRandomUser() {
 		return userRepository.retrieveRandom();
 	}
-
 	
 }

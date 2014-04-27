@@ -1,88 +1,116 @@
-INSERT INTO dm_account_jumbo
+insert into dm_account_jumbo 
   (username, password, secret_question, secret_answer)
-  VALUES
+  values
   ('test.guy', '54321', 'what is this', '42');
 
-INSERT INTO dm_account_jumbo
+insert into dm_account_jumbo 
   (username, password, secret_question, secret_answer)
-  VALUES
+  values
   ('guy.test', '54321', 'what is this', '42');
 
-INSERT INTO dm_account_jumbo
+insert into dm_account_jumbo 
   (username, password, secret_question, secret_answer)
-  VALUES
+  values
   ('tester.guy', '54321', 'what is this', '42');
+  
+insert into dm_account_jumbo 
+  (username, password, secret_question, secret_answer)
+  values
+  ('accounters', '54321', 'hello', 'world');
 
+  
 
-INSERT INTO dm_contact_info
+insert into dm_contact_info
   (email_address, phone_number)
-  VALUES
+  values
   ('test.guy@ggg.com', '54321');
 
-INSERT INTO dm_contact_info
+insert into dm_contact_info
   (email_address, phone_number)
-  VALUES
+  values
   ('guy.test@ggg.com', '54321');
 
-INSERT INTO dm_contact_info
+insert into dm_contact_info
   (email_address, phone_number)
-  VALUES
+  values
   ('tester.guy@ggg.com', '54321');
 
 
 
-INSERT INTO dm_user
+insert into dm_user
   (first_name , last_name, age, contact_info_id, account_id)
   values
   ('test', 'guy', 52, 1, 1);
 
-INSERT INTO dm_user
+insert into dm_user
   (first_name , last_name, age, contact_info_id, account_id)
   values
   ('guy', 'test', 17, 2, 2);
 
-INSERT INTO dm_user
+insert into dm_user
   (first_name , last_name, age, contact_info_id, account_id)
   values
   ('tester', 'guy', 27, 3, 3);
 
+insert into dm_user
+  (first_name, last_name, age, account_id)
+  values
+  ('hello', 'world', 30, 4);
+  
 
-
-INSERT INTO dm_message
+insert into dm_message
   (user_id, message)
-  VALUES
-  (1, 'This is a test 1');
+  values
+  (1, 'This is test 1');
 
-INSERT INTO dm_message
+insert into dm_message
   (user_id, message)
-  VALUES
-  (2, 'This is a test 2');
+  values
+  (1, 'This is test 2');
 
-INSERT INTO dm_message
+insert into dm_message
   (user_id, message)
-  VALUES
-  (3, 'This is a test 3');
+  values
+  (2, 'This is test 3');
+  
+insert into dm_message
+  (user_id, message)
+  values
+  (4, 'This is test 4');
+  
+insert into dm_message
+  (user_id, message)
+  values
+  (3, 'This is test 5');
 
 
-INSERT INTO dm_message_user
+insert into dm_message_user
   (message_id, user_id, friend_id)
   values
   (1, 1, 2);
-INSERT INTO dm_message_user
+insert into dm_message_user
   (message_id, user_id, friend_id)
   values
   (1, 1, 3);
 
-INSERT INTO dm_message_user
+insert into dm_message_user
   (message_id, user_id, friend_id)
   values
-  (2, 2, 1);
-INSERT INTO dm_message_user
+  (2, 1, 2);
+  
+insert into dm_message_user
   (message_id, user_id, friend_id)
   values
-  (2, 2, 3);
+  (3, 2, 3);
 
-INSERT INTO dm_message_user
+insert into dm_message_user
   (message_id, user_id, friend_id)
   values
-  (3, 3, 2);
+  (4, 4, 2);
+  
+insert into dm_message_user
+  (message_id, user_id, friend_id)
+  values
+  (5, 3, 1);
+  
+commit;

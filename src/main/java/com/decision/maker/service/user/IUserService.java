@@ -23,6 +23,8 @@ public interface IUserService {
 	
 	List<User> retrieveUsersByPageAndCount(int page, int count);
 	
+	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
+
 	Long retrieveCount();
 	
 	boolean checkIfUserExistsById(Long id);
@@ -34,6 +36,7 @@ public interface IUserService {
 	void deleteUserById(Long id) throws EntityDoesNotExistException;
 
 	void deleteUserByUsername(String username) throws EntityDoesNotExistException;
+
 
 	
 }

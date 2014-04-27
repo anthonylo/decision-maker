@@ -9,9 +9,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "dm_account_jumbo")
+@JsonInclude(value = Include.NON_NULL)
 public class Account extends AbstractDecisionMakerObject<Long> {
 	
 	/**

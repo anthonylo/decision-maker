@@ -1,5 +1,7 @@
 package com.decision.maker.domain.user;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,11 +13,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
+import com.decision.maker.domain.message.Message;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "dm_user")
+@JsonInclude(value = Include.NON_NULL)
 public class User extends AbstractDecisionMakerObject<Long> {
 
 	/**
@@ -38,26 +45,34 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@Column(name = "age", nullable = false, updatable = true, insertable = true)
 	private Integer age;
 	
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, targetEntity = ContactInfo.class)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ContactInfo.class)
 	@JoinColumn(name = "contact_info_id", referencedColumnName = "contact_info_id")
 	private ContactInfo contactInfo;
 	
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, targetEntity = Account.class)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Account.class)
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	private Account account;
 
+	@Transient
+	private Set<Message> messagesSent;
+	
+	@Transient
+	private Set<Message> messagesReceived;
+
 	public User() {
-		
 	}
 
 	public User(Long id, String firstName, String lastName, Integer age,
-			ContactInfo contactInfo, Account account) {
+			ContactInfo contactInfo, Account account,
+			Set<Message> messagesSent, Set<Message> messagesReceived) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.age = age;
 		this.contactInfo = contactInfo;
 		this.account = account;
+		this.messagesSent = messagesSent;
+		this.messagesReceived = messagesReceived;
 	}
 
 	public Long getId() {
@@ -108,6 +123,22 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.account = account;
 	}
 
+	public Set<Message> getMessagesSent() {
+		return messagesSent;
+	}
+
+	public void setMessagesSent(Set<Message> messagesSent) {
+		this.messagesSent = messagesSent;
+	}
+
+	public Set<Message> getMessagesReceived() {
+		return messagesReceived;
+	}
+
+	public void setMessagesReceived(Set<Message> messagesReceived) {
+		this.messagesReceived = messagesReceived;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -121,6 +152,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime
+				* result
+				+ ((messagesReceived == null) ? 0 : messagesReceived.hashCode());
+		result = prime * result
+				+ ((messagesSent == null) ? 0 : messagesSent.hashCode());
 		return result;
 	}
 
@@ -162,6 +198,16 @@ public class User extends AbstractDecisionMakerObject<Long> {
 			if (other.lastName != null)
 				return false;
 		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (messagesReceived == null) {
+			if (other.messagesReceived != null)
+				return false;
+		} else if (!messagesReceived.equals(other.messagesReceived))
+			return false;
+		if (messagesSent == null) {
+			if (other.messagesSent != null)
+				return false;
+		} else if (!messagesSent.equals(other.messagesSent))
 			return false;
 		return true;
 	}

@@ -1,5 +1,8 @@
 package com.decision.maker.repository.user;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,10 @@ public interface IUserRepository extends IRepository<User, Long> {
 	boolean checkIfUsernameAlreadyExists(String username);
 
 	User retrieveRandom();
+	
+	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
+	
+	Set<User> retrieveBareboneUsersFromListOfIds(List<Long> ids);
 	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;
 	

@@ -35,6 +35,11 @@ public class UserController {
 		return userService.retrieveUserById(id);
 	}
 	
+	@RequestMapping(value = "barebone/{id}", method = RequestMethod.GET)
+	public @ResponseBody User retrieveBareboneUserById(@PathVariable Long id) throws EntityDoesNotExistException {
+		return userService.retrieveBareboneUserById(id);
+	}
+	
 	@RequestMapping(value = "username/{username:.+}", method = RequestMethod.GET)
 	public @ResponseBody User retrieveUserByUsername(@PathVariable String username)
 			throws EntityDoesNotExistException {

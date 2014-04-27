@@ -61,8 +61,8 @@ CREATE TABLE dm_message_user (
 	constraint pk_dm_message_user 
 		primary key (message_id, user_id, friend_id),
 	constraint fk1_dm_message_user
-		foreign key (message_id)
-		references dm_message(message_id) on delete cascade,
+		foreign key (message_id, user_id)
+		references dm_message(message_id, user_id) on delete cascade,
 	constraint fk2_dm_message_user
 		foreign key (user_id)
 		references dm_user(user_id) on delete cascade,
@@ -117,3 +117,5 @@ CREATE OR REPLACE TRIGGER dm_message_trigger
     FROM dual;
   END;
 /
+
+COMMIT;
