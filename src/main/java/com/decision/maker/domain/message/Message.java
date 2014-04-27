@@ -33,6 +33,11 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dm_message_seq")
 	@SequenceGenerator(name = "dm_message_seq", sequenceName = "dm_message_seq", initialValue = 1, allocationSize = 1)
 	private Long id;
+	
+	@Id
+	@Column(name = "user_id", insertable = true, updatable = false)
+	@JsonIgnore
+	private Long senderId;
 
 	@Column(name = "message", length = 140, insertable = true, updatable = false)
 	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "CST")
@@ -41,11 +46,10 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	@Column(name = "date_posted")
 	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "CST")
 	private Date datePosted;
-	
-	@Id
-	@Column(name = "user_id", insertable = true, updatable = false)
-	@JsonInclude(value = Include.NON_EMPTY)
-	private Long senderId;
+
+	@Transient
+	@JsonInclude(value = Include.NON_NULL)
+	private User sender;
 	
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
@@ -56,14 +60,16 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	private MessageUser userMessage;
 
 	public Message() {
+		
 	}
 
-	public Message(Long id, String message, Date datePosted, Long senderId,
-			Set<User> recipients, MessageUser userMessage) {
+	public Message(Long id, Long senderId, String message, Date datePosted,
+			User sender, Set<User> recipients, MessageUser userMessage) {
 		this.id = id;
+		this.senderId = senderId;
 		this.message = message;
 		this.datePosted = datePosted;
-		this.senderId = senderId;
+		this.sender = sender;
 		this.recipients = recipients;
 		this.userMessage = userMessage;
 	}
@@ -76,6 +82,14 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getSenderId() {
+		return senderId;
+	}
+
+	public void setSenderId(Long senderId) {
+		this.senderId = senderId;
 	}
 
 	public String getMessage() {
@@ -94,12 +108,12 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 		this.datePosted = datePosted;
 	}
 
-	public Long getSenderId() {
-		return senderId;
+	public User getSender() {
+		return sender;
 	}
 
-	public void setSenderId(Long senderId) {
-		this.senderId = senderId;
+	public void setSender(User sender) {
+		this.sender = sender;
 	}
 
 	public Set<User> getRecipients() {
@@ -127,9 +141,10 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((message == null) ? 0 : message.hashCode());
 		result = prime * result
-				+ ((senderId == null) ? 0 : senderId.hashCode());
-		result = prime * result
 				+ ((recipients == null) ? 0 : recipients.hashCode());
+		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
+		result = prime * result
+				+ ((senderId == null) ? 0 : senderId.hashCode());
 		result = prime * result
 				+ ((userMessage == null) ? 0 : userMessage.hashCode());
 		return result;
@@ -159,15 +174,20 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 				return false;
 		} else if (!message.equals(other.message))
 			return false;
-		if (senderId == null) {
-			if (other.senderId != null)
-				return false;
-		} else if (!senderId.equals(other.senderId))
-			return false;
 		if (recipients == null) {
 			if (other.recipients != null)
 				return false;
 		} else if (!recipients.equals(other.recipients))
+			return false;
+		if (sender == null) {
+			if (other.sender != null)
+				return false;
+		} else if (!sender.equals(other.sender))
+			return false;
+		if (senderId == null) {
+			if (other.senderId != null)
+				return false;
+		} else if (!senderId.equals(other.senderId))
 			return false;
 		if (userMessage == null) {
 			if (other.userMessage != null)

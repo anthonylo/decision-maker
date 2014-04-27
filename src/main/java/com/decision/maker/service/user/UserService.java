@@ -24,10 +24,6 @@ public class UserService implements IUserService {
 	@Autowired
 	private IUserRepository userRepository;
 	
-	public void setUserRepository(IUserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-	
 	@Override
 	public String getTargetDatabase() {
 		return userRepository.getTargetDatabase();
@@ -126,6 +122,10 @@ public class UserService implements IUserService {
 	@Override
 	public User retrieveRandomUser() {
 		return userRepository.retrieveRandom();
+	}
+
+	public void setUserRepository(IUserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 	
 }

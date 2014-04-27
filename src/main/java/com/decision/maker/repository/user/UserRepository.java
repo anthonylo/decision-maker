@@ -26,10 +26,6 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Autowired
 	private IMessageRepository messageRepository;
-
-	public void setMessageRepository(IMessageRepository messageRepository) {
-		this.messageRepository = messageRepository;
-	}
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {

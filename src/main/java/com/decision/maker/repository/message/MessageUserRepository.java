@@ -28,10 +28,6 @@ public class MessageUserRepository extends
 	@Autowired
 	private IUserRepository userRepository;
 	
-	public void setUserRepository(IUserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-	
 	@Override
 	public Set<User> getRecipientsOfMessage(MessageUserPK id) throws EntityDoesNotExistException {
 		List<Long> friendIds = sessionFactory.getCurrentSession().createCriteria(MessageUser.class)

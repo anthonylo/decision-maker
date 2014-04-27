@@ -17,13 +17,8 @@ import com.decision.maker.service.user.IUserService;
 @RequestMapping(value = "user")
 public class UserController {
 
-	@Autowired
-	private IUserService userService;
-	
-	public void setUserService(IUserService userService) {
-		this.userService = userService;
-	}
-	
+	@Autowired private IUserService userService;
+
 	@RequestMapping(value = "count", method = RequestMethod.GET)
 	public @ResponseBody String retrieveCount() {
 		return "There are " + userService.retrieveCount() + " Users in " + userService.getTargetDatabase();

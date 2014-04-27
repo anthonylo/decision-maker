@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ReflectionUtils;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
 import com.decision.maker.exception.EntityDoesNotExistException;
@@ -24,8 +22,6 @@ import com.decision.maker.exception.EntityDoesNotExistException;
 @SuppressWarnings("unchecked")
 public abstract class AbstractDecisionMakerRepository<T extends AbstractDecisionMakerObject<K>, K extends Serializable>
 	implements IRepository<T, K> {
-	
-	private static Logger log = Logger.getLogger(AbstractDecisionMakerRepository.class);
 	
 	@Value("${target.database}")
 	private String targetDatabase;
@@ -40,11 +36,6 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	public AbstractDecisionMakerRepository() {
 		setClazz();
 	}
-	
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-		setClazz();
-	}
 
 	@Override
 	public void saveEntity(T entity) {
@@ -53,9 +44,6 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 
 	@Override
 	public Set<T> retrieveById(K id) throws EntityDoesNotExistException {
-		log.info("Attempting to retrieve " + clazz.getSimpleName() + " by ID: " + id);
-		log.info("The ID is a " + id.getClass().getName());
-		log.info(ReflectionUtils.findField(clazz, "id"));
 		List<T> listResults = sessionFactory.getCurrentSession().createCriteria(clazz)
 			.add(Restrictions.eq("id", id)).list();
 		
@@ -124,6 +112,10 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	
 	public void setTargetDatabase(String targetDatabase) {
 		this.targetDatabase = targetDatabase;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 }

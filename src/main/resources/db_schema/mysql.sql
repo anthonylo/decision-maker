@@ -2,12 +2,11 @@ CREATE SCHEMA IF NOT EXISTS mobile_questions;
 
 USE mobile_questions;
 
-DROP TABLE IF EXISTS mobile_questions.dm_user_friends;
-DROP TABLE IF EXISTS mobile_questions.dm_account_active;
-DROP TABLE IF EXISTS mobile_questions.dm_message;
-DROP TABLE IF EXISTS mobile_questions.dm_user;
 DROP TABLE IF EXISTS mobile_questions.dm_contact_info;
 DROP TABLE IF EXISTS mobile_questions.dm_account_jumbo;
+DROP TABLE IF EXISTS mobile_questions.dm_message;
+DROP TABLE IF EXISTS mobile_questions.dm_message_user;
+DROP TABLE IF EXISTS mobile_questions.dm_user;
 
 CREATE TABLE IF NOT EXISTS mobile_questions.dm_contact_info (
 	contact_info_id		BIGINT auto_increment,
@@ -26,15 +25,6 @@ CREATE TABLE IF NOT EXISTS mobile_questions.dm_account_jumbo (
 );
 
 
-CREATE TABLE IF NOT EXISTS mobile_questions.dm_account_active (
-	account_id		BIGINT not null,
-	logged_in		smallint(1) not null default 0,
-	session_id		varchar(20) not null,
-	primary key (account_id),
-	foreign key (account_id) 
-		references dm_account_jumbo(account_id) on delete cascade
-);
-
 CREATE TABLE IF NOT EXISTS mobile_questions.dm_user (
 	user_id			BIGINT auto_increment unique,
 	first_name		VARCHAR(50) not null,
@@ -49,23 +39,24 @@ CREATE TABLE IF NOT EXISTS mobile_questions.dm_user (
 		references dm_account_jumbo(account_id) on delete cascade
 );
 
-CREATE TABLE IF NOT EXISTS mobile_questions.dm_user_friends (
-	user_id			BIGINT not null,
-	friend_id		BIGINT not null,
-	primary key (user_id, friend_id),
-	foreign key (user_id)
-		references dm_user(user_id) on delete cascade,
-	foreign key (friend_id) 
-		references dm_user(user_id) on delete cascade
-);
-
 CREATE TABLE IF NOT EXISTS mobile_questions.dm_message (
 	message_id		BIGINT not null,
 	user_id			BIGINT not null,
-	friend_id		BIGINT not null,
 	message			varchar(140) not null,
 	date_posted		timestamp default now(),
 	primary key (message_id, user_id, friend_id),
-	foreign key (user_id) references dm_user(user_id) on delete cascade,
-	foreign key (friend_id) references dm_user(user_id) on delete cascade
+	foreign key (user_id) references dm_user(user_id) on delete cascade
+);
+
+CREATE TABLE IF NOT EXISTS mobile_questions.dm_message_user (
+	message_id		number(10) not null,
+	user_id			number(10) not null,
+	friend_id		number(10) not null,
+	primary key (message_id, user_id, friend_id),
+	foreign key (message_id, user_id)
+		references dm_message(message_id, user_id) on delete cascade,
+	foreign key (user_id)
+		references dm_user(user_id) on delete cascade,
+	foreign key (friend_id)
+		references dm_user(user_id) on delete cascade
 );

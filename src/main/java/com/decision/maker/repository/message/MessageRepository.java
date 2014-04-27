@@ -15,6 +15,7 @@ import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.EntityDoesNotExistException;
 import com.decision.maker.factory.message.key.MessageUserPKFactory;
 import com.decision.maker.repository.AbstractDecisionMakerRepository;
+import com.decision.maker.repository.user.IUserRepository;
 
 @Repository
 @Transactional
@@ -24,10 +25,9 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 
 	@Autowired
 	private IMessageUserRepository messageUserRepository;
-	
-	public void setMessageUserRepository(IMessageUserRepository messageUserRepository) {
-		this.messageUserRepository = messageUserRepository;
-	}
+
+	@Autowired
+	private IUserRepository userRepository;
 	
 	@Override
 	public Set<Message> retrieveMessagesThatAUserHasSent(Long userId) throws EntityDoesNotExistException {
@@ -48,6 +48,9 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 		Message message = listResults.iterator().next();
 		Long senderId = message.getSenderId();
 
+		User sender = userRepository.retrieveBareboneUserById(senderId);
+		message.setSender(sender);
+		
 		MessageUserPK muID = MessageUserPKFactory.newInstance(messageId, senderId);
 		MessageUser mu = messageUserRepository.retrieveById(muID).iterator().next();
 		message.setUserMessage(mu);

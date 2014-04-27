@@ -46,7 +46,6 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	
 	public Account(Long id, String username, String password,
 			String secretQuestion, String secretAnswer) {
-		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
