@@ -42,19 +42,20 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 	}
 
 	@Override
+	public Set<User> retrieveRecipientsOfMessageById(Long messageId) throws EntityDoesNotExistException {
+		return messageUserRepository.getRecipientsOfMessageByMessageId(messageId);
+	}
+	
+	@Override
 	public Message retrieveMessageByMessageId(Long messageId) throws EntityDoesNotExistException {
 		Set<Message> listResults = super.retrieveById(messageId);
-
 		Message message = listResults.iterator().next();
+		
 		Long senderId = message.getSenderId();
-
 		User sender = userRepository.retrieveBareboneUserById(senderId);
 		message.setSender(sender);
 		
 		MessageUserPK muID = MessageUserPKFactory.newInstance(messageId, senderId);
-		MessageUser mu = messageUserRepository.retrieveById(muID).iterator().next();
-		message.setUserMessage(mu);
-		
 		Set<User> recipients = messageUserRepository.getRecipientsOfMessage(muID);
 		message.setRecipients(recipients);
 		

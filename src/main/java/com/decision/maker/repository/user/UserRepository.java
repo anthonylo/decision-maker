@@ -34,16 +34,21 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		
 		while (resultItr.hasNext()) {
 			User userItr = resultItr.next();
-			Set<Message> messagesReceived = messageRepository
-					.retrieveMessagesThatAUserHasReceived(userItr.getId());
+			Set<Message> messagesReceived = userItr.getMessagesReceived();
 			if (!messagesReceived.isEmpty()) {
-				userItr.setMessagesReceived(messagesReceived);
+				for (Message message : messagesReceived) {
+					Long senderId = message.getSenderId();
+					message.setSender(retrieveBareboneUserById(senderId));
+				}
 			}
 			
-			Set<Message> messagesSent = messageRepository
-					.retrieveMessagesThatAUserHasSent(userItr.getId());
+			Set<Message> messagesSent = userItr.getMessagesSent();
 			if (!messagesSent.isEmpty()) {
-				userItr.setMessagesSent(messagesSent);
+				for (Message message : messagesSent) {
+					Long messageId = message.getId();
+					Set<User> recipients = messageRepository.retrieveRecipientsOfMessageById(messageId);
+					message.setRecipients(recipients);
+				}
 			}
 		}
 		
@@ -88,7 +93,9 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 						.add(Projections.property("acc.username"))
 					)
 				.uniqueResult();
-		Account account = new Account(null, username, null, null, null);
+		
+		Account account = new Account();
+		account.setUsername(username);
 		
 		Object[] objList = (Object[]) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.add(Restrictions.eq("id", id))
@@ -99,13 +106,12 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 					)
 				.uniqueResult();
 
-		User user = new User(id, 
-				(String) objList[0],   // firstName
-				(String) objList[1],   // lastName
-				(Integer) objList[2],  // age
-				null,              	   // contactInfo 
-				account,         	   // account
-				null, null);
+		User user = new User();
+		user.setId(id);
+		user.setFirstName((String) objList[0]);
+		user.setLastName((String) objList[1]);
+		user.setAge((Integer) objList[2]);
+		user.setAccount(account);
 
 		return user;
 	}
@@ -130,5 +136,5 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	protected void setClazz() {
 		this.clazz = User.class;
 	}
-
+	
 }

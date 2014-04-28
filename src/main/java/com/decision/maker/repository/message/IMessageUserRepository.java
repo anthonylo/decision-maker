@@ -20,5 +20,8 @@ public interface IMessageUserRepository extends IRepository<MessageUser, Message
 	Set<MessageUser> getMessagesThatUserHasSent(Long senderId);
 
 	Set<MessageUser> getMessagesThatUserHasReceived(Long receiverId);
+
+	Set<User> getRecipientsOfMessageByMessageId(Long messageId)
+			throws EntityDoesNotExistException;
 	
 }

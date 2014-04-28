@@ -40,11 +40,11 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	private Long senderId;
 
 	@Column(name = "message", length = 140, insertable = true, updatable = false)
-	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "CST")
+	@JsonFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'", timezone = "CST")
 	private String message;
 	
 	@Column(name = "date_posted")
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "CST")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "CST")
 	private Date datePosted;
 
 	@Transient

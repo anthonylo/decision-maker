@@ -10,10 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
 import com.decision.maker.domain.message.Message;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "dm_user")
-@JsonInclude(value = Include.NON_NULL)
 public class User extends AbstractDecisionMakerObject<Long> {
 
 	/**
@@ -45,18 +45,32 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@Column(name = "age", nullable = false, updatable = true, insertable = true)
 	private Integer age;
 	
-	@OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ContactInfo.class)
+	@OneToOne(optional = true, cascade = { CascadeType.ALL }, 
+			fetch = FetchType.LAZY, targetEntity = ContactInfo.class)
 	@JoinColumn(name = "contact_info_id", referencedColumnName = "contact_info_id")
+	@JsonInclude(value = Include.NON_NULL)
 	private ContactInfo contactInfo;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Account.class)
+	@OneToOne(cascade = { CascadeType.ALL }, 
+			fetch = FetchType.LAZY, targetEntity = Account.class)
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
+	@JsonInclude(value = Include.NON_NULL)
 	private Account account;
 
-	@Transient
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
+	@JoinColumn(name = "user_id", updatable = false)
+	@JsonInclude(value = Include.NON_EMPTY)
 	private Set<Message> messagesSent;
 	
-	@Transient
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
+	@JoinTable(name = "dm_message_user",
+		joinColumns = { @JoinColumn(name = "friend_id", referencedColumnName = "user_id") },
+		inverseJoinColumns = {
+			@JoinColumn(name = "message_id", referencedColumnName = "message_id"),
+			@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+		}
+	)
+	@JsonInclude(value = Include.NON_EMPTY)
 	private Set<Message> messagesReceived;
 
 	public User() {
