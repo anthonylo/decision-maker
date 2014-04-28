@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +58,7 @@ public class UserServiceTest {
 	@Test
 	public void save_user_and_pass() throws DecisionMakerException {
 		// Given
-		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green");
+		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date());
 		ContactInfo mockContactInfo = new ContactInfo(0L, "5421@test.com", "54321");
 		User mockUser = new User(0L, "test", "guy" , 22, mockContactInfo, mockAccount, null, null);
 		
@@ -71,7 +72,7 @@ public class UserServiceTest {
 	@Test
 	public void try_to_save_user_that_already_exists_in_database() throws DecisionMakerException {
 		// Given
-		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green");
+		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date());
 		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null);
 		
 		// When
