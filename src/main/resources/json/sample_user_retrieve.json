@@ -1,0 +1,80 @@
+{
+	"id" : 1,
+	"firstName" : "test",
+	"lastName" : "guy",
+	"age" : 52,
+	"contactInfo" : {
+		"id" : 1,
+		"email" : "test.guy@ggg.com",
+		"phoneNumber" : "54321"
+	},
+	"account" : {
+		"id" : 1,
+		"username" : "test.guy",
+		"password" : "54321",
+		"secretQuestion" : "what is this",
+		"secretAnswer" : "42",
+		"dateCreated" : "2014-04-28T17:36:06Z"
+	},
+	"messagesSent" : [{
+			"id" : 2,
+			"message" : "This is test 2",
+			"datePosted" : "2014-04-28T17:36:07Z",
+			"recipients" : [{
+					"id" : 2,
+					"firstName" : "guy",
+					"lastName" : "test",
+					"age" : 17,
+					"account" : {
+						"username" : "guy.test"
+					}
+				}, {
+					"id" : 3,
+					"firstName" : "tester",
+					"lastName" : "guy",
+					"age" : 27,
+					"account" : {
+						"username" : "tester.guy"
+					}
+				}
+			]
+		}, {
+			"id" : 1,
+			"message" : "This is test 1",
+			"datePosted" : "2014-04-28T17:36:07Z",
+			"recipients" : [{
+					"id" : 2,
+					"firstName" : "guy",
+					"lastName" : "test",
+					"age" : 17,
+					"account" : {
+						"username" : "guy.test"
+					}
+				}, {
+					"id" : 3,
+					"firstName" : "tester",
+					"lastName" : "guy",
+					"age" : 27,
+					"account" : {
+						"username" : "tester.guy"
+					}
+				}
+			]
+		}
+	],
+	"messagesReceived" : [{
+			"id" : 5,
+			"message" : "This is test 5",
+			"datePosted" : "2014-04-28T17:36:07Z",
+			"sender" : {
+				"id" : 3,
+				"firstName" : "tester",
+				"lastName" : "guy",
+				"age" : 27,
+				"account" : {
+					"username" : "tester.guy"
+				}
+			}
+		}
+	]
+}

@@ -65,7 +65,7 @@ public class UserServiceTest {
 		// When
 
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 		verify(userRepository).saveEntity(mockUser);
 	}
 
@@ -80,7 +80,7 @@ public class UserServiceTest {
 		
 		// Then
 		exception.expect(DecisionMakerException.class);
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class UserServiceTest {
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 		
 		verify(mockAccount, times(2)).getUsername();
 		verify(mockUser).setContactInfo(null);
@@ -123,7 +123,7 @@ public class UserServiceTest {
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 		
 		verify(mockAccount, times(2)).getUsername();
 	}
@@ -145,7 +145,7 @@ public class UserServiceTest {
 		// When
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 		assertNull(mockContactInfo.getEmail());
 		assertNull(mockContactInfo.getPhoneNumber());
 	}
@@ -168,7 +168,7 @@ public class UserServiceTest {
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 
 		assertNotNull(mockContactInfo);
 		assertNotNull(mockContactInfo.getEmail());
@@ -195,7 +195,7 @@ public class UserServiceTest {
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
-		userService.saveUser(mockUser);
+		userService.saveEntity(mockUser);
 		
 		assertFalse(StringUtils.isEmpty(mockContactInfo.getEmail()));
 		assertFalse(StringUtils.isEmpty(mockContactInfo.getPhoneNumber()));
@@ -218,7 +218,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveById(targetId)).thenReturn(users);
 		
 		// Then
-		User result = userService.retrieveUserById(targetId);
+		User result = userService.retrieveEntityById(targetId);
 		assertNotNull(result);
 		assertTrue(result.equals(user));
 		
@@ -244,7 +244,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveById(1L)).thenReturn(users);
 		
 		// Then
-		userService.retrieveUserById(targetId); 
+		userService.retrieveEntityById(targetId); 
 		
 		// Expect exception to be thrown because size > 1
 	}
@@ -259,7 +259,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveById(targetId)).thenThrow(EntityDoesNotExistException.class);
 		
 		// Then
-		userService.retrieveUserById(targetId);
+		userService.retrieveEntityById(targetId);
 		verify(userRepository).retrieveById(targetId);
 	}
 
@@ -306,7 +306,7 @@ public class UserServiceTest {
 		when(users.size()).thenReturn(1);
 		
 		// Then
-		List<User> results = userService.retrieveUsersByPageAndCount(page, count);
+		List<User> results = userService.retrieveEntitiesByPageAndCount(page, count);
 		assertEquals(results, users);
 		assertTrue(results.size() == 1);
 	}
@@ -352,7 +352,7 @@ public class UserServiceTest {
 		when(userRepository.doesEntityExistById(id)).thenReturn(result);
 		
 		// Then
-		assertTrue(userService.checkIfUserExistsById(id));
+		assertTrue(userService.checkIfEntityExistsById(id));
 		verify(userRepository).doesEntityExistById(id);
 	}
 	
@@ -366,7 +366,7 @@ public class UserServiceTest {
 		when(userRepository.doesEntityExistById(id)).thenReturn(result);
 		
 		// Then
-		assertFalse(userService.checkIfUserExistsById(id));
+		assertFalse(userService.checkIfEntityExistsById(id));
 		verify(userRepository).doesEntityExistById(id);
 	}
 
@@ -399,7 +399,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveUserByUsername(username)).thenReturn(mockUser);
 		
 		// Then
-		userService.updateUser(mockUser);
+		userService.updateEntity(mockUser);
 		
 		verify(userRepository).doesEntityExistById(id);
 		verify(userRepository).retrieveUserByUsername(username);
@@ -426,7 +426,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveUserByUsername(username)).thenThrow(EntityDoesNotExistException.class);
 		
 		// Then
-		userService.updateUser(mockUser);
+		userService.updateEntity(mockUser);
 		
 		verify(userRepository).doesEntityExistById(id);
 		verify(userRepository).retrieveUserByUsername(username);
@@ -455,7 +455,7 @@ public class UserServiceTest {
 		when(userRepository.retrieveUserByUsername(username)).thenReturn(fakeUser);
 		
 		// Then
-		userService.updateUser(mockUser);
+		userService.updateEntity(mockUser);
 		
 		verify(userRepository).doesEntityExistById(id);
 		verify(userRepository).retrieveUserByUsername(username);
@@ -484,7 +484,7 @@ public class UserServiceTest {
 		when(userRepository.checkIfUsernameAlreadyExists(username)).thenReturn(result);
 		
 		// Then
-		userService.updateUser(mockUser);
+		userService.updateEntity(mockUser);
 		
 		verify(userRepository).doesEntityExistById(id);
 		verify(mockAccount).getUsername();
@@ -505,7 +505,7 @@ public class UserServiceTest {
 		Long id = 1L;
 
 		// Then
-		userService.deleteUserById(id);
+		userService.deleteEntityById(id);
 		verify(userRepository).deleteEntityById(id);
 	}
 	

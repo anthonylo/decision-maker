@@ -59,6 +59,20 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	}
 
 	@Override
+	public T retrieveUniqueById(K id) throws EntityDoesNotExistException {
+		 T result = (T) sessionFactory.getCurrentSession().createCriteria(clazz)
+			.add(Restrictions.eq("id", id)).uniqueResult();
+		
+		if (result != null) {
+			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
+					+ " with ID " + id + " does not exist.", 
+					id.getClass(), id);
+		}
+		
+		return result;
+	}
+	
+	@Override
 	public List<T> retrieveAll() {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(clazz).list();

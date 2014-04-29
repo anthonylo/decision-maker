@@ -1,42 +1,25 @@
 package com.decision.maker.service.user;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
+import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.service.IService;
 
 @Service
-public interface IUserService {
+public interface IUserService extends IService<User, Long> {
 
-	String getTargetDatabase();
-	
-	void saveUser(User user) throws DecisionMakerException;
-	
-	User retrieveUserById(Long id) throws DecisionMakerException, EntityDoesNotExistException;
-	
 	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
 	User retrieveRandomUser();
 	
-	List<User> retrieveUsersByPageAndCount(int page, int count);
-	
 	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
 
-	Long retrieveCount();
-	
-	boolean checkIfUserExistsById(Long id);
-	
 	boolean checkIfUserExistsByUsername(String username);
-
-	void updateUser(User user) throws DecisionMakerException, EntityDoesNotExistException;
 	
-	void deleteUserById(Long id) throws EntityDoesNotExistException;
+	void sendMessage(Long id, Message message) throws EntityDoesNotExistException;
 
 	void deleteUserByUsername(String username) throws EntityDoesNotExistException;
-
-
 	
 }

@@ -1,0 +1,7 @@
+NOTE: 
+
+These json files are meant for sample data, and should not be used for real-time use. 
+
+The retrieve should represent what you should get at the moment of calling /{endpoint}/id/{id} - GET
+
+The insert can be used when POSTing an /{endpoint} with a RequestBody and ContentType: application/json

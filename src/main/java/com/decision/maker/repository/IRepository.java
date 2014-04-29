@@ -16,6 +16,8 @@ public interface IRepository<T, K> {
 	
 	Set<T> retrieveById(K id) throws EntityDoesNotExistException;
 	
+	T retrieveUniqueById(K id) throws EntityDoesNotExistException;
+	
 	List<T> retrieveAll();
 	
 	List<T> retrieveSubsetOfEndpoint(int startIdx, int count);

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.ContactInfo;
 import com.decision.maker.domain.user.User;
@@ -30,7 +31,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void saveUser(User user) throws DecisionMakerException {
+	public void saveEntity(User user) throws DecisionMakerException {
 		Account account = user.getAccount();
 		if (checkIfUserExistsByUsername(account.getUsername())) {
 			throw new DecisionMakerException("The username " + account.getUsername() + " already exists");
@@ -50,7 +51,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public User retrieveUserById(Long id) throws DecisionMakerException, EntityDoesNotExistException {
+	public User retrieveEntityById(Long id) throws DecisionMakerException, EntityDoesNotExistException {
 		Set<User> result = userRepository.retrieveById(id);
 		
 		if (result.size() > 1) {
@@ -66,7 +67,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public List<User> retrieveUsersByPageAndCount(int page, int count) {
+	public List<User> retrieveEntitiesByPageAndCount(int page, int count) {
 		return userRepository.retrieveSubsetOfEndpoint(page*count, count);
 	}
 
@@ -81,7 +82,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public boolean checkIfUserExistsById(Long id) {
+	public boolean checkIfEntityExistsById(Long id) {
 		return userRepository.doesEntityExistById(id);
 	}
 	
@@ -91,8 +92,13 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void updateUser(User user) throws DecisionMakerException, EntityDoesNotExistException {
-		if (checkIfUserExistsById(user.getId())) {
+	public void sendMessage(Long id, Message message) throws EntityDoesNotExistException {
+		userRepository.sendMessage(id, message);
+	}
+	
+	@Override
+	public void updateEntity(User user) throws DecisionMakerException, EntityDoesNotExistException {
+		if (checkIfEntityExistsById(user.getId())) {
 			try {
 				User checkUser = retrieveUserByUsername(user.getAccount().getUsername());
 				if (checkUser.getId().equals(user.getId())) {
@@ -105,12 +111,12 @@ public class UserService implements IUserService {
 				userRepository.updateEntity(user);
 			}
 		} else {
-			saveUser(user);
+			saveEntity(user);
 		}
 	}
 	
 	@Override
-	public void deleteUserById(Long id) throws EntityDoesNotExistException {
+	public void deleteEntityById(Long id) throws EntityDoesNotExistException {
 		userRepository.deleteEntityById(id);
 	}
 
@@ -127,5 +133,5 @@ public class UserService implements IUserService {
 	public void setUserRepository(IUserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	
+
 }

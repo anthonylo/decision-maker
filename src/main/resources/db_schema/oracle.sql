@@ -24,7 +24,7 @@ CREATE TABLE dm_account_jumbo (
 	password		    varchar(30) not null,
 	secret_question     varchar(75) not null,
 	secret_answer	    varchar(50) not null,
-  date_created     date default sysdate,
+    date_created        date default sysdate,
 	constraint pk_dm_account_jumbo primary key (account_id)
 );
 
@@ -48,7 +48,7 @@ CREATE TABLE dm_message (
 	message_id		number(10) 		not null,
 	user_id			number(10)      not null,
 	message			varchar(140) 	not null,
-	date_posted	 timestamp with local time zone default sysdate not null,
+	date_posted	    date default sysdate not null,
 	constraint pk_dm_message primary key (message_id, user_id),
 	constraint fk1_dm_message
 		foreign key (user_id)

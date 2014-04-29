@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
@@ -17,7 +18,8 @@ import com.decision.maker.service.user.IUserService;
 @RequestMapping(value = "user")
 public class UserController {
 
-	@Autowired private IUserService userService;
+	@Autowired
+	private IUserService userService;
 
 	@RequestMapping(value = "count", method = RequestMethod.GET)
 	public @ResponseBody String retrieveCount() {
@@ -27,7 +29,7 @@ public class UserController {
 	@RequestMapping(value = "id/{id}", method = RequestMethod.GET)
 	public @ResponseBody User retrieveUserById(@PathVariable Long id)
 			throws DecisionMakerException, EntityDoesNotExistException {
-		return userService.retrieveUserById(id);
+		return userService.retrieveEntityById(id);
 	}
 	
 	@RequestMapping(value = "barebone/{id}", method = RequestMethod.GET)
@@ -44,21 +46,28 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody String createUser(@RequestBody User user)
 			throws DecisionMakerException {
-		userService.saveUser(user);
+		userService.saveEntity(user);
 		return "The user '" + user.getAccount().getUsername() + "' has been created."; 
+	}
+	
+	@RequestMapping(value = "id/{id}/send/message", method = RequestMethod.POST)
+	public @ResponseBody String sendMessage(@PathVariable Long id, @RequestBody Message message)
+			throws EntityDoesNotExistException {
+		userService.sendMessage(id, message);
+		return "The user " + id + " has sent a message to: " + message.getRecipients() + "."; 
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.PUT)
 	public @ResponseBody String updateUser(@PathVariable Long id, @RequestBody User user)
 			throws DecisionMakerException, EntityDoesNotExistException {
 		user.setId(id);
-		userService.updateUser(user);
+		userService.updateEntity(user);
 		return "The user " + id + ": '" + user.getAccount().getUsername() + "' has been updated.";
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.DELETE)
-	public @ResponseBody String deleteUserById(@PathVariable Long id) throws EntityDoesNotExistException {
-		userService.deleteUserById(id);
+	public @ResponseBody String deleteUserById(@PathVariable Long id) throws EntityDoesNotExistException, DecisionMakerException {
+		userService.deleteEntityById(id);
 		return "User " + id + " has been deleted.";
 	}
 	
@@ -70,7 +79,7 @@ public class UserController {
 
 	@RequestMapping(value = "id/{id}", method = RequestMethod.HEAD)
 	public @ResponseBody String checkIfUserExistsById(@PathVariable Long id) {
-		boolean exists = userService.checkIfUserExistsById(id);
+		boolean exists = userService.checkIfEntityExistsById(id);
 		return "User " + id + ": " + generateExistString(exists);
 	}
 	

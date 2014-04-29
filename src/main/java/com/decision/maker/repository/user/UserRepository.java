@@ -127,6 +127,18 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
+	public void sendMessage(Long userId, Message message) throws EntityDoesNotExistException {
+		User sender = retrieveUniqueById(userId);
+
+		Set<Message> messagesSent = sender.getMessagesSent();
+		message.setSenderId(userId);
+		messagesSent.add(message);
+		sender.setMessagesSent(messagesSent);
+		
+		updateEntity(sender);
+	}
+	
+	@Override
 	public void deleteEntityByUsername(String username) throws EntityDoesNotExistException {
 		User user = retrieveUserByUsername(username);
 		sessionFactory.getCurrentSession().delete(user);
