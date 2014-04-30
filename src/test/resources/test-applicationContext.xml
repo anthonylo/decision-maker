@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
 	       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 	       http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
-	       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
        	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
 	       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        ">
 
 	<!-- Scan for spring annotated components -->
-
-	<bean id="userRepo" class="com.decision.maker.repository.user.UserRepository">
-		<property name="sessionFactory">
-			<bean class="org.hibernate.SessionFactory"/>
-		</property>
-	</bean>
-	<bean id="userService" class="com.decision.maker.service.user.UserService">
-		<property name="userRepository" ref="userRepo"/>
-	</bean>	
-	
-	<bean id="userController" class="com.decision.maker.controller.UserController">
-		<property name="userService" ref="userService"/>
-	</bean>
+	<context:component-scan base-package="com.decision.maker.repository" />
+	<context:component-scan base-package="com.decision.maker.service" />
 
 	<context:property-placeholder location="classpath:/test-application.properties" />
 
+	<tx:annotation-driven/>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver.name}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		lazy-init="true">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect.property}</prop>
+				<prop key="hibernate.show_sql">${hibernate.display.sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.connection.pool_size">3</prop>
+				<prop key="hibernate.connection.autocommit">true</prop>
+			</props>
+		</property>
+		<property name="packagesToScan" value="com.decision.maker.domain" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
 
 	<!-- Process annotations on registered beans like @Autowired... -->
 	<context:annotation-config />
-
-	<!-- This tag registers the DefaultAnnotationHandlerMapping and AnnotationMethodHandlerAdapter 
-		beans that are required for Spring MVC -->
-    <mvc:annotation-driven/>
-	
-	<!-- Exception Resolver that resolves exceptions through @ExceptionHandler methods -->
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" />
 
 </beans>

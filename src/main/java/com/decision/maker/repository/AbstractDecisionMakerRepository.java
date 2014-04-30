@@ -63,7 +63,7 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 		 T result = (T) sessionFactory.getCurrentSession().createCriteria(clazz)
 			.add(Restrictions.eq("id", id)).uniqueResult();
 		
-		if (result != null) {
+		if (result == null) {
 			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
 					+ " with ID " + id + " does not exist.", 
 					id.getClass(), id);
@@ -95,6 +95,11 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 				.uniqueResult();
 		
 		return count > 0;
+	}
+	
+	@Override
+	public boolean tableEmpty() {
+		return retrieveCount() == 0;
 	}
 
 	@Override

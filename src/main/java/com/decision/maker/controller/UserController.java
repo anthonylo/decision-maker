@@ -12,6 +12,8 @@ import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.NoRecipientsException;
 import com.decision.maker.service.user.IUserService;
 
 @Controller
@@ -52,7 +54,7 @@ public class UserController {
 	
 	@RequestMapping(value = "id/{id}/send/message", method = RequestMethod.POST)
 	public @ResponseBody String sendMessage(@PathVariable Long id, @RequestBody Message message)
-			throws EntityDoesNotExistException {
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
 		userService.sendMessage(id, message);
 		return "The user " + id + " has sent a message to: " + message.getRecipients() + "."; 
 	}

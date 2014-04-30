@@ -29,10 +29,11 @@ public class MessageUserRepository extends
 	private IUserRepository userRepository;
 
 	@Override
-	public Set<User> getRecipientsOfMessage(MessageUserPK id) throws EntityDoesNotExistException {
+	public Set<User> getRecipientsOfMessage(Long messageId, Long senderId) throws EntityDoesNotExistException {
 		List<Long> friendIds = sessionFactory.getCurrentSession().createCriteria(MessageUser.class)
-				.add(Restrictions.eq("id", id))
-				.setProjection(Projections.property("friendId"))
+				.add(Restrictions.eq("id.messageId", messageId))
+				.add(Restrictions.eq("id.senderId", senderId))
+				.setProjection(Projections.property("id.recipientId"))
 				.list();
 		
 		return userRepository.retrieveBareboneUsersFromListOfIds(friendIds);
@@ -42,7 +43,7 @@ public class MessageUserRepository extends
 	public Set<User> getRecipientsOfMessageByMessageId(Long messageId) throws EntityDoesNotExistException {
 		List<Long> friendIds = sessionFactory.getCurrentSession().createCriteria(MessageUser.class)
 				.add(Restrictions.eq("id.messageId", messageId))
-				.setProjection(Projections.property("friendId"))
+				.setProjection(Projections.property("id.recipientId"))
 				.list();
 		
 		return userRepository.retrieveBareboneUsersFromListOfIds(friendIds);
@@ -62,7 +63,7 @@ public class MessageUserRepository extends
 	public Set<MessageUser> getMessagesThatUserHasReceived(Long receiverId) {
 		List<MessageUser> receivedMessages = sessionFactory.getCurrentSession()
 				.createCriteria(MessageUser.class)
-				.add(Restrictions.eq("friendId", receiverId))
+				.add(Restrictions.eq("id.recipientId", receiverId))
 				.list();
 		
 		return new LinkedHashSet<MessageUser>(receivedMessages);

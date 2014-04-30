@@ -9,6 +9,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,9 @@ import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.NoRecipientsException;
+import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.AbstractDecisionMakerRepository;
 import com.decision.maker.repository.message.IMessageRepository;
 
@@ -26,6 +30,9 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Autowired
 	private IMessageRepository messageRepository;
+	
+	@Value("${user.random.sql}")
+	private String randomSqlStatement;
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -79,9 +86,9 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 
 	@Override
-	public User retrieveRandom() {
-		String hql = "select u from User u order by rand()";
-		return (User) sessionFactory.getCurrentSession().createQuery(hql).setMaxResults(1).uniqueResult();
+	public User retrieveRandom() throws NotImplementedException {
+		// TODO - Implement method
+		throw new NotImplementedException("IUserRepository.retrieveRandom()");
 	}
 
 	@Override
@@ -127,15 +134,16 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
-	public void sendMessage(Long userId, Message message) throws EntityDoesNotExistException {
+	public void sendMessage(Long userId, Message message) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
 		User sender = retrieveUniqueById(userId);
 
-		Set<Message> messagesSent = sender.getMessagesSent();
 		message.setSenderId(userId);
+		Set<Message> messagesSent = sender.getMessagesSent();
 		messagesSent.add(message);
 		sender.setMessagesSent(messagesSent);
 		
-		updateEntity(sender);
+		messageRepository.saveMessage(message);
 	}
 	
 	@Override

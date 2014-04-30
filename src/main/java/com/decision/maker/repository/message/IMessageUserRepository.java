@@ -15,13 +15,14 @@ import com.decision.maker.repository.IRepository;
 @Transactional
 public interface IMessageUserRepository extends IRepository<MessageUser, MessageUserPK> {
 
-	Set<User> getRecipientsOfMessage(MessageUserPK id) throws EntityDoesNotExistException;
-
 	Set<MessageUser> getMessagesThatUserHasSent(Long senderId);
 
 	Set<MessageUser> getMessagesThatUserHasReceived(Long receiverId);
 
 	Set<User> getRecipientsOfMessageByMessageId(Long messageId)
+			throws EntityDoesNotExistException;
+
+	Set<User> getRecipientsOfMessage(Long messageId, Long senderId)
 			throws EntityDoesNotExistException;
 	
 }

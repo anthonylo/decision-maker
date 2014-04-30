@@ -1,7 +1,6 @@
 package com.decision.maker.service.user;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,9 @@ import com.decision.maker.domain.user.ContactInfo;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.NoRecipientsException;
+import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.user.IUserRepository;
 
 @Component
@@ -52,13 +54,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public User retrieveEntityById(Long id) throws DecisionMakerException, EntityDoesNotExistException {
-		Set<User> result = userRepository.retrieveById(id);
-		
-		if (result.size() > 1) {
-			throw new DecisionMakerException("There are too many users with ID " + id);
-		}
-		
-		return result.iterator().next();
+		return userRepository.retrieveUniqueById(id);
 	}
 
 	@Override
@@ -92,7 +88,8 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void sendMessage(Long id, Message message) throws EntityDoesNotExistException {
+	public void sendMessage(Long id, Message message) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
 		userRepository.sendMessage(id, message);
 	}
 	
@@ -126,7 +123,7 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
-	public User retrieveRandomUser() {
+	public User retrieveRandomUser() throws NotImplementedException {
 		return userRepository.retrieveRandom();
 	}
 

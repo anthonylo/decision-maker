@@ -24,7 +24,7 @@ CREATE TABLE dm_account_jumbo (
 	password		    varchar(30) not null,
 	secret_question     varchar(75) not null,
 	secret_answer	    varchar(50) not null,
-    date_created        date default sysdate,
+  date_created     date default sysdate,
 	constraint pk_dm_account_jumbo primary key (account_id)
 );
 
@@ -45,11 +45,11 @@ CREATE TABLE dm_user (
 );
 
 CREATE TABLE dm_message (
-	message_id		number(10) 		not null,
-	user_id			number(10)      not null,
-	message			varchar(140) 	not null,
+	message_id		number(10) 			 not null,
+	user_id			number(10) 	     	 not null,
+	message			varchar(140) 	  	 not null,
 	date_posted	    date default sysdate not null,
-	constraint pk_dm_message primary key (message_id, user_id),
+	constraint pk_dm_message primary key (message_id),
 	constraint fk1_dm_message
 		foreign key (user_id)
 		references dm_user(user_id) on delete cascade
@@ -57,18 +57,18 @@ CREATE TABLE dm_message (
 
 CREATE TABLE dm_message_user (
 	message_id		number(10) not null,
-	user_id			number(10) not null,
-	friend_id		number(10) not null,
+	sender_id		number(10) not null,
+	recipient_id	number(10) not null,
 	constraint pk_dm_message_user 
-		primary key (message_id, user_id, friend_id),
+		primary key (message_id, sender_id, recipient_id),
 	constraint fk1_dm_message_user
-		foreign key (message_id, user_id)
-		references dm_message(message_id, user_id) on delete cascade,
+		foreign key (message_id)
+		references dm_message(message_id) on delete cascade,
 	constraint fk2_dm_message_user
-		foreign key (user_id)
+		foreign key (sender_id)
 		references dm_user(user_id) on delete cascade,
 	constraint fk3_dm_message_user
-		foreign key (friend_id)
+		foreign key (recipient_id)
 		references dm_user(user_id) on delete cascade
 );
 

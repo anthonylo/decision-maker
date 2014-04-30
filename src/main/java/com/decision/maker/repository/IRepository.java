@@ -24,6 +24,8 @@ public interface IRepository<T, K> {
 	
 	boolean doesEntityExistById(K id);
 	
+	boolean tableEmpty();
+	
 	Long retrieveCount();
 	
 	void updateEntity(T entity);

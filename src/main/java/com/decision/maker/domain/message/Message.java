@@ -34,7 +34,6 @@ public class Message extends AbstractDecisionMakerObject<Long> {
 	@SequenceGenerator(name = "dm_message_seq", sequenceName = "dm_message_seq", initialValue = 1, allocationSize = 1)
 	private Long id;
 	
-	@Id
 	@Column(name = "user_id", insertable = true, updatable = false)
 	@JsonIgnore
 	private Long senderId;

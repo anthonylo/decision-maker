@@ -1,6 +1,5 @@
 package com.decision.maker.domain.message;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -20,17 +19,12 @@ public class MessageUser extends AbstractDecisionMakerObject<MessageUserPK> {
 	@EmbeddedId
 	private MessageUserPK id;
 	
-//	@Transient
-	@Column(name = "friend_id")
-	private Long friendId;
-	
 	public MessageUser() {
 		
 	}
 
-	public MessageUser(MessageUserPK id, Long friendId) {
+	public MessageUser(MessageUserPK id) {
 		this.id = id;
-		this.friendId = friendId;
 	}
 
 	@Override
@@ -41,14 +35,6 @@ public class MessageUser extends AbstractDecisionMakerObject<MessageUserPK> {
 	@Override
 	public void setId(MessageUserPK id) {
 		this.id = id;
-	}
-
-	public Long getFriendId() {
-		return friendId;
-	}
-
-	public void setFriendId(Long friendId) {
-		this.friendId = friendId;
 	}
 
 	@Override

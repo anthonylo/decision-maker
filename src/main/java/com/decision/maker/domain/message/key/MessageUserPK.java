@@ -16,16 +16,20 @@ public class MessageUserPK implements IPrimaryKey {
 	@Column(name = "message_id")
 	private Long messageId;
 
-	@Column(name = "user_id")
+	@Column(name = "sender_id")
 	private Long senderId;
+	
+	@Column(name = "recipient_id")
+	private Long recipientId;
 
 	public MessageUserPK() {
 		
 	}
 
-	public MessageUserPK(Long messageId, Long senderId) {
+	public MessageUserPK(Long messageId, Long senderId, Long recipientId) {
 		this.messageId = messageId;
 		this.senderId = senderId;
+		this.recipientId = recipientId;
 	}
 
 	public Long getMessageId() {
@@ -44,12 +48,22 @@ public class MessageUserPK implements IPrimaryKey {
 		this.senderId = senderId;
 	}
 
+	public Long getRecipientId() {
+		return recipientId;
+	}
+
+	public void setRecipientId(Long recipientId) {
+		this.recipientId = recipientId;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((messageId == null) ? 0 : messageId.hashCode());
+		result = prime * result
+				+ ((recipientId == null) ? 0 : recipientId.hashCode());
 		result = prime * result
 				+ ((senderId == null) ? 0 : senderId.hashCode());
 		return result;
@@ -68,6 +82,11 @@ public class MessageUserPK implements IPrimaryKey {
 			if (other.messageId != null)
 				return false;
 		} else if (!messageId.equals(other.messageId))
+			return false;
+		if (recipientId == null) {
+			if (other.recipientId != null)
+				return false;
+		} else if (!recipientId.equals(other.recipientId))
 			return false;
 		if (senderId == null) {
 			if (other.senderId != null)

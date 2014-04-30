@@ -23,6 +23,7 @@ import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.exception.NotImplementedException;
 
 public class UserRepositoryTest {
 
@@ -126,8 +127,13 @@ public class UserRepositoryTest {
 		assertFalse(result);
 	}
 	
-	@Test
-	public void should_retrieve_a_random_user() throws DecisionMakerException {
+	@Test(expected = NotImplementedException.class)
+	public void retrieve_random_user_exception() throws NotImplementedException {
+		repository.retrieveRandom();
+	}
+	
+//	@Test -- TODO
+	public void should_retrieve_a_random_user() throws DecisionMakerException, NotImplementedException {
 		// Given
 		Query query = mock(Query.class);
 		String targetUsername = "test.user";

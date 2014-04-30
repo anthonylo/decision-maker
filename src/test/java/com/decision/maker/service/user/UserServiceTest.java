@@ -27,6 +27,7 @@ import com.decision.maker.domain.user.ContactInfo;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.user.IUserRepository;
 import com.decision.maker.repository.user.UserRepository;
 
@@ -202,46 +203,30 @@ public class UserServiceTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void should_retrieve_user_by_id() throws EntityDoesNotExistException, DecisionMakerException {
 		// Given
-		Set<User> users = mock(Set.class);
 		User user = new User();
 		Long targetId = 1L;
-		Iterator<User> iterator = mock(Iterator.class);
 		
 		// When
-		when(users.size()).thenReturn(1);
-		when(users.iterator()).thenReturn(iterator);
-		when(iterator.next()).thenReturn(user);
-
-		when(userRepository.retrieveById(targetId)).thenReturn(users);
+		when(userRepository.retrieveUniqueById(targetId)).thenReturn(user);
 		
 		// Then
 		User result = userService.retrieveEntityById(targetId);
 		assertNotNull(result);
 		assertTrue(result.equals(user));
 		
-		verify(userRepository).retrieveById(targetId);
+		verify(userRepository).retrieveUniqueById(targetId);
 	}
 	
-	@Test(expected = DecisionMakerException.class)
-	public void should_retrieve_too_many_users_by_id() throws EntityDoesNotExistException, DecisionMakerException {
+	@SuppressWarnings("unchecked")
+	@Test(expected = EntityDoesNotExistException.class)
+	public void should_retrieve_no_user_by_id() throws EntityDoesNotExistException, DecisionMakerException {
 		// Given
-		Set<User> users = new HashSet<User>();
-		User user = new User();
-		user.setFirstName("two");
-		
-		User user2 = new User();
-		user2.setFirstName("one");
-		
 		Long targetId = 1L;
 		
 		// When
-		users.add(user);
-		users.add(user2);
-		
-		when(userRepository.retrieveById(1L)).thenReturn(users);
+		when(userRepository.retrieveUniqueById(targetId)).thenThrow(EntityDoesNotExistException.class);
 		
 		// Then
 		userService.retrieveEntityById(targetId); 
@@ -256,11 +241,11 @@ public class UserServiceTest {
 		Long targetId = 1L;
 		
 		// When
-		when(userRepository.retrieveById(targetId)).thenThrow(EntityDoesNotExistException.class);
+		when(userRepository.retrieveUniqueById(targetId)).thenThrow(EntityDoesNotExistException.class);
 		
 		// Then
 		userService.retrieveEntityById(targetId);
-		verify(userRepository).retrieveById(targetId);
+		verify(userRepository).retrieveUniqueById(targetId);
 	}
 
 	@Test
@@ -311,17 +296,13 @@ public class UserServiceTest {
 		assertTrue(results.size() == 1);
 	}
 	
-	@Test
-	public void should_retrieve_random_user() {
-		// Given
-		User mockUser = new User();
-
+	@Test(expected = NotImplementedException.class)
+	public void should_retrieve_random_user() throws NotImplementedException {
 		// When
-		when(userRepository.retrieveRandom()).thenReturn(mockUser);
+		when(userRepository.retrieveRandom()).thenCallRealMethod();
 		
 		// Then
-		User user = userService.retrieveRandomUser();
-		assertNotNull(user);
+		userService.retrieveRandomUser();
 		
 		verify(userRepository).retrieveRandom();
 	}
@@ -518,4 +499,5 @@ public class UserServiceTest {
 		userService.deleteUserByUsername(username);
 		verify(userRepository).deleteEntityByUsername(username);
 	}
+	
 }
