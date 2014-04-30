@@ -37,12 +37,8 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 		
 		Set<User> recipients = message.getRecipients();
 		Long senderId = message.getSenderId();
-		
-		if (recipients.isEmpty()) {
-			throw new NoRecipientsException();
-		}
-		
 		Long messageId = message.getId();
+		
 		for (User recipient : recipients) {
 			Long recipientId = recipient.getId();
 			

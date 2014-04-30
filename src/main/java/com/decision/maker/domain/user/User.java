@@ -46,31 +46,31 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	private Integer age;
 	
 	@OneToOne(optional = true, cascade = { CascadeType.ALL }, 
-			fetch = FetchType.LAZY, targetEntity = ContactInfo.class)
+			fetch = FetchType.EAGER, targetEntity = ContactInfo.class)
 	@JoinColumn(name = "contact_info_id", referencedColumnName = "contact_info_id")
 	@JsonInclude(value = Include.NON_NULL)
 	private ContactInfo contactInfo;
 	
 	@OneToOne(cascade = { CascadeType.ALL }, 
-			fetch = FetchType.LAZY, targetEntity = Account.class)
+			fetch = FetchType.EAGER, targetEntity = Account.class)
 	@JoinColumn(name = "account_id", referencedColumnName = "account_id")
 	@JsonInclude(value = Include.NON_NULL)
 	private Account account;
 
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
 	@JoinColumn(name = "user_id", updatable = false)
-	@JsonInclude(value = Include.NON_EMPTY)
+	@JsonInclude(value = Include.NON_NULL)
 	private Set<Message> messagesSent;
 	
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
 	@JoinTable(name = "dm_message_user",
-		joinColumns = { @JoinColumn(name = "friend_id", referencedColumnName = "user_id") },
+		joinColumns = { @JoinColumn(name = "recipient_id", referencedColumnName = "user_id", updatable = false) },
 		inverseJoinColumns = {
 			@JoinColumn(name = "message_id", referencedColumnName = "message_id"),
-			@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+			@JoinColumn(name = "sender_id", referencedColumnName = "user_id")
 		}
 	)
-	@JsonInclude(value = Include.NON_EMPTY)
+	@JsonInclude(value = Include.NON_NULL)
 	private Set<Message> messagesReceived;
 
 	public User() {

@@ -9,7 +9,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,25 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Autowired
 	private IMessageRepository messageRepository;
 	
-	@Value("${user.random.sql}")
-	private String randomSqlStatement;
+	private User handleMessages(User user) throws EntityDoesNotExistException {
+		Set<Message> messagesReceived = user.getMessagesReceived();
+		if (!messagesReceived.isEmpty()) {
+			for (Message message : messagesReceived) {
+				Long senderId = message.getSenderId();
+				message.setSender(retrieveBareboneUserById(senderId));
+			}
+		}
+		
+		Set<Message> messagesSent = user.getMessagesSent();
+		if (!messagesSent.isEmpty()) {
+			for (Message message : messagesSent) {
+				Long messageId = message.getId();
+				Set<User> recipients = messageRepository.retrieveRecipientsOfMessageById(messageId);
+				message.setRecipients(recipients);
+			}
+		}
+		return user;
+	}
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -41,25 +57,17 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		
 		while (resultItr.hasNext()) {
 			User userItr = resultItr.next();
-			Set<Message> messagesReceived = userItr.getMessagesReceived();
-			if (!messagesReceived.isEmpty()) {
-				for (Message message : messagesReceived) {
-					Long senderId = message.getSenderId();
-					message.setSender(retrieveBareboneUserById(senderId));
-				}
-			}
-			
-			Set<Message> messagesSent = userItr.getMessagesSent();
-			if (!messagesSent.isEmpty()) {
-				for (Message message : messagesSent) {
-					Long messageId = message.getId();
-					Set<User> recipients = messageRepository.retrieveRecipientsOfMessageById(messageId);
-					message.setRecipients(recipients);
-				}
-			}
+			handleMessages(userItr);
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public User retrieveUniqueById(Long id) throws EntityDoesNotExistException {
+		User user = super.retrieveUniqueById(id);
+		handleMessages(user);
+		return user;
 	}
 	
 	@Override
@@ -136,6 +144,11 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Override
 	public void sendMessage(Long userId, Message message) 
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
+		Set<User> recipients = message.getRecipients();
+		if (recipients == null || recipients.isEmpty()) {
+			throw new NoRecipientsException();
+		}
+
 		User sender = retrieveUniqueById(userId);
 
 		message.setSenderId(userId);
