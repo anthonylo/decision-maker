@@ -1,0 +1,20 @@
+{
+	"id" : 5,
+	"firstName" : "Anthony",
+	"lastName" : "Lo",
+	"age" : 22,
+	"contactInfo" : {
+		"id" : 4,
+		"email" : "loanthony09@gmail.com",
+		"phoneNumber" : "sample phone"
+	},
+	"account" : {
+		"id" : 5,
+		"username" : "loanthony",
+		"password" : "testpass",
+		"secretQuestion" : "Who is the developer of this app?",
+		"secretAnswer" : "Anthony Lo",
+		"dateCreated" : "2014-05-01T11:00:22Z",
+		"active" : false
+	}
+}

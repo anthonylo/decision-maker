@@ -95,5 +95,5 @@ public class MessageUserPK implements IPrimaryKey {
 			return false;
 		return true;
 	}
-	
+
 }

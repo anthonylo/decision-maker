@@ -10,11 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.decision.maker.domain.AbstractDecisionMakerObject;
 import com.decision.maker.domain.message.Message;
@@ -57,21 +56,13 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@JsonInclude(value = Include.NON_NULL)
 	private Account account;
 
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
-	@JoinColumn(name = "user_id", updatable = false)
+	@Transient
 	@JsonInclude(value = Include.NON_NULL)
-	private Set<Message> messagesSent;
+	private Set<Message> messagesSent = null;
 	
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = Message.class)
-	@JoinTable(name = "dm_message_user",
-		joinColumns = { @JoinColumn(name = "recipient_id", referencedColumnName = "user_id", updatable = false) },
-		inverseJoinColumns = {
-			@JoinColumn(name = "message_id", referencedColumnName = "message_id"),
-			@JoinColumn(name = "sender_id", referencedColumnName = "user_id")
-		}
-	)
+	@Transient
 	@JsonInclude(value = Include.NON_NULL)
-	private Set<Message> messagesReceived;
+	private Set<Message> messagesReceived = null;
 
 	public User() {
 	}

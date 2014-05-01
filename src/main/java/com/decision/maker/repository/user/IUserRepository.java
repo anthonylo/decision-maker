@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.IllegalRecipientException;
 import com.decision.maker.exception.NoRecipientsException;
 import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.IRepository;
@@ -29,8 +29,12 @@ public interface IUserRepository extends IRepository<User, Long> {
 	boolean checkIfUsernameAlreadyExists(String username);
 	
 	void sendMessage(Long userId, Message message)
-			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException;
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException;
 	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;
+	
+	boolean isUserLoggedIn(Long userId);
+	
+	void performLogInOrOut(Long userId) throws EntityDoesNotExistException;
 	
 }

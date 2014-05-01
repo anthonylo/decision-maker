@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import com.decision.maker.domain.AbstractDecisionMakerObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,22 +45,28 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	@Column(name = "secret_answer", nullable = false, updatable = true)
 	private String secretAnswer;
 	
-	@Column(name = "date_created")
+	@Column(name = "date_created", updatable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "CST")
 	private Date dateCreated;
+	
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	@Column(name = "active", insertable = false, updatable = true)
+	private Boolean active;
 
 	public Account() {
 		
 	}
 	
 	public Account(Long id, String username, String password,
-			String secretQuestion, String secretAnswer, Date dateCreated) {
+			String secretQuestion, String secretAnswer, Date dateCreated,
+			Boolean active) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.secretQuestion = secretQuestion;
 		this.secretAnswer = secretAnswer;
 		this.dateCreated = dateCreated;
+		this.active = active;
 	}
 
 	@Override
@@ -111,10 +119,19 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 		this.dateCreated = dateCreated;
 	}
 
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((active == null) ? 0 : active.hashCode());
 		result = prime * result
 				+ ((dateCreated == null) ? 0 : dateCreated.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -138,6 +155,11 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
+		if (active == null) {
+			if (other.active != null)
+				return false;
+		} else if (!active.equals(other.active))
+			return false;
 		if (dateCreated == null) {
 			if (other.dateCreated != null)
 				return false;

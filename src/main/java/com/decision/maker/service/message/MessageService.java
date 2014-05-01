@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decision.maker.domain.message.Message;
+import com.decision.maker.domain.message.MessageType;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
 import com.decision.maker.repository.message.IMessageRepository;
@@ -34,7 +35,7 @@ public class MessageService implements IMessageService {
 	@Override
 	public Message retrieveEntityById(Long messageId)
 			throws DecisionMakerException, EntityDoesNotExistException {
-		return messageRepository.retrieveMessageByMessageId(messageId);
+		return messageRepository.retrieveMessageByMessageId(messageId, MessageType.ALL);
 	}
 
 	@Override

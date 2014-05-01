@@ -1,9 +1,7 @@
 {
 	"message" : "This is a post message",
-	"recipients" : [{
-			"id" : 2
-		}, {
-			"id" : 3
-		}
+	"recipients" : [
+		{ "id" : 2 }, 
+		{ "id" : 3 }
 	]
 }

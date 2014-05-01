@@ -14,7 +14,7 @@ import com.decision.maker.domain.user.ContactInfo;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.IllegalRecipientException;
 import com.decision.maker.exception.NoRecipientsException;
 import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.user.IUserRepository;
@@ -89,7 +89,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public void sendMessage(Long id, Message message) 
-			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
 		userRepository.sendMessage(id, message);
 	}
 	

@@ -112,7 +112,7 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 
 	@Override
 	public void updateEntity(T entity) {
-		sessionFactory.getCurrentSession().merge(entity);
+		sessionFactory.getCurrentSession().update(entity);
 	}
 
 	@Override

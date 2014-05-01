@@ -15,8 +15,18 @@
 	<context:component-scan base-package="com.decision.maker.controller" />
 	<context:component-scan base-package="com.decision.maker.repository" />
 	<context:component-scan base-package="com.decision.maker.service" />
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:/application.properties</value>
+				<value>classpath:/sql_queries.properties</value>
+			</list>
+		</property>
+	</bean>
 
-	<context:property-placeholder location="classpath:/application.properties" />
+<!-- 	<context:property-placeholder location="classpath:/application.properties" /> -->
 
 	<tx:annotation-driven/>
 
@@ -35,7 +45,7 @@
 			<props>
 				<prop key="hibernate.dialect">${oracle.hibernate.dialect.property}</prop>
 				<prop key="hibernate.show_sql">${hibernate.display.sql}</prop>
-				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.connection.pool_size">3</prop>
 				<prop key="hibernate.connection.autocommit">true</prop>
 			</props>

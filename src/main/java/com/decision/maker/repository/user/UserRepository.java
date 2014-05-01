@@ -16,7 +16,7 @@ import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.Account;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.IllegalRecipientException;
 import com.decision.maker.exception.NoRecipientsException;
 import com.decision.maker.exception.NotImplementedException;
 import com.decision.maker.repository.AbstractDecisionMakerRepository;
@@ -29,26 +29,6 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Autowired
 	private IMessageRepository messageRepository;
-	
-	private User handleMessages(User user) throws EntityDoesNotExistException {
-		Set<Message> messagesReceived = user.getMessagesReceived();
-		if (!messagesReceived.isEmpty()) {
-			for (Message message : messagesReceived) {
-				Long senderId = message.getSenderId();
-				message.setSender(retrieveBareboneUserById(senderId));
-			}
-		}
-		
-		Set<Message> messagesSent = user.getMessagesSent();
-		if (!messagesSent.isEmpty()) {
-			for (Message message : messagesSent) {
-				Long messageId = message.getId();
-				Set<User> recipients = messageRepository.retrieveRecipientsOfMessageById(messageId);
-				message.setRecipients(recipients);
-			}
-		}
-		return user;
-	}
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -143,12 +123,14 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	
 	@Override
 	public void sendMessage(Long userId, Message message) 
-			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
 		Set<User> recipients = message.getRecipients();
 		if (recipients == null || recipients.isEmpty()) {
 			throw new NoRecipientsException();
 		}
 
+		containsIllegalRecipient(recipients, userId);
+		
 		User sender = retrieveUniqueById(userId);
 
 		message.setSenderId(userId);
@@ -160,6 +142,12 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
+	public void deleteEntityById(Long id) throws EntityDoesNotExistException {
+		messageRepository.deleteMessagesByUserId(id);
+		super.deleteEntityById(id);
+	}
+
+	@Override
 	public void deleteEntityByUsername(String username) throws EntityDoesNotExistException {
 		User user = retrieveUserByUsername(username);
 		sessionFactory.getCurrentSession().delete(user);
@@ -168,6 +156,56 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Override
 	protected void setClazz() {
 		this.clazz = User.class;
+	}
+
+	@Override
+	public boolean isUserLoggedIn(Long userId) {
+		Boolean loggedIn = (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("id", userId))
+				.setProjection(Projections.property("acc.active"))
+				.uniqueResult();
+		return loggedIn;
+	}
+
+	@Override
+	public void performLogInOrOut(Long userId) throws EntityDoesNotExistException {
+		User user = retrieveUniqueById(userId);
+		Account account = user.getAccount();
+		Boolean loggedIn = account.getActive();
+		account.setActive(!loggedIn);
+		updateEntity(user);
+	}
+
+	private void containsIllegalRecipient(Set<User> recipients, Long senderId) throws IllegalRecipientException {
+		for (User recipient : recipients) {
+			if (recipient.getId() == senderId) {
+				throw new IllegalRecipientException("The message has been "
+						+ "cancelled because a recipient of this message is the sender");
+			}
+		}
+	}
+	
+	private User handleMessages(User user) throws EntityDoesNotExistException {
+		Set<Message> messagesReceived = messageRepository.retrieveMessagesThatAUserHasReceived(user.getId());
+		if (messagesReceived != null && !messagesReceived.isEmpty()) {
+			for (Message message : messagesReceived) {
+				Long senderId = message.getSenderId();
+				message.setSender(retrieveBareboneUserById(senderId));
+			}
+			user.setMessagesReceived(messagesReceived);
+		}
+		
+		Set<Message> messagesSent = messageRepository.retrieveMessagesThatAUserHasSent(user.getId());
+		if (messagesSent != null && !messagesSent.isEmpty()) {
+			for (Message message : messagesSent) {
+				Long messageId = message.getId();
+				Set<User> recipients = messageRepository.retrieveRecipientsOfMessageById(messageId);
+				message.setRecipients(recipients);
+			}
+			user.setMessagesSent(messagesSent);
+		}
+		return user;
 	}
 	
 }

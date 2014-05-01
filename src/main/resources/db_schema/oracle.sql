@@ -24,7 +24,8 @@ CREATE TABLE dm_account_jumbo (
 	password		    varchar(30) not null,
 	secret_question     varchar(75) not null,
 	secret_answer	    varchar(50) not null,
-  date_created     date default sysdate,
+    date_created        date default sysdate,
+    active              number(1) default 1 not null,
 	constraint pk_dm_account_jumbo primary key (account_id)
 );
 

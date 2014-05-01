@@ -12,7 +12,7 @@ import com.decision.maker.domain.message.Message;
 import com.decision.maker.domain.user.User;
 import com.decision.maker.exception.DecisionMakerException;
 import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalMessageInsertException;
+import com.decision.maker.exception.IllegalRecipientException;
 import com.decision.maker.exception.NoRecipientsException;
 import com.decision.maker.service.user.IUserService;
 
@@ -29,13 +29,13 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.GET)
-	public @ResponseBody User retrieveUserById(@PathVariable Long id)
+	public @ResponseBody User retrieveUserById(@PathVariable final Long id)
 			throws DecisionMakerException, EntityDoesNotExistException {
 		return userService.retrieveEntityById(id);
 	}
 	
 	@RequestMapping(value = "barebone/{id}", method = RequestMethod.GET)
-	public @ResponseBody User retrieveBareboneUserById(@PathVariable Long id) throws EntityDoesNotExistException {
+	public @ResponseBody User retrieveBareboneUserById(@PathVariable final Long id) throws EntityDoesNotExistException {
 		return userService.retrieveBareboneUserById(id);
 	}
 	
@@ -53,22 +53,21 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "id/{id}/send/message", method = RequestMethod.POST)
-	public @ResponseBody String sendMessage(@PathVariable Long id, @RequestBody Message message)
-			throws EntityDoesNotExistException, NoRecipientsException, IllegalMessageInsertException {
+	public @ResponseBody String sendMessage(@PathVariable final Long id, @RequestBody Message message)
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
 		userService.sendMessage(id, message);
 		return "The user " + id + " has sent a message to: " + message.getRecipients() + "."; 
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.PUT)
-	public @ResponseBody String updateUser(@PathVariable Long id, @RequestBody User user)
+	public @ResponseBody String updateUser(@PathVariable final Long id, @RequestBody User user)
 			throws DecisionMakerException, EntityDoesNotExistException {
-		user.setId(id);
 		userService.updateEntity(user);
 		return "The user " + id + ": '" + user.getAccount().getUsername() + "' has been updated.";
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.DELETE)
-	public @ResponseBody String deleteUserById(@PathVariable Long id) throws EntityDoesNotExistException, DecisionMakerException {
+	public @ResponseBody String deleteUserById(@PathVariable final Long id) throws EntityDoesNotExistException, DecisionMakerException {
 		userService.deleteEntityById(id);
 		return "User " + id + " has been deleted.";
 	}
@@ -80,7 +79,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "id/{id}", method = RequestMethod.HEAD)
-	public @ResponseBody String checkIfUserExistsById(@PathVariable Long id) {
+	public @ResponseBody String checkIfUserExistsById(@PathVariable final Long id) {
 		boolean exists = userService.checkIfEntityExistsById(id);
 		return "User " + id + ": " + generateExistString(exists);
 	}
