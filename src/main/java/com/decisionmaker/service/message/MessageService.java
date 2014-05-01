@@ -1,4 +1,4 @@
-package com.decision.maker.service.message;
+package com.decisionmaker.service.message;
 
 import java.util.List;
 import java.util.Set;
@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.message.MessageType;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.repository.message.IMessageRepository;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.message.MessageType;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.repository.message.IMessageRepository;
 
 @Component
 @Transactional

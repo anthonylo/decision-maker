@@ -1,4 +1,4 @@
-package com.decision.maker.domain.user;
+package com.decisionmaker.domain.user;
 
 import java.util.Date;
 
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

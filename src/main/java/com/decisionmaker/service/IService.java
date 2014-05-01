@@ -1,9 +1,9 @@
-package com.decision.maker.service;
+package com.decisionmaker.service;
 
 import java.util.List;
 
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
 
 public interface IService<T, K> {
 

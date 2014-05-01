@@ -1,9 +1,9 @@
-package com.decision.maker.domain.message.key;
+package com.decisionmaker.domain.message.key;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import com.decision.maker.domain.IPrimaryKey;
+import com.decisionmaker.domain.IPrimaryKey;
 
 @Embeddable
 public class MessageUserPK implements IPrimaryKey {

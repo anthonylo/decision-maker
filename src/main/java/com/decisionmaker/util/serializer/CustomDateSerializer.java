@@ -1,4 +1,4 @@
-package com.decision.maker.util.serializer;
+package com.decisionmaker.util.serializer;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

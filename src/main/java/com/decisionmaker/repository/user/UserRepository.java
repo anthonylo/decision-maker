@@ -1,4 +1,4 @@
-package com.decision.maker.repository.user;
+package com.decisionmaker.repository.user;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -12,15 +12,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.user.Account;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalRecipientException;
-import com.decision.maker.exception.NoRecipientsException;
-import com.decision.maker.exception.NotImplementedException;
-import com.decision.maker.repository.AbstractDecisionMakerRepository;
-import com.decision.maker.repository.message.IMessageRepository;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.repository.AbstractDecisionMakerRepository;
+import com.decisionmaker.repository.message.IMessageRepository;
 
 @Repository
 @Transactional
@@ -61,6 +61,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		if (user == null) {
 			throw new EntityDoesNotExistException("The user " + username + " does not exist", clazz, user);
 		}
+		handleMessages(user);
 		return user;
 	}
 

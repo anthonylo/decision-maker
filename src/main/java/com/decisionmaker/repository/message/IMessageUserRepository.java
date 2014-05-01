@@ -1,15 +1,15 @@
-package com.decision.maker.repository.message;
+package com.decisionmaker.repository.message;
 
 import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.message.MessageUser;
-import com.decision.maker.domain.message.key.MessageUserPK;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.repository.IRepository;
+import com.decisionmaker.domain.message.MessageUser;
+import com.decisionmaker.domain.message.key.MessageUserPK;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.repository.IRepository;
 
 @Repository
 @Transactional

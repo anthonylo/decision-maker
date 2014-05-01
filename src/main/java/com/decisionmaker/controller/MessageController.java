@@ -1,4 +1,4 @@
-package com.decision.maker.controller;
+package com.decisionmaker.controller;
 
 import java.util.Set;
 
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.service.message.IMessageService;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.service.message.IMessageService;
 
 @Controller
 @RequestMapping(value = "message")

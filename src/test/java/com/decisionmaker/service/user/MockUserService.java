@@ -1,6 +1,6 @@
-package com.decision.maker.service.user;
+package com.decisionmaker.service.user;
 
-import com.decision.maker.service.user.UserService;
+import com.decisionmaker.service.user.UserService;
 
 public class MockUserService extends UserService {
 

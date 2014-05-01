@@ -1,7 +1,7 @@
-package com.decision.maker.repository;
+package com.decisionmaker.repository;
 
-import com.decision.maker.domain.DummyObject;
-import com.decision.maker.repository.AbstractDecisionMakerRepository;
+import com.decisionmaker.domain.DummyObject;
+import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 
 public class MockAbstractDecisionMakerRepository extends AbstractDecisionMakerRepository<DummyObject, Long> {
 

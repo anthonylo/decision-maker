@@ -1,4 +1,4 @@
-package com.decision.maker.repository;
+package com.decisionmaker.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,8 +23,9 @@ import org.hibernate.criterion.Projection;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.decision.maker.domain.DummyObject;
-import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decisionmaker.domain.DummyObject;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 
 public class AbstractDecisionMakerRepositoryTest {
 

@@ -1,4 +1,4 @@
-package com.decision.maker.exception;
+package com.decisionmaker.exception;
 
 public class NoRecipientsException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package com.decision.maker.service.user;
+package com.decisionmaker.service.user;
 
 import java.util.List;
 
@@ -8,16 +8,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.user.Account;
-import com.decision.maker.domain.user.ContactInfo;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalRecipientException;
-import com.decision.maker.exception.NoRecipientsException;
-import com.decision.maker.exception.NotImplementedException;
-import com.decision.maker.repository.user.IUserRepository;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.ContactInfo;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.repository.user.IUserRepository;
 
 @Component
 @Qualifier("userService")

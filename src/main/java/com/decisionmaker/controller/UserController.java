@@ -1,4 +1,4 @@
-package com.decision.maker.controller;
+package com.decisionmaker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalRecipientException;
-import com.decision.maker.exception.NoRecipientsException;
-import com.decision.maker.service.user.IUserService;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.service.user.IUserService;
 
 @Controller
 @RequestMapping(value = "user")

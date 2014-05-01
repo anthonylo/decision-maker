@@ -1,4 +1,4 @@
-package com.decision.maker.controller;
+package com.decisionmaker.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

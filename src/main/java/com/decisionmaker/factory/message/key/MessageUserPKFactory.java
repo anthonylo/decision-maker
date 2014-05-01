@@ -1,6 +1,6 @@
-package com.decision.maker.factory.message.key;
+package com.decisionmaker.factory.message.key;
 
-import com.decision.maker.domain.message.key.MessageUserPK;
+import com.decisionmaker.domain.message.key.MessageUserPK;
 
 public final class MessageUserPKFactory {
 

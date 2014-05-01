@@ -1,4 +1,4 @@
-package com.decision.maker.domain.user;
+package com.decisionmaker.domain.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
 
 @Entity
 @Table(name = "dm_contact_info")

@@ -1,4 +1,4 @@
-package com.decision.maker.domain.message;
+package com.decisionmaker.domain.message;
 
 public enum MessageType {
 

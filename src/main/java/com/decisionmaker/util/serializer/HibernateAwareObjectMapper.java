@@ -1,4 +1,4 @@
-package com.decision.maker.util.serializer;
+package com.decisionmaker.util.serializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;

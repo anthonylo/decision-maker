@@ -1,4 +1,4 @@
-package com.decision.maker.repository;
+package com.decisionmaker.repository;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
-import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.exception.EntityDoesNotExistException;
 
 @Repository
 @Transactional

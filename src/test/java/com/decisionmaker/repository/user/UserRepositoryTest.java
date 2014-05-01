@@ -1,4 +1,4 @@
-package com.decision.maker.repository.user;
+package com.decisionmaker.repository.user;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,11 +19,11 @@ import org.hibernate.criterion.Projection;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.decision.maker.domain.user.Account;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.NotImplementedException;
+import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.NotImplementedException;
 
 public class UserRepositoryTest {
 

@@ -12,9 +12,9 @@
        ">
 
 	<!-- Scan for spring annotated components -->
-	<context:component-scan base-package="com.decision.maker.controller" />
-	<context:component-scan base-package="com.decision.maker.repository" />
-	<context:component-scan base-package="com.decision.maker.service" />
+	<context:component-scan base-package="com.decisionmaker.controller" />
+	<context:component-scan base-package="com.decisionmaker.repository" />
+	<context:component-scan base-package="com.decisionmaker.service" />
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -25,8 +25,6 @@
 			</list>
 		</property>
 	</bean>
-
-<!-- 	<context:property-placeholder location="classpath:/application.properties" /> -->
 
 	<tx:annotation-driven/>
 
@@ -50,7 +48,7 @@
 				<prop key="hibernate.connection.autocommit">true</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="com.decision.maker.domain" />
+		<property name="packagesToScan" value="com.decisionmaker.domain" />
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
@@ -69,7 +67,7 @@
 			<bean
 				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="objectMapper">
-					<bean class="com.decision.maker.util.serializer.HibernateAwareObjectMapper" />
+					<bean class="com.decisionmaker.util.serializer.HibernateAwareObjectMapper" />
 				</property>
 			</bean>
 		</mvc:message-converters>

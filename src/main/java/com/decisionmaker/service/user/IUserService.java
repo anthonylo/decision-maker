@@ -1,14 +1,14 @@
-package com.decision.maker.service.user;
+package com.decisionmaker.service.user;
 
 import org.springframework.stereotype.Service;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalRecipientException;
-import com.decision.maker.exception.NoRecipientsException;
-import com.decision.maker.exception.NotImplementedException;
-import com.decision.maker.service.IService;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.service.IService;
 
 @Service
 public interface IUserService extends IService<User, Long> {

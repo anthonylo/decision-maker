@@ -1,6 +1,6 @@
-package com.decision.maker.domain;
+package com.decisionmaker.domain;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
 
 public class DummyObject extends AbstractDecisionMakerObject<Long> {
 

@@ -1,4 +1,4 @@
-package com.decision.maker.domain.message;
+package com.decisionmaker.domain.message;
 
 import java.util.Date;
 import java.util.Set;
@@ -12,8 +12,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
-import com.decision.maker.domain.user.User;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

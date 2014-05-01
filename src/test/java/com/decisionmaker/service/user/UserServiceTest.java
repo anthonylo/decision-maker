@@ -1,4 +1,4 @@
-package com.decision.maker.service.user;
+package com.decisionmaker.service.user;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,14 +19,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.decision.maker.domain.user.Account;
-import com.decision.maker.domain.user.ContactInfo;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.DecisionMakerException;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.NotImplementedException;
-import com.decision.maker.repository.user.IUserRepository;
-import com.decision.maker.repository.user.UserRepository;
+import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.ContactInfo;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.DecisionMakerException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.repository.user.IUserRepository;
+import com.decisionmaker.repository.user.UserRepository;
+import com.decisionmaker.service.user.UserService;
 
 public class UserServiceTest {
 

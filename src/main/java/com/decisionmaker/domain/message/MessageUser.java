@@ -1,11 +1,11 @@
-package com.decision.maker.domain.message;
+package com.decisionmaker.domain.message;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.decision.maker.domain.AbstractDecisionMakerObject;
-import com.decision.maker.domain.message.key.MessageUserPK;
+import com.decisionmaker.domain.AbstractDecisionMakerObject;
+import com.decisionmaker.domain.message.key.MessageUserPK;
 
 @Entity
 @Table(name = "dm_message_user")

@@ -1,11 +1,11 @@
-package com.decision.maker.repository;
+package com.decisionmaker.repository;
 
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.decision.maker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.EntityDoesNotExistException;
 
 @Service
 public interface IRepository<T, K> {

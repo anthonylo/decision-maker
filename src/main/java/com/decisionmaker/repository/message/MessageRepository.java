@@ -1,4 +1,4 @@
-package com.decision.maker.repository.message;
+package com.decisionmaker.repository.message;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -9,17 +9,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.decision.maker.domain.message.Message;
-import com.decision.maker.domain.message.MessageType;
-import com.decision.maker.domain.message.MessageUser;
-import com.decision.maker.domain.message.key.MessageUserPK;
-import com.decision.maker.domain.user.User;
-import com.decision.maker.exception.EntityDoesNotExistException;
-import com.decision.maker.exception.IllegalRecipientException;
-import com.decision.maker.exception.NoRecipientsException;
-import com.decision.maker.factory.message.key.MessageUserPKFactory;
-import com.decision.maker.repository.AbstractDecisionMakerRepository;
-import com.decision.maker.repository.user.IUserRepository;
+import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.message.MessageType;
+import com.decisionmaker.domain.message.MessageUser;
+import com.decisionmaker.domain.message.key.MessageUserPK;
+import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.factory.message.key.MessageUserPKFactory;
+import com.decisionmaker.repository.AbstractDecisionMakerRepository;
+import com.decisionmaker.repository.user.IUserRepository;
 
 @Repository
 @Transactional

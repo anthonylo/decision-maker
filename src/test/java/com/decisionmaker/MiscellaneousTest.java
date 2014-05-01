@@ -1,4 +1,4 @@
-package com.decision.maker;
+package com.decisionmaker;
 
 public class MiscellaneousTest {
 	

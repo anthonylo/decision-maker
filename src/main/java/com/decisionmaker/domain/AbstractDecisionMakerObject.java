@@ -1,4 +1,4 @@
-package com.decision.maker.domain;
+package com.decisionmaker.domain;
 
 import java.io.Serializable;
 
