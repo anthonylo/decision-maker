@@ -1,5 +1,6 @@
 package com.decisionmaker.domain.user;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,6 +18,7 @@ import javax.persistence.Transient;
 
 import com.decisionmaker.domain.AbstractDecisionMakerObject;
 import com.decisionmaker.domain.message.Message;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -45,6 +47,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@Column(name = "age", nullable = false, updatable = true, insertable = true)
 	private Integer age;
 	
+	@Transient
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "CST")
+	@JsonInclude(value = Include.NON_NULL)
+	private Date friendshipStarted;
+	
 	@OneToOne(optional = true, cascade = { CascadeType.ALL }, 
 			fetch = FetchType.EAGER, targetEntity = ContactInfo.class)
 	@JoinColumn(name = "contact_info_id", referencedColumnName = "contact_info_id")
@@ -64,7 +71,7 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@Transient
 	@JsonIgnore
 	private Set<User> friendOf;
-
+	
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
 	private Set<Message> messagesSent = null;
@@ -77,8 +84,8 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	}
 
 	public User(Long id, String firstName, String lastName, Integer age,
-			ContactInfo contactInfo, Account account,
-			Set<User> friends, Set<User> friendOf,
+			ContactInfo contactInfo, Account account, Set<User> friends,
+			Set<User> friendOf, Date friendshipStarted,
 			Set<Message> messagesSent, Set<Message> messagesReceived) {
 		this.id = id;
 		this.firstName = firstName;
@@ -88,6 +95,7 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.account = account;
 		this.friends = friends;
 		this.friendOf = friendOf;
+		this.friendshipStarted = friendshipStarted;
 		this.messagesSent = messagesSent;
 		this.messagesReceived = messagesReceived;
 	}
@@ -174,6 +182,14 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.messagesReceived = messagesReceived;
 	}
 
+	public Date getFriendshipStarted() {
+		return friendshipStarted;
+	}
+
+	public void setFriendshipStarted(Date friendshipStarted) {
+		this.friendshipStarted = friendshipStarted;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -187,6 +203,10 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		result = prime * result
 				+ ((friendOf == null) ? 0 : friendOf.hashCode());
 		result = prime * result + ((friends == null) ? 0 : friends.hashCode());
+		result = prime
+				* result
+				+ ((friendshipStarted == null) ? 0 : friendshipStarted
+						.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
@@ -237,6 +257,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 				return false;
 		} else if (!friends.equals(other.friends))
 			return false;
+		if (friendshipStarted == null) {
+			if (other.friendshipStarted != null)
+				return false;
+		} else if (!friendshipStarted.equals(other.friendshipStarted))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -258,6 +283,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		} else if (!messagesSent.equals(other.messagesSent))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "User [id= " + id + "]";
 	}
 
 }

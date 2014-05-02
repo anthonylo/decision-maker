@@ -79,8 +79,7 @@ public class FriendshipPK implements IPrimaryKey {
 
 	@Override
 	public String toString() {
-		return "FriendshipPK [sourceUser=" + userId + ", targetUser="
-				+ friendId + "]";
+		return "[ user=" + userId + ", friend=" + friendId + "]";
 	}	
 	
 }

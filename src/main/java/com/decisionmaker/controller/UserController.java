@@ -54,7 +54,7 @@ public class UserController {
 		return "The user '" + user.getAccount().getUsername() + "' has been created."; 
 	}
 
-	@RequestMapping(value = "id/{id}/send/message", method = RequestMethod.POST)
+	@RequestMapping(value = "id/{id}/message", method = RequestMethod.POST)
 	public @ResponseBody String sendMessage(@PathVariable final Long id, @RequestBody Message message)
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
 		userService.sendMessage(id, message);
@@ -92,10 +92,6 @@ public class UserController {
 		return "User '" + username + "': " + generateExistString(exists);
 	}
 	
-	private String generateExistString(boolean exists) {
-		return (exists) ? "exists" : "does not exist";
-	}
-	
 	@RequestMapping(value = "id/{id}/friend/{friendId}", method = RequestMethod.GET)
 	public @ResponseBody String checkIfUsersAreFriends(@PathVariable final Long id,
 			@PathVariable final Long friendId) throws EntityDoesNotExistException {
@@ -115,6 +111,10 @@ public class UserController {
 			@PathVariable final Long friendId) throws EntityDoesNotExistException {
 		userService.removeFriend(id, friendId);
 		return "The users: { " + id + ", " + friendId + " } are no longer friends";
+	}
+
+	private String generateExistString(boolean exists) {
+		return (exists) ? "exists" : "does not exist";
 	}
 	
 }

@@ -155,19 +155,16 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Override
 	public void sendMessage(Long userId, Message message) 
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
+		if (!doesEntityExistById(userId)) {
+			throw new EntityDoesNotExistException("The user attempting to send a message does not exist");
+		}
 		Set<User> recipients = message.getRecipients();
 		if (recipients == null || recipients.isEmpty()) {
 			throw new NoRecipientsException();
 		}
 
 		containsIllegalRecipient(recipients, userId);
-		
-		User sender = retrieveUniqueById(userId);
-
 		message.setSenderId(userId);
-		Set<Message> messagesSent = sender.getMessagesSent();
-		messagesSent.add(message);
-		sender.setMessagesSent(messagesSent);
 		
 		messageRepository.saveMessage(message);
 	}
@@ -214,6 +211,10 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 				throw new IllegalRecipientException("The message has been "
 						+ "cancelled because a recipient of this message is the sender");
 			}
+			if (!checkIfUsersAreFriends(senderId, recipient.getId())) {
+				throw new IllegalRecipientException("The users: { sender=" 
+						+ senderId + ", recipient=" + recipient.getId() + " } are not friends");
+			}
 		}
 	}
 	
@@ -225,6 +226,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			for (Friendship friendship : friendIds) {
 				Long friendId = friendship.getId().getUserId();
 				User friend = retrieveBareboneUserById(friendId);
+				friend.setFriendshipStarted(friendship.getFriendshipStarted());
 				friends.add(friend);
 			}
 			user.setFriends(friends);

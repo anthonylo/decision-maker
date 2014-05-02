@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 @Qualifier("friendshipRepository")
 public class FriendshipRepository extends AbstractDecisionMakerRepository<Friendship, FriendshipPK>
 		implements IFriendshipRepository {
+	
+	@Value("${friendship.delete.hql}")
+	private String deleteHql;
 
 	@Override
 	public Set<Friendship> discoverUserIdIsFriendOf(Long userId) {
@@ -52,7 +56,7 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 		FriendshipPK reverseId = FriendshipFactory.newPKInstance(possibleFriendId, userId);
 		
 		if (doesEntityExistById(id) || doesEntityExistById(reverseId)) {
-			throw new AlreadyFriendsException("The users: { " + userId + ", " + possibleFriendId + " } are already friends");
+			throw new AlreadyFriendsException("The users: { " + id.toString() +" } are already friends");
 		}
 		
 		Friendship friendship = FriendshipFactory.newInstance(id);

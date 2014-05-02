@@ -9,7 +9,6 @@ import javax.persistence.Table;
 
 import com.decisionmaker.domain.AbstractDecisionMakerObject;
 import com.decisionmaker.domain.user.key.FriendshipPK;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "dm_user_friend")
@@ -24,7 +23,6 @@ public class Friendship extends AbstractDecisionMakerObject<FriendshipPK> {
 	private FriendshipPK id;
 
 	@Column(name = "friendship_started", updatable = false, insertable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "CST")
 	private Date friendshipStarted;
 	
 	public Friendship() {
