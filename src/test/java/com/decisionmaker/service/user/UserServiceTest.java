@@ -59,7 +59,7 @@ public class UserServiceTest {
 		// Given
 		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
 		ContactInfo mockContactInfo = new ContactInfo(0L, "5421@test.com", "54321");
-		User mockUser = new User(0L, "test", "guy" , 22, mockContactInfo, mockAccount, null, null);
+		User mockUser = new User(0L, "test", "guy" , 22, mockContactInfo, mockAccount, null, null, null, null);
 		
 		// When
 
@@ -72,7 +72,7 @@ public class UserServiceTest {
 	public void try_to_save_user_that_already_exists_in_database() throws DecisionMakerException {
 		// Given
 		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
-		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null);
+		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null, null, null);
 		
 		// When
 		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(true);

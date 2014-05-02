@@ -3,6 +3,7 @@ package com.decisionmaker.repository.message;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,8 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 	@Autowired
 	private IUserRepository userRepository;
 	
+	private static Logger log = Logger.getLogger(MessageRepository.class);
+	
 	@Value("${message.delete.userid}")
 	private String deleteByUserId;
 	
@@ -46,9 +49,13 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 		
 		for (User recipient : recipients) {
 			Long recipientId = recipient.getId();
-			MessageUserPK muPK = MessageUserPKFactory.newInstance(messageId, senderId, recipientId);
-			MessageUser mu = new MessageUser(muPK);
-			messageUserRepository.saveEntity(mu);
+			if (userRepository.checkIfUsersAreFriends(senderId, recipientId)) {
+				MessageUserPK muPK = MessageUserPKFactory.newInstance(messageId, senderId, recipientId);
+				MessageUser mu = new MessageUser(muPK);
+				messageUserRepository.saveEntity(mu);
+			} else {
+				log.error("The users: { " + senderId + ", " + recipientId + " } are not friends");
+			}
 		}
 	}
 	

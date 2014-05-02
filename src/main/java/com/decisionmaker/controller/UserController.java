@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.AlreadyFriendsException;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.service.user.IUserService;
@@ -51,7 +53,7 @@ public class UserController {
 		userService.saveEntity(user);
 		return "The user '" + user.getAccount().getUsername() + "' has been created."; 
 	}
-	
+
 	@RequestMapping(value = "id/{id}/send/message", method = RequestMethod.POST)
 	public @ResponseBody String sendMessage(@PathVariable final Long id, @RequestBody Message message)
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
@@ -92,6 +94,27 @@ public class UserController {
 	
 	private String generateExistString(boolean exists) {
 		return (exists) ? "exists" : "does not exist";
+	}
+	
+	@RequestMapping(value = "id/{id}/friend/{friendId}", method = RequestMethod.GET)
+	public @ResponseBody String checkIfUsersAreFriends(@PathVariable final Long id,
+			@PathVariable final Long friendId) throws EntityDoesNotExistException {
+		Boolean friends = userService.checkIfUsersAreFriends(id, friendId);
+		return "The users: { " + id + ", " + friendId + " } are" + ((friends) ? "" : " not" ) + " friends";
+	}
+	
+	@RequestMapping(value = "id/{id}/friend/{friendId}", method = RequestMethod.POST)
+	public @ResponseBody String addFriend(@PathVariable final Long id,
+			@PathVariable final Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException {
+		userService.addFriend(id, friendId);
+		return "The users: { " + id + ", " + friendId + " } became friends";
+	}
+
+	@RequestMapping(value = "id/{id}/friend/{friendId}", method = RequestMethod.DELETE)
+	public @ResponseBody String removeFriend(@PathVariable final Long id,
+			@PathVariable final Long friendId) throws EntityDoesNotExistException {
+		userService.removeFriend(id, friendId);
+		return "The users: { " + id + ", " + friendId + " } are no longer friends";
 	}
 	
 }

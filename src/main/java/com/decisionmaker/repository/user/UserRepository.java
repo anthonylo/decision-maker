@@ -1,5 +1,6 @@
 package com.decisionmaker.repository.user;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,11 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.Friendship;
 import com.decisionmaker.domain.user.User;
+import com.decisionmaker.domain.user.key.FriendshipPK;
+import com.decisionmaker.exception.AlreadyFriendsException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.factory.user.FriendshipFactory;
 import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 import com.decisionmaker.repository.message.IMessageRepository;
 
@@ -29,6 +35,18 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Autowired
 	private IMessageRepository messageRepository;
+	
+	@Autowired
+	private IFriendshipRepository friendshipRepository;
+
+	@Override
+	public void addFriend(Long userId, Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException {
+		if (doesEntityExistById(userId) && doesEntityExistById(friendId)) {
+			friendshipRepository.addFriend(userId, friendId);
+		} else {
+			throw new EntityDoesNotExistException("One of the users does not exist when trying to add a friend");
+		}
+	}
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -46,6 +64,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Override
 	public User retrieveUniqueById(Long id) throws EntityDoesNotExistException {
 		User user = super.retrieveUniqueById(id);
+		handleFriends(user);
 		handleMessages(user);
 		return user;
 	}
@@ -123,6 +142,17 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
+	public Set<User> retrieveFriendsById(Long id) {
+		return null;
+	}
+	
+	@Override
+	public boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId) {
+		FriendshipPK friendshipPK = FriendshipFactory.newPKInstance(userId, possibleFriendId);
+		return friendshipRepository.doesEntityExistById(friendshipPK);
+	}
+	
+	@Override
 	public void sendMessage(Long userId, Message message) 
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
 		Set<User> recipients = message.getRecipients();
@@ -155,8 +185,8 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
-	protected void setClazz() {
-		this.clazz = User.class;
+	public void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException {
+		friendshipRepository.removeFriend(userId, friendId);
 	}
 
 	@Override
@@ -168,7 +198,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 				.uniqueResult();
 		return loggedIn;
 	}
-
+	
 	@Override
 	public void performLogInOrOut(Long userId) throws EntityDoesNotExistException {
 		User user = retrieveUniqueById(userId);
@@ -185,6 +215,21 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 						+ "cancelled because a recipient of this message is the sender");
 			}
 		}
+	}
+	
+	private User handleFriends(User user) {
+		Long id = user.getId();
+		Set<Friendship> friendIds = friendshipRepository.discoverFriendsOfUserId(id);
+		if (friendIds != null && !friendIds.isEmpty()) {
+			Set<User> friends = new HashSet<User>();
+			for (Friendship friendship : friendIds) {
+				Long friendId = friendship.getId().getUserId();
+				User friend = retrieveBareboneUserById(friendId);
+				friends.add(friend);
+			}
+			user.setFriends(friends);
+		}
+		return user;
 	}
 	
 	private User handleMessages(User user) throws EntityDoesNotExistException {
@@ -207,6 +252,11 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			user.setMessagesSent(messagesSent);
 		}
 		return user;
+	}
+	
+	@Override
+	protected void setClazz() {
+		this.clazz = User.class;
 	}
 	
 }

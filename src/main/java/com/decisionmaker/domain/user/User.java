@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import com.decisionmaker.domain.AbstractDecisionMakerObject;
 import com.decisionmaker.domain.message.Message;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -58,17 +59,26 @@ public class User extends AbstractDecisionMakerObject<Long> {
 
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
+	private Set<User> friends;
+
+	@Transient
+	@JsonIgnore
+	private Set<User> friendOf;
+
+	@Transient
+	@JsonInclude(value = Include.NON_NULL)
 	private Set<Message> messagesSent = null;
 	
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
 	private Set<Message> messagesReceived = null;
-
+	
 	public User() {
 	}
 
 	public User(Long id, String firstName, String lastName, Integer age,
 			ContactInfo contactInfo, Account account,
+			Set<User> friends, Set<User> friendOf,
 			Set<Message> messagesSent, Set<Message> messagesReceived) {
 		this.id = id;
 		this.firstName = firstName;
@@ -76,14 +86,18 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.age = age;
 		this.contactInfo = contactInfo;
 		this.account = account;
+		this.friends = friends;
+		this.friendOf = friendOf;
 		this.messagesSent = messagesSent;
 		this.messagesReceived = messagesReceived;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -127,6 +141,22 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+	
+	public Set<User> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(Set<User> friends) {
+		this.friends = friends;
+	}
+
+	public Set<User> getFriendOf() {
+		return friendOf;
+	}
+
+	public void setFriendOf(Set<User> friendOf) {
+		this.friendOf = friendOf;
+	}
 
 	public Set<Message> getMessagesSent() {
 		return messagesSent;
@@ -154,6 +184,9 @@ public class User extends AbstractDecisionMakerObject<Long> {
 				+ ((contactInfo == null) ? 0 : contactInfo.hashCode());
 		result = prime * result
 				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((friendOf == null) ? 0 : friendOf.hashCode());
+		result = prime * result + ((friends == null) ? 0 : friends.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
@@ -193,6 +226,16 @@ public class User extends AbstractDecisionMakerObject<Long> {
 			if (other.firstName != null)
 				return false;
 		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (friendOf == null) {
+			if (other.friendOf != null)
+				return false;
+		} else if (!friendOf.equals(other.friendOf))
+			return false;
+		if (friends == null) {
+			if (other.friends != null)
+				return false;
+		} else if (!friends.equals(other.friends))
 			return false;
 		if (id == null) {
 			if (other.id != null)

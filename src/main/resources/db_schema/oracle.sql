@@ -3,6 +3,7 @@ DROP TABLE dm_contact_info    CASCADE CONSTRAINTS;
 DROP TABLE dm_account_jumbo   CASCADE CONSTRAINTS;
 DROP TABLE dm_message_user    CASCADE CONSTRAINTS;
 DROP TABLE dm_message         CASCADE CONSTRAINTS;
+DROP TABLE dm_user_friend     CASCADE CONSTRAINTS;
 DROP TABLE dm_user            CASCADE CONSTRAINTS;
 
 DROP SEQUENCE dm_contact_info_seq;
@@ -43,6 +44,19 @@ CREATE TABLE dm_user (
 	constraint fk2_dm_user
 		foreign key (account_id) 
 		references dm_account_jumbo(account_id) on delete cascade
+);
+
+CREATE TABLE dm_user_friend (
+  user_id         number(10) not null,
+  friend_id       number(10) not null,
+  friendship_started    date default sysdate,
+  constraint pk_dm_user_friend primary key (user_id, friend_id),
+  constraint fk1_dm_user_friend
+    foreign key (user_id)
+    references dm_user(user_id) on delete cascade,
+  constraint fk2_dm_user_friend
+    foreign key (friend_id)
+    references dm_user(user_id) on delete cascade
 );
 
 CREATE TABLE dm_message (
@@ -117,6 +131,18 @@ CREATE OR REPLACE TRIGGER dm_user_trigger
     IF :new.user_id IS NULL THEN
       SELECT dm_user_seq.NEXTVAL
       INTO :new.user_id
+      FROM dual;
+    END IF;
+  END;
+/
+
+CREATE OR REPLACE TRIGGER dm_user_friend_trigger
+  BEFORE INSERT ON dm_user_friend
+  FOR EACH ROW
+  BEGIN
+    IF :new.friendship_started IS NULL THEN
+      SELECT sysdate 
+      INTO :new.friendship_started
       FROM dual;
     END IF;
   END;

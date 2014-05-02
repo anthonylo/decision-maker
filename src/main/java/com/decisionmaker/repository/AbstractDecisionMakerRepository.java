@@ -1,7 +1,6 @@
 package com.decisionmaker.repository;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +50,7 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 		
 		if (results.size() == 0) {
 			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
-					+ " with ID " + id + " does not exist.", 
+					+ " with ID " + id.toString() + " does not exist.", 
 					id.getClass(), id);
 		}
 		
@@ -65,7 +64,7 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 		
 		if (result == null) {
 			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
-					+ " with ID " + id + " does not exist.", 
+					+ " with ID " + id.toString() + " does not exist.", 
 					id.getClass(), id);
 		}
 		
@@ -117,12 +116,13 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 
 	@Override
 	public void deleteEntityById(K id) throws EntityDoesNotExistException {
-		Set<T> entities = retrieveById(id);
-		Iterator<T> iterator = entities.iterator();
-		
-		while (iterator.hasNext()) {
-			sessionFactory.getCurrentSession().delete(iterator.next());
+		if (!doesEntityExistById(id)) {
+			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
+					+ " with ID " + id.toString() + " does not exist.", 
+					id.getClass(), id);
 		}
+		String deleteHql = "delete " + clazz.getSimpleName() + " c where c.id = :id";
+		sessionFactory.getCurrentSession().createQuery(deleteHql).setParameter("id", id).executeUpdate();
 	}
 
 	public String getTargetDatabase() {

@@ -14,6 +14,14 @@ public class EntityDoesNotExistException extends Exception {
 	
 	private Serializable id;
 	
+	public EntityDoesNotExistException() {
+		
+	}
+	
+	public EntityDoesNotExistException(String message) {
+		super(message);
+	}
+	
 	public EntityDoesNotExistException(String message, Class<? extends Serializable> idType, Serializable id) {
 		super(message);
 		this.idType = idType;

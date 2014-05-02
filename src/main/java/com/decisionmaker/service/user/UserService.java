@@ -12,8 +12,10 @@ import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.ContactInfo;
 import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.AlreadyFriendsException;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.exception.NotImplementedException;
@@ -53,6 +55,11 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	public void addFriend(Long userId, Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException {
+		userRepository.addFriend(userId, friendId);
+	}
+	
+	@Override
 	public User retrieveEntityById(Long id) throws DecisionMakerException, EntityDoesNotExistException {
 		return userRepository.retrieveUniqueById(id);
 	}
@@ -85,6 +92,11 @@ public class UserService implements IUserService {
 	@Override
 	public boolean checkIfUserExistsByUsername(String username) {
 		return userRepository.checkIfUsernameAlreadyExists(username);
+	}
+	
+	@Override
+	public boolean checkIfUsersAreFriends(Long userId, Long friendId) {
+		return userRepository.checkIfUsersAreFriends(userId, friendId);
 	}
 
 	@Override
@@ -120,6 +132,11 @@ public class UserService implements IUserService {
 	@Override
 	public void deleteUserByUsername(String username) throws EntityDoesNotExistException {
 		userRepository.deleteEntityByUsername(username);
+	}
+
+	@Override
+	public void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException {
+		userRepository.removeFriend(userId, friendId);
 	}
 	
 	@Override
