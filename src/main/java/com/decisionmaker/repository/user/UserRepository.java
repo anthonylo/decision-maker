@@ -173,9 +173,9 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
-	public void deleteEntityById(Long id) throws EntityDoesNotExistException {
+	public int deleteEntityById(Long id) throws EntityDoesNotExistException {
 		messageRepository.deleteMessagesByUserId(id);
-		super.deleteEntityById(id);
+		return super.deleteEntityById(id);
 	}
 
 	@Override

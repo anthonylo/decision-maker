@@ -115,14 +115,14 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	}
 
 	@Override
-	public void deleteEntityById(K id) throws EntityDoesNotExistException {
+	public int deleteEntityById(K id) throws EntityDoesNotExistException {
 		if (!doesEntityExistById(id)) {
 			throw new EntityDoesNotExistException("The " + clazz.getSimpleName() 
 					+ " with ID " + id.toString() + " does not exist.", 
 					id.getClass(), id);
 		}
 		String deleteHql = "delete " + clazz.getSimpleName() + " c where c.id = :id";
-		sessionFactory.getCurrentSession().createQuery(deleteHql).setParameter("id", id).executeUpdate();
+		return sessionFactory.getCurrentSession().createQuery(deleteHql).setParameter("id", id).executeUpdate();
 	}
 
 	public String getTargetDatabase() {

@@ -30,6 +30,6 @@ public interface IRepository<T, K> {
 	
 	void updateEntity(T entity);
 	
-	void deleteEntityById(K id) throws EntityDoesNotExistException;
+	int deleteEntityById(K id) throws EntityDoesNotExistException;
 	
 }

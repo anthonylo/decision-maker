@@ -6,8 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -25,7 +27,6 @@ import org.junit.Test;
 
 import com.decisionmaker.domain.DummyObject;
 import com.decisionmaker.exception.EntityDoesNotExistException;
-import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 
 public class AbstractDecisionMakerRepositoryTest {
 
@@ -262,26 +263,30 @@ public class AbstractDecisionMakerRepositoryTest {
 	}
 
 	@Test
-	public void should_delete_five_rows_from_table() throws EntityDoesNotExistException {
+	public void should_delete_row_from_table() throws EntityDoesNotExistException {
 		// Given
 		Criteria mockCriteria = mock(Criteria.class);
-		List<DummyObject> mockResults = new ArrayList<DummyObject>();
-		int length = 5;
-
-		for (Long i = 0L; i < length; i++) {
-			DummyObject obj = new DummyObject(i);
-			mockResults.add(obj);
-		}
+		Query mockQuery = mock(Query.class);
+		Long count = 5L;
+		Long id = 1L;
 
 		// When
 		when(mockSession.createCriteria(repository.clazz)).thenReturn(mockCriteria);
+
+		// For doesEntityExistById
 		when(mockCriteria.add((Criterion) anyObject())).thenReturn(mockCriteria);
-		when(mockCriteria.list()).thenReturn(mockResults);
+		when(mockCriteria.setProjection((Projection) anyObject())).thenReturn(mockCriteria);
+		when(mockCriteria.uniqueResult()).thenReturn(count);
+		
+		// For deleteById
+		when(mockSession.createQuery(anyString())).thenReturn(mockQuery);
+		when(mockQuery.setParameter("id", id)).thenReturn(mockQuery);
+		when(mockQuery.executeUpdate()).thenReturn(count.intValue());
 
 		// Then
-		repository.deleteEntityById(1L);
-
-		verify(mockSession, times(5)).delete((DummyObject) anyObject());
+		int result = repository.deleteEntityById(1L);
+		
+		assertTrue(result == 5);
 	}
 
 }
