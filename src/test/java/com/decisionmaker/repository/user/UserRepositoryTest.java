@@ -204,7 +204,7 @@ public class UserRepositoryTest {
 		when(criteria.uniqueResult()).thenReturn(1L);
 		
 		// Then
-		boolean result = repository.checkIfUsernameAlreadyExists(targetUsername);
+		boolean result = repository.checkIfUsernameExists(targetUsername);
 		assertTrue(result);
 	}
 	
@@ -220,7 +220,7 @@ public class UserRepositoryTest {
 		when(criteria.uniqueResult()).thenReturn(0L);
 		
 		// Then
-		boolean result = repository.checkIfUsernameAlreadyExists(targetUsername);
+		boolean result = repository.checkIfUsernameExists(targetUsername);
 		assertFalse(result);
 	}
 	

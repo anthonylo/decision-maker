@@ -13,6 +13,8 @@ import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.ContactInfo;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.AlreadyFriendsException;
+import com.decisionmaker.exception.AlreadyLoggedInException;
+import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
@@ -91,7 +93,7 @@ public class UserService implements IUserService {
 	
 	@Override
 	public boolean checkIfUserExistsByUsername(String username) {
-		return userRepository.checkIfUsernameAlreadyExists(username);
+		return userRepository.checkIfUsernameExists(username);
 	}
 	
 	@Override
@@ -144,6 +146,17 @@ public class UserService implements IUserService {
 		return userRepository.retrieveRandom();
 	}
 
+	@Override
+	public void logOut(User user) throws EntityDoesNotExistException,
+			AlreadyLoggedOutException {
+		userRepository.logOut(user);
+	}
+	
+	@Override
+	public void logIn(User user) throws EntityDoesNotExistException, AlreadyLoggedInException {
+		userRepository.logIn(user);
+	}
+	
 	public void setUserRepository(IUserRepository userRepository) {
 		this.userRepository = userRepository;
 	}

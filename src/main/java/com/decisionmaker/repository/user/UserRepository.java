@@ -19,6 +19,8 @@ import com.decisionmaker.domain.user.Friendship;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.domain.user.key.FriendshipPK;
 import com.decisionmaker.exception.AlreadyFriendsException;
+import com.decisionmaker.exception.AlreadyLoggedInException;
+import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
@@ -78,7 +80,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 
 	@Override
-	public boolean checkIfUsernameAlreadyExists(String username) {
+	public boolean checkIfUsernameExists(String username) {
 		Long count = (Long) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.createAlias("account", "acc")
 				.add(Restrictions.eq("acc.username", username))
@@ -188,13 +190,28 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 				.uniqueResult();
 		return loggedIn;
 	}
+
+	@Override
+	public void logOut(User user) 
+			throws EntityDoesNotExistException, AlreadyLoggedOutException {
+		Long userId = user.getId();
+		if (!isUserLoggedIn(userId)) {
+			throw new AlreadyLoggedOutException(user.getId());
+		}
+		Account account = user.getAccount();
+		account.setActive(false);
+		updateEntity(user);
+	}
 	
 	@Override
-	public void performLogInOrOut(Long userId) throws EntityDoesNotExistException {
-		User user = retrieveUniqueById(userId);
+	public void logIn(User user) 
+			throws EntityDoesNotExistException, AlreadyLoggedInException {
+		Long userId = user.getId();
+		if (isUserLoggedIn(userId)) {
+			throw new AlreadyLoggedInException(userId);
+		}
 		Account account = user.getAccount();
-		Boolean loggedIn = account.getActive();
-		account.setActive(!loggedIn);
+		account.setActive(true);
 		updateEntity(user);
 	}
 

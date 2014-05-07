@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.AlreadyLoggedInException;
+import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
@@ -26,13 +28,13 @@ public class UserRepositoryIntegrationTest {
 	}
 	
 //	@Test
-	public void should_check_if_users_not_logged_in_log_out() throws EntityDoesNotExistException {
+	public void should_check_if_users_not_logged_in_log_out() throws EntityDoesNotExistException, AlreadyLoggedInException {
 		Long testId = 1L;
 		
 		Boolean loggedIn = userRepository.isUserLoggedIn(testId);
 		log.info("User " + testId + " is logged in: " + loggedIn);
 		
-		userRepository.performLogInOrOut(testId);
+		userRepository.logIn(testId);
 		
 		loggedIn = userRepository.isUserLoggedIn(testId);
 		log.info("User " + testId + " is logged in: " + loggedIn);
@@ -59,16 +61,22 @@ public class UserRepositoryIntegrationTest {
 							int temp = gen.nextInt(count.intValue())+1;
 							Long id = Long.valueOf(temp);
 							User user = repository.retrieveUniqueById(id);
+							
 							Boolean loggedIn = userRepository.isUserLoggedIn(id);
 							log.info(this.getName() + " is attempting to log in user: " + user.getId());
-							log.info(this.getName() + ": User " + id + " is logged in: " + loggedIn);
-							userRepository.performLogInOrOut(id);
+							userRepository.logIn(id);
 							loggedIn = userRepository.isUserLoggedIn(id);
+							assert loggedIn;
 							log.info(this.getName() + ": User " + id + " is logged in: " + loggedIn);
-							userRepository.performLogInOrOut(id);
+							
+							log.info(this.getName() + " is attempting to log out user: " + user.getId());
+							userRepository.logOut(id);
+							loggedIn = userRepository.isUserLoggedIn(id);
+							assert !loggedIn;
 							log.info(this.getName() + " finished log out user: " + user.getId());
+							
 							log.info("----");
-						} catch (EntityDoesNotExistException e) {
+						} catch (EntityDoesNotExistException | AlreadyLoggedInException | AlreadyLoggedOutException e) {
 							e.printStackTrace();
 						}
 					}

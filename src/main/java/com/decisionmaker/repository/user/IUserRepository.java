@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.AlreadyFriendsException;
+import com.decisionmaker.exception.AlreadyLoggedInException;
+import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
@@ -30,7 +32,7 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	Set<User> retrieveFriendsById(Long id) throws NotImplementedException;
 	
-	boolean checkIfUsernameAlreadyExists(String username);
+	boolean checkIfUsernameExists(String username);
 	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;
 	
@@ -46,6 +48,8 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	boolean isUserLoggedIn(Long userId);
 	
-	void performLogInOrOut(Long userId) throws EntityDoesNotExistException;
+	void logOut(User user) throws EntityDoesNotExistException, AlreadyLoggedOutException;
+	
+	void logIn(User user) throws EntityDoesNotExistException, AlreadyLoggedInException;
 	
 }

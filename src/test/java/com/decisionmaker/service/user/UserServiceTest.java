@@ -75,7 +75,7 @@ public class UserServiceTest {
 		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null, null, null, null);
 		
 		// When
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(true);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(true);
 		
 		// Then
 		exception.expect(DecisionMakerException.class);
@@ -98,7 +98,7 @@ public class UserServiceTest {
 		when(mockUser.getAccount()).thenReturn(mockAccount);
 		when(mockUser.getContactInfo()).thenReturn(mockContactInfo);
 		
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
 		userService.saveEntity(mockUser);
@@ -119,7 +119,7 @@ public class UserServiceTest {
 		when(mockUser.getAccount()).thenReturn(mockAccount);
 		when(mockUser.getContactInfo()).thenReturn(null);
 		
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
 		userService.saveEntity(mockUser);
@@ -142,7 +142,7 @@ public class UserServiceTest {
 		mockUser.setContactInfo(mockContactInfo);
 		
 		// When
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(false);
 		// Then
 		userService.saveEntity(mockUser);
 		assertNull(mockContactInfo.getEmail());
@@ -164,7 +164,7 @@ public class UserServiceTest {
 		mockUser.setContactInfo(mockContactInfo);
 
 		// When
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
 		userService.saveEntity(mockUser);
@@ -191,7 +191,7 @@ public class UserServiceTest {
 		mockUser.setContactInfo(mockContactInfo);
 		
 		// When
-		when(userRepository.checkIfUsernameAlreadyExists(mockAccount.getUsername())).thenReturn(false);
+		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(false);
 		
 		// Then
 		userService.saveEntity(mockUser);
@@ -355,7 +355,7 @@ public class UserServiceTest {
 		String username = "test.guy";
 		
 		// When
-		when(userRepository.checkIfUsernameAlreadyExists(username)).thenReturn(true);
+		when(userRepository.checkIfUsernameExists(username)).thenReturn(true);
 		
 		// Then
 		assertTrue(userService.checkIfUserExistsByUsername(username));
@@ -460,7 +460,7 @@ public class UserServiceTest {
 		when(mockContact.getId()).thenReturn(id);
 		when(mockUser.getContactInfo()).thenReturn(mockContact);
 		when(userRepository.doesEntityExistById(mockUser.getId())).thenReturn(result);
-		when(userRepository.checkIfUsernameAlreadyExists(username)).thenReturn(result);
+		when(userRepository.checkIfUsernameExists(username)).thenReturn(result);
 		
 		// Then
 		userService.updateEntity(mockUser);

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.AlreadyFriendsException;
+import com.decisionmaker.exception.AlreadyLoggedInException;
+import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
@@ -33,5 +35,9 @@ public interface IUserService extends IService<User, Long> {
 	void deleteUserByUsername(String username) throws EntityDoesNotExistException;
 
 	void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException;
+
+	void logIn(User user) throws EntityDoesNotExistException, AlreadyLoggedInException;
+
+	void logOut(User user) throws EntityDoesNotExistException, AlreadyLoggedOutException;
 	
 }
