@@ -35,7 +35,7 @@ public class MessageService implements IMessageService {
 	@Override
 	public Message retrieveEntityById(Long messageId)
 			throws DecisionMakerException, EntityDoesNotExistException {
-		return messageRepository.retrieveMessageByMessageId(messageId, MessageType.ALL);
+		return messageRepository.retrieveMessageById(messageId, MessageType.ALL);
 	}
 
 	@Override

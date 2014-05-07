@@ -34,19 +34,10 @@ import com.decisionmaker.repository.message.IMessageRepository;
 public class UserRepository extends AbstractDecisionMakerRepository<User, Long> implements IUserRepository {
 
 	@Autowired
-	private IMessageRepository messageRepository;
+	protected IMessageRepository messageRepository;
 	
 	@Autowired
-	private IFriendshipRepository friendshipRepository;
-
-	@Override
-	public void addFriend(Long userId, Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException {
-		if (doesEntityExistById(userId) && doesEntityExistById(friendId)) {
-			friendshipRepository.addFriend(userId, friendId);
-		} else {
-			throw new EntityDoesNotExistException("One of the users does not exist when trying to add a friend");
-		}
-	}
+	protected IFriendshipRepository friendshipRepository;
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -80,6 +71,8 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		if (user == null) {
 			throw new EntityDoesNotExistException("The user " + username + " does not exist", clazz, user);
 		}
+		
+		handleFriends(user);
 		handleMessages(user);
 		return user;
 	}
@@ -101,17 +94,6 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Override
 	public User retrieveBareboneUserById(Long id) {
-		String username = (String) sessionFactory.getCurrentSession().createCriteria(clazz)
-				.createAlias("account", "acc")
-				.add(Restrictions.eq("id", id))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("acc.username"))
-					)
-				.uniqueResult();
-		
-		Account account = new Account();
-		account.setUsername(username);
-		
 		Object[] objList = (Object[]) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.add(Restrictions.eq("id", id))
 				.setProjection(Projections.projectionList()
@@ -126,8 +108,10 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		user.setFirstName((String) objList[0]);
 		user.setLastName((String) objList[1]);
 		user.setAge((Integer) objList[2]);
+		
+		Account account = retrieveBareboneAccountByUserId(id);
 		user.setAccount(account);
-
+		
 		return user;
 	}
 	
@@ -142,16 +126,22 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
-	public Set<User> retrieveFriendsById(Long id) {
-		return null;
+	public Set<User> retrieveFriendsById(Long id) throws NotImplementedException {
+		throw new NotImplementedException("IUserRepository.retrieveFriendsById");
 	}
-	
+		
 	@Override
-	public boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId) {
-		FriendshipPK friendshipPK = FriendshipFactory.newPKInstance(userId, possibleFriendId);
-		return friendshipRepository.doesEntityExistById(friendshipPK);
+	public int deleteEntityById(Long id) throws EntityDoesNotExistException {
+		messageRepository.deleteMessagesByUserId(id);
+		return super.deleteEntityById(id);
 	}
-	
+
+	@Override
+	public void deleteEntityByUsername(String username) throws EntityDoesNotExistException {
+		User user = retrieveUserByUsername(username);
+		sessionFactory.getCurrentSession().delete(user);
+	}
+
 	@Override
 	public void sendMessage(Long userId, Message message) 
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
@@ -170,15 +160,18 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 	
 	@Override
-	public int deleteEntityById(Long id) throws EntityDoesNotExistException {
-		messageRepository.deleteMessagesByUserId(id);
-		return super.deleteEntityById(id);
+	public boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId) {
+		FriendshipPK friendshipPK = FriendshipFactory.newPKInstance(userId, possibleFriendId);
+		return friendshipRepository.doesEntityExistById(friendshipPK);
 	}
 
 	@Override
-	public void deleteEntityByUsername(String username) throws EntityDoesNotExistException {
-		User user = retrieveUserByUsername(username);
-		sessionFactory.getCurrentSession().delete(user);
+	public void addFriend(Long userId, Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException {
+		if (doesEntityExistById(userId) && doesEntityExistById(friendId)) {
+			friendshipRepository.addFriend(userId, friendId);
+		} else {
+			throw new EntityDoesNotExistException("One of the users does not exist when trying to add a friend");
+		}
 	}
 	
 	@Override
@@ -205,6 +198,20 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		updateEntity(user);
 	}
 
+	private Account retrieveBareboneAccountByUserId(Long userId) {
+		String username = (String) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("id", userId))
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("acc.username"))
+					)
+				.uniqueResult();
+		
+		Account account = new Account();
+		account.setUsername(username);
+		return account;
+	}
+	
 	private void containsIllegalRecipient(Set<User> recipients, Long senderId) throws IllegalRecipientException {
 		for (User recipient : recipients) {
 			if (recipient.getId() == senderId) {
@@ -234,6 +241,13 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		return user;
 	}
 	
+	/**
+	 * Should retrieve the messages that a user has sent/received.
+	 * 
+	 * @param user - User performing handle message on
+	 * @return the user with their messages
+	 * @throws EntityDoesNotExistException - in case the User does not exist
+	 */
 	private User handleMessages(User user) throws EntityDoesNotExistException {
 		Set<Message> messagesReceived = messageRepository.retrieveMessagesThatAUserHasReceived(user.getId());
 		if (messagesReceived != null && !messagesReceived.isEmpty()) {

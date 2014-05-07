@@ -70,7 +70,7 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 	}
 	
 	@Override
-	public Message retrieveMessageByMessageId(Long messageId, MessageType messageType)
+	public Message retrieveMessageById(Long messageId, MessageType messageType)
 			throws EntityDoesNotExistException {
 		Message message = retrieveUniqueById(messageId);
 		Long senderId = message.getSenderId();
@@ -100,7 +100,7 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 		for (MessageUser mu : result) {
 			MessageUserPK mId = mu.getId();
 			Long id = mId.getMessageId();
-			Message message = retrieveMessageByMessageId(id, messageType);
+			Message message = retrieveMessageById(id, messageType);
 			messages.add(message);
 		}
 		return messages;

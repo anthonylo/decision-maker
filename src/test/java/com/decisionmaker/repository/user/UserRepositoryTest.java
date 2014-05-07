@@ -10,6 +10,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -19,11 +23,13 @@ import org.hibernate.criterion.Projection;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.NotImplementedException;
+import com.decisionmaker.repository.message.IMessageRepository;
 
 public class UserRepositoryTest {
 
@@ -32,6 +38,9 @@ public class UserRepositoryTest {
 	private SessionFactory sessionFactory;
 	private Session session;
 	private Criteria criteria;
+
+	private IMessageRepository messageRepository;
+	private IFriendshipRepository friendshipRepository;
 	
 	@Before
 	public void setUp() {
@@ -40,26 +49,114 @@ public class UserRepositoryTest {
 		sessionFactory = mock(SessionFactory.class);
 		session = mock(Session.class);
 		criteria = mock(Criteria.class);
-		
 		when(sessionFactory.getCurrentSession()).thenReturn(session);
 		when(session.createCriteria(User.class)).thenReturn(criteria);
-		
 		repository.setSessionFactory(sessionFactory);
+		
+		messageRepository = mock(IMessageRepository.class);
+		friendshipRepository = mock(IFriendshipRepository.class);
+		repository.setMessageRepository(messageRepository);
+		repository.setFriendRepository(friendshipRepository);
 	}
 
 	@Test
-	public void should_retrieve_a_user_by_username() throws EntityDoesNotExistException {
+	public void should_retrieve_unique_user_by_id_that_doesnt_have_messages_or_friends() throws EntityDoesNotExistException {
 		// Given
 		String targetUsername = "test.user";
+		Long id = 1L;
 		
 		User mockUser = new User();
-		mockUser.setId(1L);
+		mockUser.setId(id);
 		mockUser.setFirstName("test");
 		mockUser.setLastName("user");
 		mockUser.setAge(22);
 		
 		Account mockAccount = new Account();
-		mockAccount.setId(1L);
+		mockAccount.setId(id);
+		mockAccount.setUsername(targetUsername);
+		mockAccount.setPassword("12345");
+		mockAccount.setSecretQuestion("hi");
+		mockAccount.setSecretAnswer("42");
+		
+		mockUser.setAccount(mockAccount);
+		
+		// When
+		when(criteria.createAlias("account", "acc")).thenReturn(criteria);
+		when(criteria.add((Criterion) anyObject())).thenReturn(criteria);
+		when(criteria.uniqueResult()).thenReturn(mockUser);
+		when(messageRepository.retrieveMessagesThatAUserHasSent(id)).thenReturn(null);
+		when(messageRepository.retrieveMessagesThatAUserHasReceived(id)).thenReturn(null);
+		
+		// Then
+		User result = repository.retrieveUniqueById(id);
+		assertNotNull(result);
+		
+		assertEquals(result.getId(), mockUser.getId());
+		assertEquals(result.getAccount().getUsername(), mockAccount.getUsername());
+		assertNull(result.getContactInfo());
+	}
+
+	@Test
+	public void should_retrieve_unique_user_by_id_that_has_messages_and_friends() throws EntityDoesNotExistException {
+		// Given
+		String targetUsername = "test.user";
+		Long id = 1L;
+		
+		User mockUser = new User();
+		mockUser.setId(id);
+		mockUser.setFirstName("test");
+		mockUser.setLastName("user");
+		mockUser.setAge(22);
+		
+		Account mockAccount = new Account();
+		mockAccount.setId(id);
+		mockAccount.setUsername(targetUsername);
+		mockAccount.setPassword("12345");
+		mockAccount.setSecretQuestion("hi");
+		mockAccount.setSecretAnswer("42");
+		
+		mockUser.setAccount(mockAccount);
+		
+		Set<Message> mockMessage = new HashSet<Message>();
+		for (int i = 0; i < 5; i++) {
+			Message message = new Message();
+			message.setId(Long.valueOf(i));
+			message.setMessage("test");
+			message.setDatePosted(new Date());
+			message.setSenderId(Long.valueOf(i));
+			mockMessage.add(message);
+		}
+		
+		// When
+		when(criteria.createAlias("account", "acc")).thenReturn(criteria);
+		when(criteria.add((Criterion) anyObject())).thenReturn(criteria);
+		when(criteria.uniqueResult()).thenReturn(mockUser);
+		when(messageRepository.retrieveMessagesThatAUserHasSent(id)).thenReturn(mockMessage);
+		when(messageRepository.retrieveMessagesThatAUserHasReceived(id)).thenReturn(mockMessage);
+		
+		// Then
+		User result = repository.retrieveUniqueById(id);
+		assertNotNull(result);
+		
+		assertEquals(result.getId(), mockUser.getId());
+		assertEquals(result.getAccount().getUsername(), mockAccount.getUsername());
+		assertNull(result.getContactInfo());
+	}
+	
+	@Test
+	public void should_retrieve_a_user_by_username() throws EntityDoesNotExistException {
+		// Given
+		String targetUsername = "test.user";
+		Long id = 1L;
+		
+		User mockUser = new User();
+		mockUser.setId(id);
+		mockUser.setFirstName("test");
+		mockUser.setLastName("user");
+		mockUser.setAge(22);
+		
+		Account mockAccount = new Account();
+		mockAccount.setId(id);
 		mockAccount.setUsername(targetUsername);
 		mockAccount.setPassword("12345");
 		mockAccount.setSecretQuestion("hi");

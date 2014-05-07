@@ -19,8 +19,6 @@ import com.decisionmaker.repository.IRepository;
 @Repository
 @Transactional
 public interface IUserRepository extends IRepository<User, Long> {
-	
-	void addFriend(Long userId, Long friendId) throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException;
 
 	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
@@ -30,16 +28,20 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	Set<User> retrieveBareboneUsersFromListOfIds(List<Long> ids);
 	
-	Set<User> retrieveFriendsById(Long id);
+	Set<User> retrieveFriendsById(Long id) throws NotImplementedException;
 	
 	boolean checkIfUsernameAlreadyExists(String username);
 	
-	boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId);
-	
-	void sendMessage(Long userId, Message message) throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException;
-	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;
 	
+	void sendMessage(Long userId, Message message) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException;
+	
+	boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId);
+	
+	void addFriend(Long userId, Long friendId) 
+			throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException;
+
 	void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException;
 	
 	boolean isUserLoggedIn(Long userId);

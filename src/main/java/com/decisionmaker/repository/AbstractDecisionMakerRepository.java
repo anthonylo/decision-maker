@@ -30,6 +30,9 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 	
 	protected Class<T> clazz;
 	
+	/**
+	 * Set the Class for the sessionFactory.
+	 */
 	protected abstract void setClazz();
 	
 	public AbstractDecisionMakerRepository() {
