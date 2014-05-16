@@ -1,0 +1,1 @@
+<div><a href='/decision-maker/register'>Register</a></div><div><a href='/decision-maker/login'>Login</a></div>

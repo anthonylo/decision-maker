@@ -213,7 +213,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			throws EntityDoesNotExistException, AlreadyLoggedInException {
 		Long userId = user.getId();
 		if (isUserLoggedIn(userId)) {
-			throw new AlreadyLoggedInException(userId);
+			throw new AlreadyLoggedInException(user.getAccount().getUsername());
 		}
 		
 		Account account = user.getAccount();

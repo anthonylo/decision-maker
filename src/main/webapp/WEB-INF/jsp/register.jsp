@@ -9,17 +9,6 @@
 		<title>Decision Maker - Register</title>
 		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$("#test").hover(
-					function() {
-						$(this).append($("<span>jQuery Works!</span>"));
-					}, function() {
-						$(this).find("span:last").remove();
-					}
-				);
-			})
-		</script>
 	</head>
 	<body>
 		<p><b>User Registration</b></p>

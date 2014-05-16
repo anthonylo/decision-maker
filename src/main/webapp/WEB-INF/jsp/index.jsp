@@ -1,29 +1,31 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker</title>
+		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
+		<script src="<c:url value='/lib/js/decision-maker.js'/>"></script>
+		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+			});
+		</script>
 	</head>
 	<body>
 		<h2>Index Page</h2>
 		<p>This is the entry point of the Decision Maker application.</p>
-		
 		<div>
 			<span>Links</span>
-			<c:choose>
-				<c:when test="${not loggedIn}">
-					<div><a href="/decision-maker/register">Register</a></div>
-					<div><a href="/decision-maker/login">Login</a></div>
-				</c:when>
-				<c:otherwise>
-					<div>Welcome, ${username}!</div>
-					<div><a href="/decision-maker/logout">Logout</a></div>
-				</c:otherwise>
-			</c:choose>
-			
+			<c:if test="${not loggedIn}">
+				<c:import url="includes/loggedOutNav.jsp"/>
+			</c:if>
+			<c:if test="${loggedIn}">
+				<c:import url="includes/loggedInNav.jsp"/>
+			</c:if>
 		</div>
 	</body>
 </html>

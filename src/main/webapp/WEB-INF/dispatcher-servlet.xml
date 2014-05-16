@@ -15,6 +15,7 @@
 	<context:component-scan base-package="com.decisionmaker.controller" />
 	<context:component-scan base-package="com.decisionmaker.repository" />
 	<context:component-scan base-package="com.decisionmaker.service" />
+	<context:component-scan base-package="com.decisionmaker.validator.user" />
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />

@@ -2,6 +2,10 @@ package com.decisionmaker.controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.User;
-import com.decisionmaker.exception.AccountValidationException;
 import com.decisionmaker.exception.AlreadyLoggedInException;
 import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.DecisionMakerException;
@@ -38,62 +42,52 @@ public class RootController {
 	}
 
 	@RequestMapping(value = {"/", "/index"})
-	public ModelAndView index(ModelMap map) {
-		if (!map.containsKey("loggedIn")) {
-			map.put("loggedIn", false);
-		}
+	public ModelAndView index(HttpServletRequest request, ModelMap map) {
 		return new ModelAndView("index", map);
 	}
 	
 	@RequestMapping(value = "/login")
 	public ModelAndView loginScreen(ModelMap map) {
-		map.addAttribute("account", new Account());
+		map.addAttribute("account", new User());
 		return new ModelAndView("login");
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView loginScreen(@ModelAttribute Account account, ModelMap map) 
+	public ModelAndView loginScreen(@ModelAttribute Account account, 
+			RedirectAttributes redirectAttributes, HttpServletRequest request, ModelMap map) 
 			throws EntityDoesNotExistException, AlreadyLoggedInException,
 				NoSuchAlgorithmException, InvalidKeySpecException, InvalidLoginException {
 		String username = account.getUsername();
 		String password = account.getPassword();
-		
-		if (userService.checkIfUserExistsByUsername(username)) {
-			try {
-				AccountValidator.validate(username, password);
-			} catch (AccountValidationException | InvalidLoginException e) {
-				map.put("error", e.getMessage());
-				return new ModelAndView("login", map);
-			}
-
-			try {
-				User user = userService.retrieveUserByUsername(username);
-				userService.logIn(user);
-				map.put("loggedIn", true);
-				map.put("username", username);
-				return new ModelAndView(new RedirectView("index"), map);
-			} catch (AlreadyLoggedInException e) {
-				map.put("error", e.getMessage());
-				return new ModelAndView("login", map);
-			}
-		} else {
-			map.put("error", "The username does not exist");
+		HttpSession session = request.getSession();
+	
+		try {
+			AccountValidator.validate(username, password);
+			User user = userService.retrieveUserByUsername(username);
+			userService.logIn(user);
+			session.setAttribute("loggedIn", true);
+			session.setAttribute("username", username);
+			return new ModelAndView("redirect:/index");
+		} catch (Exception e) {
+			map.put("error", e.getMessage());
+			return new ModelAndView("login", map);
 		}
-		
-		return new ModelAndView("login", map);
 	}
 
 	@RequestMapping(value = "/logout")
-	public ModelAndView logout(@RequestBody String username, ModelMap map) 
+	public ModelAndView logout(HttpServletRequest request, ModelMap map) 
 			throws EntityDoesNotExistException, AlreadyLoggedOutException {
+		HttpSession session = request.getSession();
 		try {
+			String username = (String) session.getAttribute("username");
 			User user = userService.retrieveUserByUsername(username);
 			userService.logOut(user);
-			map.put("loggedIn", false);
+			session.removeAttribute("username");
+			session.removeAttribute("loggedIn");
 		} catch (EntityDoesNotExistException | AlreadyLoggedOutException e) {
 			map.put("error", e.getMessage());
 		}
-		return new ModelAndView("redirect:/index", map);
+		return new ModelAndView("redirect:/index");
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
