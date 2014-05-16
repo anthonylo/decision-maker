@@ -11,7 +11,6 @@ import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.NoRecipientsException;
-import com.decisionmaker.exception.NotImplementedException;
 import com.decisionmaker.service.IService;
 
 @Service
@@ -21,7 +20,7 @@ public interface IUserService extends IService<User, Long> {
 	
 	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
-	User retrieveRandomUser() throws NotImplementedException;
+	User retrieveRandomUser();
 	
 	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
 

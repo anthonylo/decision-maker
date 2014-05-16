@@ -1,5 +1,8 @@
 package com.decisionmaker.controller;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +52,7 @@ public class UserController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody String createUser(@RequestBody User user)
-			throws DecisionMakerException {
+			throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		userService.saveEntity(user);
 		return "The user '" + user.getAccount().getUsername() + "' has been created."; 
 	}
@@ -63,7 +66,7 @@ public class UserController {
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.PUT)
 	public @ResponseBody String updateUser(@PathVariable final Long id, @RequestBody User user)
-			throws DecisionMakerException, EntityDoesNotExistException {
+			throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		userService.updateEntity(user);
 		return "The user " + id + ": '" + user.getAccount().getUsername() + "' has been updated.";
 	}

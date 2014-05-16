@@ -12,9 +12,9 @@ import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.AlreadyLoggedInException;
 import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
-
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
+//
+////@RunWith(SpringJUnit4ClassRunner.class)
+////@ContextConfiguration(locations = "classpath:/test-applicationContext.xml")
 public class UserRepositoryIntegrationTest {
 	
 	@Autowired
@@ -34,7 +34,7 @@ public class UserRepositoryIntegrationTest {
 		Boolean loggedIn = userRepository.isUserLoggedIn(testId);
 		log.info("User " + testId + " is logged in: " + loggedIn);
 		
-		userRepository.logIn(testId);
+//		userRepository.logIn(testId);
 		
 		loggedIn = userRepository.isUserLoggedIn(testId);
 		log.info("User " + testId + " is logged in: " + loggedIn);

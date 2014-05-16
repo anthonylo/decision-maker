@@ -9,7 +9,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +20,6 @@ import com.decisionmaker.exception.EntityDoesNotExistException;
 @SuppressWarnings("unchecked")
 public abstract class AbstractDecisionMakerRepository<T extends AbstractDecisionMakerObject<K>, K extends Serializable>
 	implements IRepository<T, K> {
-	
-	@Value("${target.database}")
-	private String targetDatabase;
 	
 	@Autowired
 	protected SessionFactory sessionFactory;
@@ -126,14 +122,6 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 		}
 		String deleteHql = "delete " + clazz.getSimpleName() + " c where c.id = :id";
 		return sessionFactory.getCurrentSession().createQuery(deleteHql).setParameter("id", id).executeUpdate();
-	}
-
-	public String getTargetDatabase() {
-		return targetDatabase;
-	}
-	
-	public void setTargetDatabase(String targetDatabase) {
-		this.targetDatabase = targetDatabase;
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {

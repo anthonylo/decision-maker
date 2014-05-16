@@ -10,8 +10,6 @@ import com.decisionmaker.exception.EntityDoesNotExistException;
 @Service
 public interface IRepository<T, K> {
 	
-	String getTargetDatabase();
-
 	/**
 	 * Saves an entity to the database.
 	 * 

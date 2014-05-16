@@ -22,7 +22,7 @@ CREATE TABLE dm_contact_info (
 CREATE TABLE dm_account_jumbo (
 	account_id          number(10)  not null,
 	username		    varchar(30) not null unique,
-	password		    varchar(30) not null,
+	password		    varchar(102) not null,
 	secret_question     varchar(75) not null,
 	secret_answer	    varchar(50) not null,
     date_created        date default sysdate,

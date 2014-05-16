@@ -10,6 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 
@@ -48,14 +50,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void check_that_the_get_target_database_works() {
-		assertNull(userService.getTargetDatabase());
-		when(userRepository.getTargetDatabase()).thenReturn("test");
-		assertEquals("test", userService.getTargetDatabase());
-	}
-	
-	@Test
-	public void save_user_and_pass() throws DecisionMakerException {
+	public void save_user_and_pass() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
 		ContactInfo mockContactInfo = new ContactInfo(0L, "5421@test.com", "54321");
@@ -69,7 +64,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void try_to_save_user_that_already_exists_in_database() throws DecisionMakerException {
+	public void try_to_save_user_that_already_exists_in_database() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
 		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null, null, null, null);
@@ -83,7 +78,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void try_to_save_user_that_doesnt_have_contact_info() throws DecisionMakerException {
+	public void try_to_save_user_that_doesnt_have_contact_info() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = mock(Account.class);
 		User mockUser = mock(User.class);
@@ -108,7 +103,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void try_to_save_user_that_has_a_null_contact_info() throws DecisionMakerException {
+	public void try_to_save_user_that_has_a_null_contact_info() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = mock(Account.class);
 		User mockUser = mock(User.class);
@@ -128,7 +123,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void try_to_save_user_that_has_does_not_have_a_null_contact_info_but_no_email_or_phone() throws DecisionMakerException {
+	public void try_to_save_user_that_has_does_not_have_a_null_contact_info_but_no_email_or_phone() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = new Account();
 		mockAccount.setUsername("test");
@@ -150,7 +145,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void try_to_save_user_that_has_a_contact_info_with_email_but_no_phone() throws DecisionMakerException {
+	public void try_to_save_user_that_has_a_contact_info_with_email_but_no_phone() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = new Account();
 		mockAccount.setUsername("test");
@@ -177,7 +172,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void try_to_save_user_that_has_a_contact_info_with_email_and_phone() throws DecisionMakerException {
+	public void try_to_save_user_that_has_a_contact_info_with_email_and_phone() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		Account mockAccount = new Account();
 		mockAccount.setUsername("test");
@@ -362,7 +357,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void try_to_update_user_that_exists() throws DecisionMakerException, EntityDoesNotExistException {
+	public void try_to_update_user_that_exists() throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		User mockUser = mock(User.class);
 		Account mockAccount = mock(Account.class);
@@ -389,7 +384,7 @@ public class UserServiceTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void try_to_update_user_with_a_username_that_doesnt_exist() throws DecisionMakerException, EntityDoesNotExistException {
+	public void try_to_update_user_with_a_username_that_doesnt_exist() throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		User mockUser = mock(User.class);
 		Account mockAccount = mock(Account.class);
@@ -415,7 +410,7 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = DecisionMakerException.class)
-	public void try_to_update_user_with_a_username_that_already_exists() throws DecisionMakerException, EntityDoesNotExistException {
+	public void try_to_update_user_with_a_username_that_already_exists() throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		User mockUser = mock(User.class);
 		User fakeUser = mock(User.class);
@@ -444,7 +439,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void try_to_update_user_that_doesnt_exist() throws DecisionMakerException, EntityDoesNotExistException {
+	public void try_to_update_user_that_doesnt_exist() throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
 		User mockUser = mock(User.class);
 		Account mockAccount = mock(Account.class);

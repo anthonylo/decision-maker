@@ -1,5 +1,7 @@
 package com.decisionmaker.repository.user;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.InvalidLoginException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.exception.NotImplementedException;
 import com.decisionmaker.repository.IRepository;
@@ -24,7 +27,7 @@ public interface IUserRepository extends IRepository<User, Long> {
 
 	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
-	User retrieveRandom() throws NotImplementedException;
+	User retrieveRandom();
 	
 	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
 	
@@ -51,5 +54,8 @@ public interface IUserRepository extends IRepository<User, Long> {
 	void logOut(User user) throws EntityDoesNotExistException, AlreadyLoggedOutException;
 	
 	void logIn(User user) throws EntityDoesNotExistException, AlreadyLoggedInException;
+
+	void validatePasswordByUsername(String username, String enteredPassword)
+			throws InvalidLoginException, NoSuchAlgorithmException, InvalidKeySpecException;
 	
 }

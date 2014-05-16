@@ -1,5 +1,7 @@
 package com.decisionmaker.controller;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +47,14 @@ public class MessageController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody String createUser(@RequestBody Message message)
-			throws DecisionMakerException {
+			throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		messageService.saveEntity(message);
 		return "The message posted by user " + message.getSenderId() + " has been created."; 
 	}
 	
 	@RequestMapping(value = "id/{id}", method = RequestMethod.PUT)
 	public @ResponseBody String updateUser(@PathVariable Long id, @RequestBody Message message)
-			throws DecisionMakerException, EntityDoesNotExistException {
+			throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		message.setId(id);
 		messageService.updateEntity(message);
 		return "Message " + id + " has been updated.";

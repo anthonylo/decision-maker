@@ -1,5 +1,7 @@
 package com.decisionmaker.repository.user;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,11 +26,13 @@ import com.decisionmaker.exception.AlreadyLoggedOutException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.InvalidLoginException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.exception.NotImplementedException;
 import com.decisionmaker.factory.user.FriendshipFactory;
 import com.decisionmaker.repository.AbstractDecisionMakerRepository;
 import com.decisionmaker.repository.message.IMessageRepository;
+import com.decisionmaker.util.PasswordHash;
 
 @Repository
 @Transactional
@@ -89,9 +93,10 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 
 	@Override
-	public User retrieveRandom() throws NotImplementedException {
-		// TODO - Implement method
-		throw new NotImplementedException("IUserRepository.retrieveRandom()");
+	public User retrieveRandom() {
+		return (User) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.add(Restrictions.sqlRestriction("1=1 order by dbms_random.value"))
+				.setMaxResults(1).uniqueResult();
 	}
 
 	@Override
@@ -210,9 +215,31 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		if (isUserLoggedIn(userId)) {
 			throw new AlreadyLoggedInException(userId);
 		}
+		
 		Account account = user.getAccount();
 		account.setActive(true);
 		updateEntity(user);
+	}
+
+	@Override
+	public void validatePasswordByUsername(String username, String enteredPassword)
+			throws InvalidLoginException, NoSuchAlgorithmException, InvalidKeySpecException {
+		String hashedPassword = retrieveHashedPasswordByUsername(username);
+		Boolean valid = PasswordHash.validatePassword(enteredPassword, hashedPassword);
+		if (!valid) {
+			throw new InvalidLoginException(
+					"Invalid login attempt. Your password does not match the one stored for '" + username + "'.");
+		}
+	}
+	
+	private String retrieveHashedPasswordByUsername(String username) {
+		return (String) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("acc.username", username))
+				.setProjection(
+						Projections.projectionList().add(
+								Projections.property("acc.password")))
+				.uniqueResult();
 	}
 
 	private Account retrieveBareboneAccountByUserId(Long userId) {

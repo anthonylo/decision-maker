@@ -15,7 +15,8 @@
 			<span>Links</span>
 			<c:choose>
 				<c:when test="${not loggedIn}">
-					<span><a href="/decision-maker/login">Login Page</a></span>
+					<div><a href="/decision-maker/register">Register</a></div>
+					<div><a href="/decision-maker/login">Login</a></div>
 				</c:when>
 				<c:otherwise>
 					<div>Welcome, ${username}!</div>

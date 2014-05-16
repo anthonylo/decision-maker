@@ -13,19 +13,15 @@ import com.decisionmaker.domain.message.MessageType;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.repository.message.IMessageRepository;
+import com.decisionmaker.service.AbstractDecisionMakerService;
 
 @Component
 @Transactional
 @Qualifier("messageService")
-public class MessageService implements IMessageService {
+public class MessageService extends AbstractDecisionMakerService<Message, Long> implements IMessageService {
 
 	@Autowired
 	private IMessageRepository messageRepository;
-
-	@Override
-	public String getTargetDatabase() {
-		return messageRepository.getTargetDatabase();
-	}
 
 	@Override
 	public void saveEntity(Message entity) throws DecisionMakerException {

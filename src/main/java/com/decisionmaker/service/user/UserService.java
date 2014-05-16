@@ -1,5 +1,7 @@
 package com.decisionmaker.service.user;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,29 +22,27 @@ import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.NoRecipientsException;
-import com.decisionmaker.exception.NotImplementedException;
 import com.decisionmaker.repository.user.IUserRepository;
+import com.decisionmaker.service.AbstractDecisionMakerService;
+import com.decisionmaker.util.PasswordHash;
 
 @Component
 @Qualifier("userService")
 @Transactional
-public class UserService implements IUserService {
+public class UserService extends AbstractDecisionMakerService<User, Long> implements IUserService {
 
 	@Autowired
 	private IUserRepository userRepository;
 	
 	@Override
-	public String getTargetDatabase() {
-		return userRepository.getTargetDatabase();
-	}
-
-	@Override
-	public void saveEntity(User user) throws DecisionMakerException {
+	public void saveEntity(User user) throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		Account account = user.getAccount();
 		if (checkIfUserExistsByUsername(account.getUsername())) {
 			throw new DecisionMakerException("The username " + account.getUsername() + " already exists");
 		}
-
+		String hashedPassword = PasswordHash.createHash(account.getPassword());
+		account.setPassword(hashedPassword);
+		
 		ContactInfo contactInfo = user.getContactInfo();
 		if (contactInfo != null) {
 			contactInfo.setId(null);
@@ -108,7 +108,7 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
-	public void updateEntity(User user) throws DecisionMakerException, EntityDoesNotExistException {
+	public void updateEntity(User user) throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		if (checkIfEntityExistsById(user.getId())) {
 			try {
 				User checkUser = retrieveUserByUsername(user.getAccount().getUsername());
@@ -135,14 +135,14 @@ public class UserService implements IUserService {
 	public void deleteUserByUsername(String username) throws EntityDoesNotExistException {
 		userRepository.deleteEntityByUsername(username);
 	}
-
+	
 	@Override
 	public void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException {
 		userRepository.removeFriend(userId, friendId);
 	}
 	
 	@Override
-	public User retrieveRandomUser() throws NotImplementedException {
+	public User retrieveRandomUser() {
 		return userRepository.retrieveRandom();
 	}
 
