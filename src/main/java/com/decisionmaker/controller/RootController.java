@@ -2,7 +2,6 @@ package com.decisionmaker.controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -12,13 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.User;
@@ -67,6 +65,7 @@ public class RootController {
 			userService.logIn(user);
 			session.setAttribute("loggedIn", true);
 			session.setAttribute("username", username);
+			session.setAttribute("user", user);
 			return new ModelAndView("redirect:/index");
 		} catch (Exception e) {
 			map.put("error", e.getMessage());
@@ -82,6 +81,7 @@ public class RootController {
 			String username = (String) session.getAttribute("username");
 			User user = userService.retrieveUserByUsername(username);
 			userService.logOut(user);
+			session.removeAttribute("user");
 			session.removeAttribute("username");
 			session.removeAttribute("loggedIn");
 		} catch (EntityDoesNotExistException | AlreadyLoggedOutException e) {
@@ -107,6 +107,20 @@ public class RootController {
 			map.put("user", user);
 		}
 		return new ModelAndView("register", map);
+	}
+
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	public ModelAndView viewUser(HttpServletRequest request, ModelMap map) throws EntityDoesNotExistException {
+		User user = (User) request.getSession().getAttribute("user");
+		map.put("user", user);
+		return new ModelAndView("view-user", map);
+	}
+	
+	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
+	public @ResponseBody String refreshUser(@RequestParam String username, HttpServletRequest request) throws EntityDoesNotExistException {
+		User user = userService.retrieveUserByUsername(username);
+		request.getSession().setAttribute("user", user);
+		return "The user '" + username + "' has been refreshed"; 
 	}
 	
 }

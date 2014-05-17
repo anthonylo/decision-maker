@@ -52,6 +52,10 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "active", insertable = false, updatable = true)
 	private Boolean active;
+	
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	@Column(name = "dm_admin", insertable = false, updatable = true)
+	private Boolean admin;
 
 	public Account() {
 		
@@ -59,7 +63,7 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	
 	public Account(Long id, String username, String password,
 			String secretQuestion, String secretAnswer, Date dateCreated,
-			Boolean active) {
+			Boolean active, Boolean admin) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -67,6 +71,7 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 		this.secretAnswer = secretAnswer;
 		this.dateCreated = dateCreated;
 		this.active = active;
+		this.admin = admin;
 	}
 
 	@Override
@@ -127,11 +132,20 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 		this.active = active;
 	}
 
+	public Boolean getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + ((admin == null) ? 0 : admin.hashCode());
 		result = prime * result
 				+ ((dateCreated == null) ? 0 : dateCreated.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -159,6 +173,11 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 			if (other.active != null)
 				return false;
 		} else if (!active.equals(other.active))
+			return false;
+		if (admin == null) {
+			if (other.admin != null)
+				return false;
+		} else if (!admin.equals(other.admin))
 			return false;
 		if (dateCreated == null) {
 			if (other.dateCreated != null)
