@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,7 @@ public abstract class AbstractDecisionMakerRepository<T extends AbstractDecision
 		return sessionFactory.getCurrentSession()
 				.createCriteria(clazz)
 				.setFirstResult(startIdx).setMaxResults(count)
+				.addOrder(Order.asc("id"))
 				.list();
 	}
 

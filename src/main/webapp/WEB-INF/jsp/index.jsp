@@ -12,6 +12,12 @@
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				$("#userLogin").hide();
+				$("#login").click(function() {
+					$("input[text]").val("");
+					$("input[password]").val("");
+					$("#userLogin").toggle();
+				});
 			});
 		</script>
 	</head>
@@ -19,12 +25,16 @@
 		<h2>Index Page</h2>
 		<p>This is the entry point of the Decision Maker application.</p>
 		<div>
-			<span>Links</span>
+			<span><b>Links</b></span>
 			<c:if test="${not loggedIn}">
 				<c:import url="includes/loggedOutNav.jsp"/>
 			</c:if>
 			<c:if test="${loggedIn}">
 				<c:import url="includes/loggedInNav.jsp"/>
+				<c:if test="${sessionScope.user.account.admin}">
+					<br/>
+					<c:import url="includes/super-nav.jsp"/>
+				</c:if>
 			</c:if>
 		</div>
 	</body>

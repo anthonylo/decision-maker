@@ -23,7 +23,7 @@
 					<td><input type="password" name="password" maxlength="30" /></td>
 				</tr> 
 				<tr>
-					<td colspan="2"><input type="submit" value="Login" /> <input type="button" value="Register" onclick="registerRedirect();" /></td>
+					<td colspan="2"><input type="submit" value="Login" /> <input type="button" value="Register" onclick="registerRedirect();" /> <input type="reset" /></td>
 				</tr>
 			</table>
 		</form:form>

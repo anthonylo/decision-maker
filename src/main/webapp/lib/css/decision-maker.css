@@ -7,3 +7,10 @@
 .successful {
 	color: green;
 }
+
+.viewall-tr {
+	border-top: solid #000;
+	border-top-width: 0 5px;
+	border-style: solid;
+	padding: 5em;
+}

@@ -2,6 +2,7 @@ package com.decisionmaker.controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,11 +45,11 @@ public class RootController {
 		return new ModelAndView("index", map);
 	}
 	
-	@RequestMapping(value = "/login")
-	public ModelAndView loginScreen(ModelMap map) {
-		map.addAttribute("account", new User());
-		return new ModelAndView("login");
-	}
+//	@RequestMapping(value = "/login")
+//	public ModelAndView loginScreen(ModelMap map) {
+//		map.addAttribute("account", new User());
+//		return new ModelAndView("login");
+//	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ModelAndView loginScreen(@ModelAttribute Account account, 
@@ -66,10 +67,10 @@ public class RootController {
 			session.setAttribute("loggedIn", true);
 			session.setAttribute("username", username);
 			session.setAttribute("user", user);
-			return new ModelAndView("redirect:/index");
+			return new ModelAndView("redirect:/");
 		} catch (Exception e) {
 			map.put("error", e.getMessage());
-			return new ModelAndView("login", map);
+			return new ModelAndView("/", map);
 		}
 	}
 
@@ -87,7 +88,7 @@ public class RootController {
 		} catch (EntityDoesNotExistException | AlreadyLoggedOutException e) {
 			map.put("error", e.getMessage());
 		}
-		return new ModelAndView("redirect:/index");
+		return new ModelAndView("redirect:/");
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
