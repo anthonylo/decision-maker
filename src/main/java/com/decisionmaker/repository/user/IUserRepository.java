@@ -33,6 +33,8 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	Set<User> retrieveBareboneUsersFromListOfIds(List<Long> ids);
 	
+	Set<User> retrieveSimilarUsersByUsername(String username);
+	
 	Set<User> retrieveFriendsById(Long id) throws NotImplementedException;
 	
 	boolean checkIfUsernameExists(String username);
@@ -57,5 +59,9 @@ public interface IUserRepository extends IRepository<User, Long> {
 
 	void validatePasswordByUsername(String username, String enteredPassword)
 			throws InvalidLoginException, NoSuchAlgorithmException, InvalidKeySpecException;
+
+	boolean isUserAdmin(String username);
+	
+	void giveAdminPrivileges(String username);
 	
 }

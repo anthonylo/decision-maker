@@ -9,6 +9,39 @@
 		<title>Decision Maker - View User</title>
 		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("#refresh").click(function() {
+					location.reload();
+				});
+				
+				$(".edit").click(function() {
+					$(".successful").text("");
+					var id = $(this).closest('tr').find('td:first').text().trim();
+					console.log("admin-edit url: /decision-maker/admin/edit?id="+id);
+					location.replace("/decision-maker/admin/edit?id="+id);
+				});
+				
+				$(".delete").click(function() {
+					$(".successful").text("");
+					$(".error").text("");
+					var deletedusername = $(this).closest("tr").find("td:eq(2)").text().trim();
+					var username = "${sessionScope.username}";
+					var deleteUrl = "/decision-maker/admin/"+username+"/delete/"+deletedusername;
+					var trToDelete = $(this).closest("tr");
+					$.ajax({
+						url : deleteUrl,
+						method : "delete",
+						success : function(response) {
+							$(".successful").text(response);
+							trToDelete.remove();
+						}, error : function(xhr) {
+							$(".error").text("The user '" + deletedusername + "' couldn't be deleted");
+						}
+					});
+				});
+			});
+		</script>
 	</head>
 	<body>
 
@@ -16,28 +49,34 @@
 		<div>Admin - ${sessionScope.username}</div>
 		<div>Page ${page} of ${totalPages}. Total Users: ${count}</div>
 		<div><c:if test="${page > 1}">Previous</c:if> <c:if test="${page < totalPages}">Next</c:if></div>
+		<div><input type="button" id="refresh" value="Refresh"/> <span class="successful"></span> <span class="error"></span></div>
 		<br/>
-		<table>
-			<tr>
-				<td align="center">User ID</td>
-				<td>Name</td>
-				<td>Username</td>
-				<td>Email</td>
-				<td>Phone Number</td>
-				<td>Action</td>			
+		<table class="viewall-table">
+			<tr class="viewall-tr" >
+				<td><b>User ID</b></td>
+				<td><b>Name</b></td>
+				<td><b>Username</b></td>
+				<td><b>Email</b></td>
+				<td><b>Phone Number</b></td>
+				<td><b>Action</b></td>			
 			</tr>
 			<c:forEach items="${users}" var="user">
 				<tr class="viewall-tr">
-					<td align="center">
-						${user.id}<c:if test="${user.account.admin}"><br/><b>ADMIN</b></c:if>
+					<td>
+						${user.id}
+						<c:if test="${user.account.admin}">
+							<br/><b>ADMIN</b>
+						</c:if>
 					</td>
 					<td>${user.firstName} ${user.lastName}</td>
 					<td>${user.account.username}</td>
 					<td>${user.contactInfo.email}</td>
 					<td>${user.contactInfo.phoneNumber}</td>
-					<td align="center">
+					<td>
 						<c:if test="${user.account.username != sessionScope.username}">
-							<a href="/admin/edit?id=${user.id}">Edit</a> <br /> <a href="/decision-maker/admin/delete?id=${user.id}">Delete</a>
+							<input type="button" class="edit" value="Edit"/>
+							<br /> 
+							<input type="button" class="delete"  value="Delete"/>
 						</c:if>
 					</td>
 				</tr>

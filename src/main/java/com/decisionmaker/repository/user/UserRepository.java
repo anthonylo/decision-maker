@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import com.decisionmaker.util.PasswordHash;
 @Repository
 @Transactional
 @Qualifier("userRepository")
+@SuppressWarnings("unchecked")
 public class UserRepository extends AbstractDecisionMakerRepository<User, Long> implements IUserRepository {
 
 	@Autowired
@@ -81,6 +83,15 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		handleFriends(user);
 		handleMessages(user);
 		return user;
+	}
+	
+	@Override
+	public Set<User> retrieveSimilarUsersByUsername(String username) {
+		List<User> likeUsers = (List<User>) sessionFactory.getCurrentSession().createCriteria(clazz)
+			.createAlias("account", "acc")
+			.add(Restrictions.like("acc.username", username, MatchMode.ANYWHERE))
+			.list();
+		return new HashSet<User>(likeUsers);
 	}
 
 	@Override
@@ -137,10 +148,13 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		throw new NotImplementedException("IUserRepository.retrieveFriendsById");
 	}
 		
+//	private String accountDeleteHql = "delete Account a where a.id = (select u.account.id from User u where u.id = :id)";
+//	private String contactInfoDeleteHql = "delete ContactInfo ci where ci.id = (select u.contactInfo.id from User u where u.id = :id)";
+	
 	@Override
-	public int deleteEntityById(Long id) throws EntityDoesNotExistException {
+	public void deleteEntityById(Long id) throws EntityDoesNotExistException {
+		super.deleteEntityById(id);
 		messageRepository.deleteMessagesByUserId(id);
-		return super.deleteEntityById(id);
 	}
 
 	@Override
@@ -317,6 +331,24 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	@Override
 	protected void setClazz() {
 		this.clazz = User.class;
+	}
+
+	@Override
+	public boolean isUserAdmin(String username) {
+		return (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("acc.username", username))
+				.setProjection(Projections.property("acc.admin"))
+				.uniqueResult();
+	}
+	
+	@Override
+	public void giveAdminPrivileges(String username) {
+		String adminHql = "update Account a "
+				+ "set a.admin = true "
+				+ "where a.username = :username";
+		sessionFactory.getCurrentSession().createQuery(adminHql)
+				.setParameter("username", username).executeUpdate();
 	}
 	
 }

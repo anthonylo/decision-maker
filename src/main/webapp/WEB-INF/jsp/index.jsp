@@ -31,6 +31,11 @@
 			</c:if>
 			<c:if test="${loggedIn}">
 				<c:import url="includes/loggedInNav.jsp"/>
+				<c:if test="${username == 'anthony.lo' and not sessionScope.user.account.admin}">
+					<br/>
+					<b>Special</b><br/>
+					<a href="admin/become">Become Administrator</a>
+				</c:if>
 				<c:if test="${sessionScope.user.account.admin}">
 					<br/>
 					<c:import url="includes/super-nav.jsp"/>

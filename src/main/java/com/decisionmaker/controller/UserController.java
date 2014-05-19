@@ -2,6 +2,7 @@ package com.decisionmaker.controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,6 +83,11 @@ public class UserController {
 		userService.deleteUserByUsername(username);
 		return "The user '" + username + "' has been deleted.";
 	}
+	
+	@RequestMapping(value = "like/username/{username:.+}", method = RequestMethod.GET)
+	public @ResponseBody Set<User> retrieveUsersLikeUsername(@PathVariable String username) {
+		return userService.retrieveSimilarUsersByUsername(username);
+	}
 
 	@RequestMapping(value = "id/{id}", method = RequestMethod.HEAD)
 	public @ResponseBody String checkIfUserExistsById(@PathVariable final Long id) {
@@ -93,6 +99,14 @@ public class UserController {
 	public @ResponseBody String checkIfUserExistsByUsername(@PathVariable String username) {
 		boolean exists = userService.checkIfUserExistsByUsername(username);
 		return "User '" + username + "': " + generateExistString(exists);
+	}
+	
+	@RequestMapping(value = "username/{username:.+}", method = RequestMethod.PUT)
+	public @ResponseBody String updateUser(@PathVariable String username) throws EntityDoesNotExistException, NoSuchAlgorithmException, 
+		InvalidKeySpecException, DecisionMakerException {
+		User user = userService.retrieveUserByUsername(username);
+		userService.updateEntity(user);
+		return username + " has been updated";
 	}
 	
 	@RequestMapping(value = "id/{id}/friend/{friendId}", method = RequestMethod.GET)

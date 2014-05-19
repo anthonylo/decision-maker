@@ -3,6 +3,7 @@ package com.decisionmaker.service.user;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.InvalidLoginException;
 import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.repository.user.IUserRepository;
 import com.decisionmaker.service.AbstractDecisionMakerService;
@@ -82,6 +84,11 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	}
 	
 	@Override
+	public Set<User> retrieveSimilarUsersByUsername(String username) {
+		return userRepository.retrieveSimilarUsersByUsername(username);
+	}
+	
+	@Override
 	public Long retrieveCount() {
 		return userRepository.retrieveCount();
 	}
@@ -100,6 +107,12 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	public boolean checkIfUsersAreFriends(Long userId, Long friendId) {
 		return userRepository.checkIfUsersAreFriends(userId, friendId);
 	}
+	
+	@Override
+	public void validatePasswordByUsername(String username, String enteredPassword) 
+			throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidLoginException {
+		userRepository.validatePasswordByUsername(username, enteredPassword);
+	}
 
 	@Override
 	public void sendMessage(Long id, Message message) 
@@ -110,16 +123,28 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	@Override
 	public void updateEntity(User user) throws DecisionMakerException, EntityDoesNotExistException, NoSuchAlgorithmException, InvalidKeySpecException {
 		if (checkIfEntityExistsById(user.getId())) {
+			User checkUser = null; 
 			try {
-				User checkUser = retrieveUserByUsername(user.getAccount().getUsername());
-				if (checkUser.getId().equals(user.getId())) {
-					userRepository.updateEntity(user);
-				} else {
-					throw new DecisionMakerException("A user already exists with the username '" 
-							+ user.getAccount().getUsername() + "'.");
-				}
+				checkUser = retrieveUserByUsername(user.getAccount().getUsername());
 			} catch (EntityDoesNotExistException e) {
+				checkUser = retrieveEntityById(user.getId());
+			}
+			if (checkUser.getId().equals(user.getId())) {
+				if (user.getAccount().getPassword() == null) {
+					user.getAccount().setPassword(
+						checkUser.getAccount().getPassword()
+					);
+				}
+				if (user.getMessagesReceived() == null) {
+					user.setMessagesReceived(checkUser.getMessagesReceived());
+				}
+				if (user.getMessagesSent() == null) {
+					user.setMessagesSent(checkUser.getMessagesSent());
+				}
 				userRepository.updateEntity(user);
+			} else {
+				throw new DecisionMakerException("A user already exists with the username '" 
+						+ user.getAccount().getUsername() + "'.");
 			}
 		} else {
 			saveEntity(user);
@@ -161,4 +186,14 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 		this.userRepository = userRepository;
 	}
 
+	@Override
+	public void makeUserAdministrator(String username) {
+		userRepository.giveAdminPrivileges(username);
+	}
+
+	@Override
+	public boolean checkIfUserIsAnAdmin(String username) {
+		return userRepository.isUserAdmin(username);
+	}
+	
 }

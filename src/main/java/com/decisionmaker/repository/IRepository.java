@@ -84,9 +84,8 @@ public interface IRepository<T, K> {
 	 * Delete an entity by ID.
 	 * 
 	 * @param id - ID to query for.
-	 * @return How many rows were affected.
 	 * @throws EntityDoesNotExistException - In case there were no rows affected.
 	 */
-	int deleteEntityById(K id) throws EntityDoesNotExistException;
+	void deleteEntityById(K id) throws EntityDoesNotExistException;
 	
 }
