@@ -18,6 +18,26 @@
 					$("input[password]").val("");
 					$("#userLogin").toggle();
 				});
+				$("#create").click(function() {
+					$.ajax({
+						url : "/decision-maker/create/anthony",
+						success : function(response) { 
+							$(".successful").text(response);
+						}, error : function(response) {
+							$(".error").text(response);
+						}
+					});
+				});
+				$("#createrandom").click(function() {
+					$.ajax({
+						url : "/decision-maker/admin/create/random",
+						success : function(response) { 
+							$(".successful").text(response);
+						}, error : function(response) {
+							$(".error").text(response);
+						}
+					});
+				});
 			});
 		</script>
 	</head>
@@ -27,20 +47,13 @@
 		<div>
 			<span><b>Links</b></span>
 			<c:if test="${not loggedIn}">
-				<c:import url="includes/loggedOutNav.jsp"/>
+				<c:import url="includes/logged-out-nav.jsp"/>
 			</c:if>
 			<c:if test="${loggedIn}">
-				<c:import url="includes/loggedInNav.jsp"/>
-				<c:if test="${username == 'anthony.lo' and not sessionScope.user.account.admin}">
-					<br/>
-					<b>Special</b><br/>
-					<a href="admin/become">Become Administrator</a>
-				</c:if>
-				<c:if test="${sessionScope.user.account.admin}">
-					<br/>
-					<c:import url="includes/super-nav.jsp"/>
-				</c:if>
+				<c:import url="includes/logged-in-nav.jsp"/>
 			</c:if>
 		</div>
+		<span class='error'>${error}</span>
+		<span class='successful'>${successful}</span>
 	</body>
 </html>

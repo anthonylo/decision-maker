@@ -9,9 +9,31 @@ import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.ContactInfo;
 import com.decisionmaker.domain.user.User;
 
-public final class DecisionMakerUtil {
+public final class DecisionMakerUtils {
 	
 	private static enum Gender { MALE, FEMALE };
+	
+	public static User createAnthony() {
+		User user = new User();
+		user.setFirstName("Anthony");
+		user.setLastName("Lo");
+		user.setAge(22);
+		
+		Account account = new Account();
+		account.setAdmin(true);
+		account.setUsername("anthony.lo");
+		account.setPassword("mypass");
+		account.setSecretQuestion("What's the meaning of life?");
+		account.setSecretAnswer("42");
+		
+		ContactInfo ci = new ContactInfo();
+		ci.setEmail("anthony.lo@fdmgroup.com");
+		ci.setPhoneNumber("2032581172");
+		
+		user.setAccount(account);
+		user.setContactInfo(ci);
+		return user;
+	}
 	
 	public static User randomUser() {
 		Random rng = new Random();

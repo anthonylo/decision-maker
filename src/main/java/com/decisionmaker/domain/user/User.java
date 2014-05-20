@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -64,6 +65,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@JsonInclude(value = Include.NON_NULL)
 	private Account account;
 
+	@OneToMany(cascade = CascadeType.ALL,
+			fetch = FetchType.EAGER, targetEntity = FriendRequest.class)
+	@JoinColumn(name = "friend_id", referencedColumnName = "user_id", updatable = false)
+	private Set<FriendRequest> friendRequest;
+	
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
 	private Set<User> friends;
@@ -84,18 +90,19 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	}
 
 	public User(Long id, String firstName, String lastName, Integer age,
-			ContactInfo contactInfo, Account account, Set<User> friends,
-			Set<User> friendOf, Date friendshipStarted,
+			Date friendshipStarted, ContactInfo contactInfo, Account account,
+			Set<FriendRequest> friendRequest, Set<User> friends, Set<User> friendOf,
 			Set<Message> messagesSent, Set<Message> messagesReceived) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.age = age;
+		this.friendshipStarted = friendshipStarted;
 		this.contactInfo = contactInfo;
 		this.account = account;
+		this.friendRequest = friendRequest;
 		this.friends = friends;
 		this.friendOf = friendOf;
-		this.friendshipStarted = friendshipStarted;
 		this.messagesSent = messagesSent;
 		this.messagesReceived = messagesReceived;
 	}
@@ -190,6 +197,14 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.friendshipStarted = friendshipStarted;
 	}
 
+	public Set<FriendRequest> getFriendRequest() {
+		return friendRequest;
+	}
+
+	public void setFriendRequest(Set<FriendRequest> friendRequest) {
+		this.friendRequest = friendRequest;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -202,6 +217,8 @@ public class User extends AbstractDecisionMakerObject<Long> {
 				+ ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result
 				+ ((friendOf == null) ? 0 : friendOf.hashCode());
+		result = prime * result
+				+ ((friendRequest == null) ? 0 : friendRequest.hashCode());
 		result = prime * result + ((friends == null) ? 0 : friends.hashCode());
 		result = prime
 				* result
@@ -251,6 +268,11 @@ public class User extends AbstractDecisionMakerObject<Long> {
 			if (other.friendOf != null)
 				return false;
 		} else if (!friendOf.equals(other.friendOf))
+			return false;
+		if (friendRequest == null) {
+			if (other.friendRequest != null)
+				return false;
+		} else if (!friendRequest.equals(other.friendRequest))
 			return false;
 		if (friends == null) {
 			if (other.friends != null)

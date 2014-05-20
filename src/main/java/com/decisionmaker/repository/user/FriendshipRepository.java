@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,15 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 	@Value("${friendship.delete.hql}")
 	private String deleteHql;
 
+	@Override
+	public List<Long> retrieveFriendIds(Long id) {
+		return (List<Long>) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.add(Restrictions.eq("id.userId", id))
+				.setProjection(Projections.property("id.friendId"))
+				.addOrder(Order.asc("id.friendId"))
+				.list();
+	}
+	
 	@Override
 	public Set<Friendship> discoverUserIdIsFriendOf(Long userId) {
 		List<Friendship> friends = sessionFactory.getCurrentSession()

@@ -1,5 +1,6 @@
 package com.decisionmaker.repository.user;
 
+import java.util.List;
 import java.util.Set;
 
 import com.decisionmaker.domain.user.Friendship;
@@ -18,5 +19,7 @@ public interface IFriendshipRepository extends IRepository<Friendship, Friendshi
 	void addFriend(Long userId, Long possibleFriendId) throws AlreadyFriendsException, IllegalFriendException;
 	
 	void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException;
+
+	List<Long> retrieveFriendIds(Long id);
 
 }

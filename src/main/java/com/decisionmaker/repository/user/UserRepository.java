@@ -8,7 +8,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.Account;
+import com.decisionmaker.domain.user.ContactInfo;
+import com.decisionmaker.domain.user.FriendRequest;
 import com.decisionmaker.domain.user.Friendship;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.domain.user.key.FriendshipPK;
@@ -118,6 +123,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 						.add(Projections.property("firstName"))
 						.add(Projections.property("lastName"))
 						.add(Projections.property("age"))
+						.add(Projections.property("contactInfo"))
 					)
 				.uniqueResult();
 
@@ -126,6 +132,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		user.setFirstName((String) objList[0]);
 		user.setLastName((String) objList[1]);
 		user.setAge((Integer) objList[2]);
+		user.setContactInfo((ContactInfo) objList[3]);
 		
 		Account account = retrieveBareboneAccountByUserId(id);
 		user.setAccount(account);
@@ -270,6 +277,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		return account;
 	}
 	
+	
 	private void containsIllegalRecipient(Set<User> recipients, Long senderId) throws IllegalRecipientException {
 		for (User recipient : recipients) {
 			if (recipient.getId() == senderId) {
@@ -333,6 +341,47 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		this.clazz = User.class;
 	}
 
+	@Override
+	public List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.not(Restrictions.eq("id", id)));
+
+		List<Long> friendIds = friendshipRepository.retrieveFriendIds(id);
+		if (!friendIds.isEmpty()) {
+			criteria.add(Restrictions.not(Restrictions.in("id", friendIds)));
+		}
+		
+		List<Long> knownFriendRequests = getListOfFriendRequestsById(id);
+		if (!knownFriendRequests.isEmpty()) {
+			criteria.add(Restrictions.not(Restrictions.in("id", knownFriendRequests)));
+		}
+		
+		List<User> result = (List<User>) criteria
+				.add(Restrictions.ilike("acc.username", username, MatchMode.ANYWHERE))
+				.setFirstResult(startIdx).setMaxResults(count)
+				.addOrder(Order.asc("id"))
+				.list();
+		return result;
+	}
+	
+	private List<Long> getListOfFriendRequestsById(Long id) {
+		// base
+		List<Long> asRequestor = (List<Long>) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("friendRequest", "fr")
+				.add(Restrictions.eq("fr.id.friendId", id))
+				.setProjection(Projections.property("fr.id.userId"))
+				.list();
+
+		List<Long> asRequestee = sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("friendRequest", "fr")
+				.add(Restrictions.eq("fr.id.userId", id))
+				.setProjection(Projections.property("fr.id.friendId"))
+				.list();
+		asRequestor.addAll(asRequestee);
+		return asRequestor;
+	}
+	
 	@Override
 	public boolean isUserAdmin(String username) {
 		return (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)

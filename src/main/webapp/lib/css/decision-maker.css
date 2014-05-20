@@ -8,17 +8,32 @@
 	color: green;
 }
 
-.viewall-tr {
+.dm-tr {
 	padding: 5em;
 	border-top: 1px solid #008999;
 	border-bottom: 1px solid #008999;
 }
 
-.viewall-tr td {
+.dm-tr td {
 	padding-left: 2em;
 }
 
-.viewall-table {
+.dm-table {
 	text-align: center;
     border-collapse: collapse;
+}
+
+a:link {
+	color: blue;
+	text-decoration: none;
+}
+
+a:visited {
+	color: blue;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: blue;
 }

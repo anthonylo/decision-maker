@@ -63,5 +63,7 @@ public interface IUserRepository extends IRepository<User, Long> {
 	boolean isUserAdmin(String username);
 	
 	void giveAdminPrivileges(String username);
+
+	List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count);
 	
 }

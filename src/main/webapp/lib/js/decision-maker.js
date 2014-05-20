@@ -13,12 +13,18 @@ function registerRedirect() {
 	window.location.href="register";
 }
 
+function isStringEmpty(str) {
+	return (!str || 0 === str.length);
+}
+
 function generateJsonOfUser() {
+	// User
 	var id = $("#id").val();
 	var firstName = $("#firstName").val();
 	var lastName = $("#lastName").val();
 	var age = $("#age").val();
 	
+	// Account Information
 	var accountId = $("#account-id").val();
 	var active = $("#account-active").val();
 	var admin = $("#account-admin").val();
@@ -29,20 +35,14 @@ function generateJsonOfUser() {
 		+ '", "secretQuestion" : "' + secretQuestion + '", "secretAnswer" : "' + secretAnswer 
 		+ '", "active" : ' + active + ', "admin" : ' + admin + '}';
 		
+	// Contact Information
 	var contactInfoId = $("#contactInfo-id").val();
 	var email = $("#contactInfo-email").val();
 	var phoneNumber = $("#contactInfo-phoneNumber").val();
 	var contactInfoJson = '"contactInfo" : { "id" : ' + contactInfoId + ', "email" : "' + email 
 		+ '", "phoneNumber" : "' + phoneNumber + '" }';
-		
-//    var second = ('{"id":'+ id +',"firstName":"' + firstName + '","lastName":"'
-//                    + lastName + '","age":' + age + ','
-//                    + '"contactInfo":{"id":'+contactInfoId+',"email":"' + email
-//                    + '","phoneNumber":"' + phoneNumber + '"},'
-//                    + '"account":{"id":'+accountId+',"username":"' + username 
-//                    + '","secretQuestion":"' + secretQuestion
-//                    + '","secretAnswer":"' + secretAnswer + '"}}');
 
+	// Full JSON
 	var userJson = ('{ "id" : ' + id + ', "firstName" : "' + firstName 
 		+ '", "lastName" : "' + lastName + '", "age" : ' + age + ', ' 
 		+ contactInfoJson + ' , ' + accountJson + ' }');
@@ -51,8 +51,8 @@ function generateJsonOfUser() {
 }
 
 function generateQuickUserTable(users) {
-	var userTable = "<table>";
-	var tableHeaders = "<tr class='viewall-tr'>";
+	var userTable = "<table class='dm-tr' id='fillMe'>";
+	var tableHeaders = "<tr class='dm-tr'>";
 	tableHeaders += "<td><b>User ID</b></td>";
 	tableHeaders += "<td><b>Name</b></td>";
 	tableHeaders += "<td><b>Username</b></td>";
@@ -61,16 +61,21 @@ function generateQuickUserTable(users) {
 	tableHeaders += "</tr>";
 	userTable += tableHeaders;
 	
-	for (var user in users) {
-		var userRow = "<tr class='viewall-tr'>";
-		userRow += "<td>" + user.id + "</td>";
-		userRow += "<td>" + user.firstName + " " + user.lastName + "</td>";
-		userRow += "<td>" + user.account.username + "</td>";
-		userRow += "<td>" + user.contactInfo.email + "</td>";
-		userRow += "<td>Do something</td>";
+	for (var k in users) {
+		
+		var username = users[k].account.username;
+		var id = users[k].id;
+		
+		var userRow = "<tr class='dm-tr'>";
+		userRow += "<td>" + users[k].id + "</td>";
+		userRow += "<td>" + users[k].firstName + " " + users[k].lastName + "</td>";
+		userRow += "<td>" + users[k].account.username + "</td>";
+		userRow += "<td>" + users[k].contactInfo.email + "</td>";
+		userRow += ("<td><a href='javascript:void(0);' class='testbuttonthree' onclick='request_friend(" + id + ", \"" + username + "\")'>Send Request</a></td>");
 		userRow += "</tr>";
 		userTable += userRow;
 	}
 	userTable += "</table>";
 	return userTable;
 }
+

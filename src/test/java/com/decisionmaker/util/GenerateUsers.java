@@ -21,10 +21,16 @@ public class GenerateUsers {
 	private IUserService userService;
 	
 	@Test
-	public void should_generate_30_users() throws NoSuchAlgorithmException, InvalidKeySpecException, DecisionMakerException {
-		for (int i = 0; i < 30; i++) {
-			User user = DecisionMakerUtil.randomUser();
-			userService.saveEntity(user);
+	public void should_generate_100_users() throws NoSuchAlgorithmException, InvalidKeySpecException, DecisionMakerException {
+		for (int i = 0; i < 100; i++) {
+			User user = null;
+			try {
+				user = DecisionMakerUtils.randomUser();
+				userService.saveEntity(user);
+			} catch (DecisionMakerException e) {
+				user = DecisionMakerUtils.randomUser();
+				userService.saveEntity(user);
+			}
 		}
 	}
 	

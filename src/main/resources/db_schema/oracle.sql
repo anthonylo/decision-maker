@@ -4,6 +4,7 @@ DROP TABLE dm_account_jumbo   CASCADE CONSTRAINTS;
 DROP TABLE dm_message_user    CASCADE CONSTRAINTS;
 DROP TABLE dm_message         CASCADE CONSTRAINTS;
 DROP TABLE dm_user_friend     CASCADE CONSTRAINTS;
+DROP TABLE dm_friend_request  CASCADE CONSTRAINTS;
 DROP TABLE dm_user            CASCADE CONSTRAINTS;
 
 DROP SEQUENCE dm_contact_info_seq;
@@ -13,44 +14,57 @@ DROP SEQUENCE dm_user_seq;
 
 -- Tables
 CREATE TABLE dm_contact_info (
-	contact_info_id       number(10) not null,
-	email_address		  varchar(50),
-	phone_number		  varchar(14),
-	constraint pk_dm_contact_info primary key (contact_info_id)
+    contact_info_id       number(10) not null,
+    email_address         varchar(50),
+    phone_number          varchar(14),
+    constraint pk_dm_contact_info primary key (contact_info_id)
 );
 
 CREATE TABLE dm_account_jumbo (
-	account_id          number(10)  not null,
-	username		    varchar(30) not null unique,
-	password		    varchar(102) not null,
-	secret_question     varchar(75) not null,
-	secret_answer	    varchar(50) not null,
-    date_created        date default sysdate,
-    active              number(1) default 0 not null,
-    dm_admin			number(1) default 0 not null,
-	constraint pk_dm_account_jumbo primary key (account_id)
+    account_id          number(10)     not null,
+    username            varchar(30)    not null unique,
+    password            varchar(102)   not null,
+    secret_question     varchar(75)    not null,
+    secret_answer       varchar(50)    not null,
+    date_created        date           default sysdate,
+    active              number(1)      default 0 not null,
+    dm_admin            number(1)      default 0 not null,
+    constraint pk_dm_account_jumbo primary key (account_id)
 );
 
 CREATE TABLE dm_user (
-	user_id             number(10)  not null,
-	first_name		    varchar(50) not null,
-	last_name   	    varchar(50) not null,
-	age				    number(4)   not null,
-	contact_info_id	    number(10),
-	account_id 		    number(10)  not null,
-	constraint pk_dm_user primary key (user_id),
-	constraint fk1_dm_user
-		foreign key (contact_info_id) 
-		references dm_contact_info(contact_info_id) on delete set null,
-	constraint fk2_dm_user
-		foreign key (account_id) 
-		references dm_account_jumbo(account_id) on delete cascade
+    user_id             number(10)  not null,
+    first_name          varchar(50) not null,
+    last_name           varchar(50) not null,
+    age                 number(4)   not null,
+    contact_info_id     number(10),
+    account_id          number(10)  not null,
+    constraint pk_dm_user primary key (user_id),
+    constraint fk1_dm_user
+        foreign key (contact_info_id) 
+        references dm_contact_info(contact_info_id) on delete set null,
+    constraint fk2_dm_user
+        foreign key (account_id) 
+        references dm_account_jumbo(account_id) on delete cascade
+);
+
+CREATE TABLE dm_friend_request (
+  user_id             number(10)    not null,
+  friend_id           number(10)    not null,
+  request_stated      date default  sysdate,
+  constraint pk_dm_friend_request primary key (user_id, friend_id),
+  constraint fk1_dm_friend_request
+    foreign key (user_id)
+    references dm_user(user_id) on delete cascade,
+  constraint fk2_dm_friend_request
+    foreign key (friend_id)
+    references dm_user(user_id) on delete cascade
 );
 
 CREATE TABLE dm_user_friend (
-  user_id         number(10) not null,
-  friend_id       number(10) not null,
-  friendship_started    date default sysdate,
+  user_id               number(10)    not null,
+  friend_id             number(10)    not null,
+  friendship_started    date default  sysdate,
   constraint pk_dm_user_friend primary key (user_id, friend_id),
   constraint fk1_dm_user_friend
     foreign key (user_id)
@@ -61,31 +75,31 @@ CREATE TABLE dm_user_friend (
 );
 
 CREATE TABLE dm_message (
-	message_id		number(10) 			 not null,
-	user_id			number(10) 	     	 not null,
-	message			varchar(140) 	  	 not null,
-	date_posted	    date default sysdate not null,
-	constraint pk_dm_message primary key (message_id),
-	constraint fk1_dm_message
-		foreign key (user_id)
-		references dm_user(user_id) on delete cascade
+    message_id      number(10)           not null,
+    user_id         number(10)           not null,
+    message         varchar(140)         not null,
+    date_posted     date default sysdate not null,
+    constraint pk_dm_message primary key (message_id),
+    constraint fk1_dm_message
+        foreign key (user_id)
+        references dm_user(user_id) on delete cascade
 );
 
 CREATE TABLE dm_message_user (
-	message_id		number(10) not null,
-	sender_id		number(10) not null,
-	recipient_id	number(10) not null,
-	constraint pk_dm_message_user 
-		primary key (message_id, sender_id, recipient_id),
-	constraint fk1_dm_message_user
-		foreign key (message_id)
-		references dm_message(message_id) on delete cascade,
-	constraint fk2_dm_message_user
-		foreign key (sender_id)
-		references dm_user(user_id) on delete cascade,
-	constraint fk3_dm_message_user
-		foreign key (recipient_id)
-		references dm_user(user_id) on delete cascade
+    message_id      number(10) not null,
+    sender_id       number(10) not null,
+    recipient_id    number(10) not null,
+    constraint pk_dm_message_user 
+        primary key (message_id, sender_id, recipient_id),
+    constraint fk1_dm_message_user
+        foreign key (message_id)
+        references dm_message(message_id) on delete cascade,
+    constraint fk2_dm_message_user
+        foreign key (sender_id)
+        references dm_user(user_id) on delete cascade,
+    constraint fk3_dm_message_user
+        foreign key (recipient_id)
+        references dm_user(user_id) on delete cascade
 );
 
 -- Sequences
@@ -137,14 +151,50 @@ CREATE OR REPLACE TRIGGER dm_user_trigger
   END;
 /
 
+CREATE OR REPLACE TRIGGER dm_friend_request_trigger
+  BEFORE INSERT ON dm_friend_request
+  FOR EACH ROW
+  BEGIN
+    IF :new.request_stated IS NULL THEN
+      SELECT sysdate 
+      INTO :new.request_stated
+      FROM dual;
+    END IF;
+  END;
+/
+
 CREATE OR REPLACE TRIGGER dm_user_friend_trigger
   BEFORE INSERT ON dm_user_friend
   FOR EACH ROW
+  DECLARE
+    v_user_id     number(10);
+    v_friend_id   number(10);
+    n_user_id     number(10);
+    n_friend_id   number(10);
   BEGIN
+    
+    SELECT user_id INTO v_user_id, friend_id INTO v_friend_id
+    FROM dm_friend_request
+    WHERE user_id = :new.user_id AND friend_id = :new.friend_id;
+
+    IF v_user_id IS NOT NULL THEN
+      DELETE FROM dm_friend_request
+      WHERE user_id = :new.user_id AND friend_id = :new.friend_id;
+    END IF;
+    
     IF :new.friendship_started IS NULL THEN
       SELECT sysdate 
       INTO :new.friendship_started
       FROM dual;
+      
+      SELECT friend_id INTO n_user_id,
+      FROM dm_user_friend
+      WHERE user_id = v_friend_id AND friend_id = v_user_id;
+      
+      IF n_user_id IS NULL THEN
+        INSERT INTO dm_user_friend (user_id, friend_id)
+        VALUES (v_friend_id, v_user_id);
+      END IF;
     END IF;
   END;
 /

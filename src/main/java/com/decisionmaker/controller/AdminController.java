@@ -22,6 +22,7 @@ import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.NotAdministratorException;
 import com.decisionmaker.service.user.IUserService;
+import com.decisionmaker.util.DecisionMakerUtils;
 
 @Controller
 @RequestMapping(value = "/admin")
@@ -76,6 +77,29 @@ public class AdminController {
 		User user = userService.retrieveEntityById(id);
 		map.put("user", user);
 		return new ModelAndView("admin-edit", map);
+	}
+	
+	@RequestMapping(value = "/create/random")
+	public @ResponseBody String createRandomUser(HttpServletRequest request) 
+			throws NoSuchAlgorithmException, 
+				InvalidKeySpecException, DecisionMakerException {
+		User admin = (User) request.getSession().getAttribute("user");
+		if (admin.getAccount().getAdmin()) {
+			boolean pass = false;
+			do {
+				try {
+					User user = DecisionMakerUtils.randomUser();
+					userService.saveEntity(user);
+					pass = true;
+					return (user.getFirstName() + " " + user.getLastName() + " was created successfully");
+				} catch (DecisionMakerException e) {
+					pass = false;
+				}
+			} while (!pass);
+		} else {
+			return "You are not an administrator";
+		}
+		return "";
 	}
 	
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)

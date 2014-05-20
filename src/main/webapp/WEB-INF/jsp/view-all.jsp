@@ -33,9 +33,10 @@
 						url : deleteUrl,
 						method : "delete",
 						success : function(response) {
+							location.reload();
 							$(".successful").text(response);
-							trToDelete.remove();
-						}, error : function(xhr) {
+						}, 
+						error : function(xhr) {
 							$(".error").text("The user '" + deletedusername + "' couldn't be deleted");
 						}
 					});
@@ -48,11 +49,14 @@
 		<div><a href="/decision-maker">Return to Index</a></div>
 		<div>Admin - ${sessionScope.username}</div>
 		<div>Page ${page} of ${totalPages}. Total Users: ${count}</div>
-		<div><c:if test="${page > 1}">Previous</c:if> <c:if test="${page < totalPages}">Next</c:if></div>
+		<div>
+			<c:if test="${page > 1}"><a href="/decision-maker/admin/viewusers?page=${page-1}">Previous</a></c:if> 
+			<c:if test="${page < totalPages}"><a href="/decision-maker/admin/viewusers?page=${page+1}">Next</a></c:if>
+		</div>
 		<div><input type="button" id="refresh" value="Refresh"/> <span class="successful"></span> <span class="error"></span></div>
 		<br/>
-		<table class="viewall-table">
-			<tr class="viewall-tr" >
+		<table class="dm-table">
+			<tr class="dm-tr" >
 				<td><b>User ID</b></td>
 				<td><b>Name</b></td>
 				<td><b>Username</b></td>
@@ -61,7 +65,7 @@
 				<td><b>Action</b></td>			
 			</tr>
 			<c:forEach items="${users}" var="user">
-				<tr class="viewall-tr">
+				<tr class="dm-tr">
 					<td>
 						${user.id}
 						<c:if test="${user.account.admin}">

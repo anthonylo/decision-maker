@@ -27,6 +27,7 @@ import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
 import com.decisionmaker.exception.InvalidLoginException;
 import com.decisionmaker.service.user.IUserService;
+import com.decisionmaker.util.DecisionMakerUtils;
 import com.decisionmaker.util.PasswordHash;
 import com.decisionmaker.validator.user.AccountValidator;
 
@@ -41,11 +42,19 @@ public class RootController {
 		return "Hello, " + name + "!";
 	}
 
+	@RequestMapping(value = "/create/anthony", method = RequestMethod.GET)
+	public @ResponseBody String createAnthony() 
+			throws NoSuchAlgorithmException, InvalidKeySpecException, DecisionMakerException {
+		User user = DecisionMakerUtils.createAnthony();
+		userService.saveEntity(user);
+		return "Anthony Lo was created successfully";
+	}
+	
 	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
 	public ModelAndView index(HttpServletRequest request, ModelMap map) {
 		return new ModelAndView("index", map);
 	}
-	
+
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ModelAndView loginScreen(@ModelAttribute Account account, 
 			RedirectAttributes redirectAttributes, HttpServletRequest request, ModelMap map) 
@@ -62,6 +71,7 @@ public class RootController {
 			session.setAttribute("loggedIn", true);
 			session.setAttribute("username", username);
 			session.setAttribute("user", user);
+			
 			return new ModelAndView("redirect:/");
 		} catch (Exception e) {
 			map.put("error", e.getMessage());
@@ -72,17 +82,7 @@ public class RootController {
 	@RequestMapping(value = "/logout")
 	public ModelAndView logout(HttpServletRequest request, ModelMap map) 
 			throws EntityDoesNotExistException, AlreadyLoggedOutException {
-		HttpSession session = request.getSession();
-		try {
-			String username = (String) session.getAttribute("username");
-			User user = userService.retrieveUserByUsername(username);
-			userService.logOut(user);
-			session.removeAttribute("user");
-			session.removeAttribute("username");
-			session.removeAttribute("loggedIn");
-		} catch (EntityDoesNotExistException | AlreadyLoggedOutException e) {
-			map.put("error", e.getMessage());
-		}
+		request.getSession().invalidate();
 		return new ModelAndView("redirect:/");
 	}
 

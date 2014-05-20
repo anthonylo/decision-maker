@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.decisionmaker.domain.message.Message;
 import com.decisionmaker.domain.user.Account;
 import com.decisionmaker.domain.user.ContactInfo;
+import com.decisionmaker.domain.user.FriendRequest;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.AlreadyFriendsException;
 import com.decisionmaker.exception.AlreadyLoggedInException;
@@ -24,6 +25,7 @@ import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IllegalRecipientException;
 import com.decisionmaker.exception.InvalidLoginException;
 import com.decisionmaker.exception.NoRecipientsException;
+import com.decisionmaker.repository.user.IFriendRequestRepository;
 import com.decisionmaker.repository.user.IUserRepository;
 import com.decisionmaker.service.AbstractDecisionMakerService;
 import com.decisionmaker.util.PasswordHash;
@@ -35,6 +37,9 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 
 	@Autowired
 	private IUserRepository userRepository;
+	
+	@Autowired
+	private IFriendRequestRepository friendRequestRepository;
 	
 	@Override
 	public void saveEntity(User user) throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -181,10 +186,6 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	public void logIn(User user) throws EntityDoesNotExistException, AlreadyLoggedInException {
 		userRepository.logIn(user);
 	}
-	
-	public void setUserRepository(IUserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
 
 	@Override
 	public void makeUserAdministrator(String username) {
@@ -194,6 +195,20 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	@Override
 	public boolean checkIfUserIsAnAdmin(String username) {
 		return userRepository.isUserAdmin(username);
+	}
+	
+	@Override
+	public void sendFriendRequest(FriendRequest friendRequest) {
+		friendRequestRepository.saveEntity(friendRequest);
+	}
+
+	@Override
+	public List<User> getUsersWhoArentFriends(Long id, String name, int page, int count) {
+		return userRepository.getUsersWhoArentFriends(id, name, page*count, count);
+	}
+	
+	public void setUserRepository(IUserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 	
 }
