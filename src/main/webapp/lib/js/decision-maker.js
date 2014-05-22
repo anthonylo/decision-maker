@@ -51,7 +51,7 @@ function generateJsonOfUser() {
 }
 
 function generateQuickUserTable(users) {
-	var userTable = "<table class='dm-tr' id='fillMe'>";
+	var userTable = "<table class='dm-table' id='fillMe'>";
 	var tableHeaders = "<tr class='dm-tr'>";
 	tableHeaders += "<td><b>User ID</b></td>";
 	tableHeaders += "<td><b>Name</b></td>";
@@ -78,4 +78,3 @@ function generateQuickUserTable(users) {
 	userTable += "</table>";
 	return userTable;
 }
-

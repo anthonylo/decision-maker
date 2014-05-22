@@ -51,6 +51,8 @@ CREATE TABLE dm_user (
 CREATE TABLE dm_friend_request (
   user_id             number(10)    not null,
   friend_id           number(10)    not null,
+  user_username       varchar(30)   not null,
+  friend_username     varchar(30)   not null,
   request_stated      date default  sysdate,
   constraint pk_dm_friend_request primary key (user_id, friend_id),
   constraint fk1_dm_friend_request
@@ -166,35 +168,11 @@ CREATE OR REPLACE TRIGGER dm_friend_request_trigger
 CREATE OR REPLACE TRIGGER dm_user_friend_trigger
   BEFORE INSERT ON dm_user_friend
   FOR EACH ROW
-  DECLARE
-    v_user_id     number(10);
-    v_friend_id   number(10);
-    n_user_id     number(10);
-    n_friend_id   number(10);
   BEGIN
-    
-    SELECT user_id INTO v_user_id, friend_id INTO v_friend_id
-    FROM dm_friend_request
-    WHERE user_id = :new.user_id AND friend_id = :new.friend_id;
-
-    IF v_user_id IS NOT NULL THEN
-      DELETE FROM dm_friend_request
-      WHERE user_id = :new.user_id AND friend_id = :new.friend_id;
-    END IF;
-    
     IF :new.friendship_started IS NULL THEN
       SELECT sysdate 
       INTO :new.friendship_started
       FROM dual;
-      
-      SELECT friend_id INTO n_user_id,
-      FROM dm_user_friend
-      WHERE user_id = v_friend_id AND friend_id = v_user_id;
-      
-      IF n_user_id IS NULL THEN
-        INSERT INTO dm_user_friend (user_id, friend_id)
-        VALUES (v_friend_id, v_user_id);
-      END IF;
     END IF;
   END;
 /

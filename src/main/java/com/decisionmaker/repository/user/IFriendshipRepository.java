@@ -16,7 +16,7 @@ public interface IFriendshipRepository extends IRepository<Friendship, Friendshi
 	
 	Set<Friendship> discoverFriendsOfUserId(Long userId);
 	
-	void addFriend(Long userId, Long possibleFriendId) throws AlreadyFriendsException, IllegalFriendException;
+	void addFriend(Long userId, Long possibleFriendId) throws AlreadyFriendsException, IllegalFriendException, EntityDoesNotExistException;
 	
 	void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException;
 

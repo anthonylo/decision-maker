@@ -21,8 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.decisionmaker.domain.user.FriendRequest;
 import com.decisionmaker.domain.user.User;
+import com.decisionmaker.exception.AlreadyFriendsException;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalFriendException;
 import com.decisionmaker.exception.IncorrectUserException;
 import com.decisionmaker.service.user.IUserService;
 
@@ -62,10 +64,20 @@ public class FriendsController {
 		}
 	}
 	
+	@RequestMapping(value = "/request/accept", method = RequestMethod.POST)
+	public @ResponseBody String acceptFriendRequest(@RequestParam String friendUsername, 
+			@RequestParam Long friendId, HttpServletRequest request) 
+					throws DecisionMakerException, EntityDoesNotExistException, AlreadyFriendsException, IllegalFriendException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		userService.addFriend(friendId, user.getId());
+		user = userService.retrieveEntityById(user.getId());
+		request.getSession().setAttribute("user", user);
+		return "The friend request was accepted successfully";
+	}
+	
 	@RequestMapping(value = "/view/requests")
 	public ModelAndView viewFriendRequests(HttpServletRequest request, ModelMap map) {
-		User user = (User) request.getSession().getAttribute("user");
-		map.put("friendRequests", user.getFriendRequest());
 		return new ModelAndView("friends/view-requests", map);
 	}
 	

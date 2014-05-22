@@ -7,10 +7,73 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - View User</title>
-		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
+		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script type="text/javascript">
+			function createPageLink(startIdx, endIdx, currentPage) {
+				for (var itr = startIdx; itr < endIdx; itr++) {
+					var link = $('<a>',{
+					    text: itr,
+					    href: '/decision-maker/admin/viewusers?page='+itr,
+					});
+					if (itr == currentPage) {
+						link.css("text-decoration", "underline");
+						link.css("font-weight", "bold");
+					}
+					$("#pages").append(link);
+					$("#pages").append(" ");
+				};
+			}
+
+			function createLeftSideOfLinks(currentPage, totalPages) {
+				var minusFive = currentPage-5;
+				var minusTen = currentPage-10;
+				var tempMinus = (minusTen >= 1) ? minusTen : minusFive;
+				if (tempMinus < 1 
+						&& currentPage < totalPages) {
+					createPageLink(1, currentPage, currentPage);
+				} else if (currentPage > 1 
+						&& tempMinus < 1 
+						&& currentPage < totalPages) {
+					createPageLink(1, currentPage, currentPage);
+				} else if (tempMinus >= 1 
+					&& currentPage < totalPages) {
+ 					if (tempMinus == minusFive) {
+ 						tempMinus = 1;
+ 					}
+ 					createPageLink(tempMinus, currentPage, currentPage);
+ 				} else if (tempMinus < 1 && currentPage == totalPages) {
+ 					createPageLink(1, totalPages+1, currentPage);
+ 				} else if (currentPage == totalPages) {
+ 					createPageLink(tempMinus, totalPages, currentPage);
+ 				}
+			}
+			
+			function createRightSideOfLinks(currentPage, totalPages) {
+				var plusFive = currentPage+5;
+				var plusTen = currentPage+10;
+				var tempPlus = (plusTen <= totalPages) ? plusTen : plusFive;
+				if (currentPage >= 1 
+						&& tempPlus < totalPages) {
+					createPageLink(currentPage+1, tempPlus, currentPage);
+				} else if (currentPage >= 1 && tempPlus <= totalPages) {
+					createPageLink(currentPage+1, totalPages+1, currentPage);
+				} else if (currentPage >= 1 && tempPlus > totalPages
+					&& currentPage != totalPages) {
+ 					createPageLink(currentPage+1, totalPages+1, currentPage);
+ 				}
+			}
+			
+			function populatePagesDiv() {
+				var currentPage = ${page};
+				var totalPages = ${totalPages};
+				createLeftSideOfLinks(currentPage, totalPages);
+				createPageLink(currentPage, currentPage+1, currentPage);
+				createRightSideOfLinks(currentPage, totalPages);
+			}
+		
 			$(document).ready(function() {
+				populatePagesDiv();
 				$("#refresh").click(function() {
 					location.reload();
 				});
@@ -48,10 +111,9 @@
 
 		<div><a href="/decision-maker">Return to Index</a></div>
 		<div>Admin - ${sessionScope.username}</div>
-		<div>Page ${page} of ${totalPages}. Total Users: ${count}</div>
-		<div>
-			<c:if test="${page > 1}"><a href="/decision-maker/admin/viewusers?page=${page-1}">Previous</a></c:if> 
-			<c:if test="${page < totalPages}"><a href="/decision-maker/admin/viewusers?page=${page+1}">Next</a></c:if>
+		<div>Page ${page} of ${totalPages}. Total Users: ${count}. Go to [ <a href="/decision-maker/admin/viewusers">First</a>, 
+			<a href="/decision-maker/admin/viewusers?page=${totalPages}">Last</a> ]</div>
+		<div id="pages">Pages: 
 		</div>
 		<div><input type="button" id="refresh" value="Refresh"/> <span class="successful"></span> <span class="error"></span></div>
 		<br/>

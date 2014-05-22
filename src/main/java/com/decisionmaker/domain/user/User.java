@@ -65,10 +65,17 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	@JsonInclude(value = Include.NON_NULL)
 	private Account account;
 
-	@OneToMany(cascade = CascadeType.ALL,
-			fetch = FetchType.EAGER, targetEntity = FriendRequest.class)
-	@JoinColumn(name = "friend_id", referencedColumnName = "user_id", updatable = false)
-	private Set<FriendRequest> friendRequest;
+//	@OneToMany(cascade = CascadeType.ALL,
+//			fetch = FetchType.EAGER, targetEntity = FriendRequest.class)
+//	@JoinColumn(name = "friend_id", referencedColumnName = "user_id", updatable = true)
+	@Transient
+	private Set<FriendRequest> friendRequesters;
+
+//	@OneToMany(cascade = CascadeType.ALL,
+//			fetch = FetchType.EAGER, targetEntity = FriendRequest.class)
+//	@JoinColumn(name = "user_id", referencedColumnName = "user_id", updatable = true)
+	@Transient
+	private Set<FriendRequest> friendRequested;
 	
 	@Transient
 	@JsonInclude(value = Include.NON_NULL)
@@ -91,8 +98,10 @@ public class User extends AbstractDecisionMakerObject<Long> {
 
 	public User(Long id, String firstName, String lastName, Integer age,
 			Date friendshipStarted, ContactInfo contactInfo, Account account,
-			Set<FriendRequest> friendRequest, Set<User> friends, Set<User> friendOf,
-			Set<Message> messagesSent, Set<Message> messagesReceived) {
+			Set<FriendRequest> friendRequesters,
+			Set<FriendRequest> friendRequested, Set<User> friends,
+			Set<User> friendOf, Set<Message> messagesSent,
+			Set<Message> messagesReceived) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -100,7 +109,8 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.friendshipStarted = friendshipStarted;
 		this.contactInfo = contactInfo;
 		this.account = account;
-		this.friendRequest = friendRequest;
+		this.friendRequesters = friendRequesters;
+		this.friendRequested = friendRequested;
 		this.friends = friends;
 		this.friendOf = friendOf;
 		this.messagesSent = messagesSent;
@@ -197,12 +207,20 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		this.friendshipStarted = friendshipStarted;
 	}
 
-	public Set<FriendRequest> getFriendRequest() {
-		return friendRequest;
+	public Set<FriendRequest> getFriendRequesters() {
+		return friendRequesters;
 	}
 
-	public void setFriendRequest(Set<FriendRequest> friendRequest) {
-		this.friendRequest = friendRequest;
+	public void setFriendRequesters(Set<FriendRequest> friendRequesters) {
+		this.friendRequesters = friendRequesters;
+	}
+
+	public Set<FriendRequest> getFriendRequested() {
+		return friendRequested;
+	}
+
+	public void setFriendRequested(Set<FriendRequest> friendRequested) {
+		this.friendRequested = friendRequested;
 	}
 
 	@Override
@@ -218,7 +236,10 @@ public class User extends AbstractDecisionMakerObject<Long> {
 		result = prime * result
 				+ ((friendOf == null) ? 0 : friendOf.hashCode());
 		result = prime * result
-				+ ((friendRequest == null) ? 0 : friendRequest.hashCode());
+				+ ((friendRequested == null) ? 0 : friendRequested.hashCode());
+		result = prime
+				* result
+				+ ((friendRequesters == null) ? 0 : friendRequesters.hashCode());
 		result = prime * result + ((friends == null) ? 0 : friends.hashCode());
 		result = prime
 				* result
@@ -269,10 +290,15 @@ public class User extends AbstractDecisionMakerObject<Long> {
 				return false;
 		} else if (!friendOf.equals(other.friendOf))
 			return false;
-		if (friendRequest == null) {
-			if (other.friendRequest != null)
+		if (friendRequested == null) {
+			if (other.friendRequested != null)
 				return false;
-		} else if (!friendRequest.equals(other.friendRequest))
+		} else if (!friendRequested.equals(other.friendRequested))
+			return false;
+		if (friendRequesters == null) {
+			if (other.friendRequesters != null)
+				return false;
+		} else if (!friendRequesters.equals(other.friendRequesters))
 			return false;
 		if (friends == null) {
 			if (other.friends != null)
@@ -309,7 +335,9 @@ public class User extends AbstractDecisionMakerObject<Long> {
 	
 	@Override
 	public String toString() {
-		return "User [id= " + id + "]";
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", age=" + age + ", contactInfo=" + contactInfo.toString()
+				+ ", account=" + account.toString() + "]";
 	}
 
 }

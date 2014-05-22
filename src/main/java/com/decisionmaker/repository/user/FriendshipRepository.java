@@ -7,6 +7,7 @@ import java.util.Set;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,9 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 	
 	@Value("${friendship.delete.hql}")
 	private String deleteHql;
+	
+	@Autowired
+	private IFriendRequestRepository friendRequestRepository;
 
 	@Override
 	public List<Long> retrieveFriendIds(Long id) {
@@ -65,6 +69,11 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 		
 		FriendshipPK id = FriendshipFactory.newPKInstance(userId, possibleFriendId);
 		FriendshipPK reverseId = FriendshipFactory.newPKInstance(possibleFriendId, userId);
+		
+		try{
+			friendRequestRepository.deleteEntityById(id);
+		} catch(EntityDoesNotExistException e) {
+		}
 		
 		if (doesEntityExistById(id) || doesEntityExistById(reverseId)) {
 			throw new AlreadyFriendsException("The users: { " + id.toString() +" } are already friends");

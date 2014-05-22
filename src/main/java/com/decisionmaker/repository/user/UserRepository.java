@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -48,9 +47,12 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 
 	@Autowired
 	protected IMessageRepository messageRepository;
-	
+
 	@Autowired
 	protected IFriendshipRepository friendshipRepository;
+	
+	@Autowired
+	protected IFriendRequestRepository friendRequestRepository;
 	
 	@Override
 	public Set<User> retrieveById(Long id) throws EntityDoesNotExistException {
@@ -304,6 +306,10 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			}
 			user.setFriends(friends);
 		}
+		Set<FriendRequest> friendRequesters = friendRequestRepository.retrieveFriendRequestsRetrievedById(id);
+		Set<FriendRequest> friendRequestees = friendRequestRepository.retrieveFriendRequestsSentById(id);
+		user.setFriendRequested(friendRequestees);
+		user.setFriendRequesters(friendRequesters);
 		return user;
 	}
 	
@@ -352,7 +358,7 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 			criteria.add(Restrictions.not(Restrictions.in("id", friendIds)));
 		}
 		
-		List<Long> knownFriendRequests = getListOfFriendRequestsById(id);
+		List<Long> knownFriendRequests = friendRequestRepository.retrievePossibleUsersRelatedToFriendRequest(id);
 		if (!knownFriendRequests.isEmpty()) {
 			criteria.add(Restrictions.not(Restrictions.in("id", knownFriendRequests)));
 		}
@@ -363,23 +369,6 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 				.addOrder(Order.asc("id"))
 				.list();
 		return result;
-	}
-	
-	private List<Long> getListOfFriendRequestsById(Long id) {
-		// base
-		List<Long> asRequestor = (List<Long>) sessionFactory.getCurrentSession().createCriteria(clazz)
-				.createAlias("friendRequest", "fr")
-				.add(Restrictions.eq("fr.id.friendId", id))
-				.setProjection(Projections.property("fr.id.userId"))
-				.list();
-
-		List<Long> asRequestee = sessionFactory.getCurrentSession().createCriteria(clazz)
-				.createAlias("friendRequest", "fr")
-				.add(Restrictions.eq("fr.id.userId", id))
-				.setProjection(Projections.property("fr.id.friendId"))
-				.list();
-		asRequestor.addAll(asRequestee);
-		return asRequestor;
 	}
 	
 	@Override

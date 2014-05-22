@@ -41,13 +41,14 @@ public class AdminController {
 			page = 1;
 		}
 		Long count = userService.retrieveCount();
-		Integer totalPages = (int) ((count+(page-1)) / 25);
-		List<User> users = userService.retrieveEntitiesByPageAndCount(page-1, 25);
+		Long pageSize = 25L;
+		Long totalPages = (count + (pageSize-1L))/pageSize;
+		List<User> users = userService.retrieveEntitiesByPageAndCount(page-1, pageSize.intValue());
 		
 		map.put("users", users);
 		map.put("page", page);
 		map.put("count", count);
-		map.put("totalPages", totalPages+1);
+		map.put("totalPages", totalPages);
 		
 		return new ModelAndView("view-all", map);
 	}

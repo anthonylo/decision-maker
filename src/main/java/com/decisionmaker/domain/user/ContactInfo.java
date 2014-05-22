@@ -103,4 +103,10 @@ public class ContactInfo extends AbstractDecisionMakerObject<Long> {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "ContactInfo [id=" + id + ", email=" + email + ", phoneNumber="
+				+ phoneNumber + "]";
+	}
+
 }

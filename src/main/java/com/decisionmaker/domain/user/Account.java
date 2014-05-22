@@ -54,7 +54,7 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	private Boolean active;
 	
 	@Type(type = "org.hibernate.type.NumericBooleanType")
-	@Column(name = "dm_admin", insertable = false, updatable = true)
+	@Column(name = "dm_admin", insertable = true, updatable = true)
 	private Boolean admin;
 
 	public Account() {
@@ -210,6 +210,14 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", username=" + username + ", password="
+				+ password + ", secretQuestion=" + secretQuestion
+				+ ", secretAnswer=" + secretAnswer + ", dateCreated="
+				+ dateCreated + ", active=" + active + ", admin=" + admin + "]";
 	}
 
 }

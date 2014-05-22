@@ -8,8 +8,8 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - <c:out value="${sessionScope[username]}"/></title>
 		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
-		<script src="<c:url value='/lib/js/decision-maker.js'/>"></script>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
+		<script src="<c:url value='/lib/js/decision-maker.js'/>"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$("#edit").hide();

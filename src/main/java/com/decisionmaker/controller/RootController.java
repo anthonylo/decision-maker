@@ -51,7 +51,13 @@ public class RootController {
 	}
 	
 	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
-	public ModelAndView index(HttpServletRequest request, ModelMap map) {
+	public ModelAndView index(HttpServletRequest request, ModelMap map) throws EntityDoesNotExistException, DecisionMakerException {
+		HttpSession session = request.getSession();
+		User user = (User)session.getAttribute("user");
+		if (user != null) {
+			user = userService.retrieveEntityById(user.getId());
+			session.setAttribute("user", user);
+		}
 		return new ModelAndView("index", map);
 	}
 

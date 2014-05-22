@@ -13,6 +13,7 @@
 	</head>
 	<body>
 	
+		<p><a href="/decision-maker">Return to Index</a></p>
 		<table class="dm-table">
 			<tr class="dm-tr">
 				<td>ID</td>

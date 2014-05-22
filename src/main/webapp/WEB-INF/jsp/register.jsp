@@ -7,8 +7,8 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - Register</title>
-		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
+		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 	</head>
 	<body>
 		<p><b>User Registration</b></p>
