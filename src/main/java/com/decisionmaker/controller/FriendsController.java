@@ -3,7 +3,6 @@ package com.decisionmaker.controller;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -63,14 +62,39 @@ public class FriendsController {
 			throw new IncorrectUserException("This is not the right user");
 		}
 	}
-	
+
 	@RequestMapping(value = "/request/accept", method = RequestMethod.POST)
 	public @ResponseBody String acceptFriendRequest(@RequestParam String friendUsername, 
 			@RequestParam Long friendId, HttpServletRequest request) 
-					throws DecisionMakerException, EntityDoesNotExistException, AlreadyFriendsException, IllegalFriendException {
+					throws DecisionMakerException, EntityDoesNotExistException,
+						AlreadyFriendsException, IllegalFriendException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		userService.addFriend(friendId, user.getId());
+		user = userService.retrieveEntityById(user.getId());
+		request.getSession().setAttribute("user", user);
+		return "The friend request was accepted successfully";
+	}
+
+	@RequestMapping(value = "/request/reject", method = RequestMethod.POST)
+	public @ResponseBody String rejectFriendRequest(@RequestParam Long friendId, 
+			HttpServletRequest request) throws DecisionMakerException, EntityDoesNotExistException, 
+						AlreadyFriendsException, IllegalFriendException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		userService.cancelFriendRequest(friendId, user.getId());
+		user = userService.retrieveEntityById(user.getId());
+		request.getSession().setAttribute("user", user);
+		return "The friend request was accepted successfully";
+	}
+	
+	@RequestMapping(value = "/request/cancel", method = RequestMethod.POST)
+	public @ResponseBody String cancelFriendRequest(@RequestParam Long friendId, 
+			HttpServletRequest request) throws DecisionMakerException, EntityDoesNotExistException, 
+						AlreadyFriendsException, IllegalFriendException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		userService.cancelFriendRequest(user.getId(), friendId);
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
 		return "The friend request was accepted successfully";

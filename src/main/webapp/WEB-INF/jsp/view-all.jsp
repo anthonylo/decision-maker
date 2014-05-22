@@ -7,8 +7,8 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - View User</title>
-		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
 		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
+		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
 		<script type="text/javascript">
 			function createPageLink(startIdx, endIdx, currentPage) {
 				for (var itr = startIdx; itr < endIdx; itr++) {
@@ -44,7 +44,7 @@
  					createPageLink(tempMinus, currentPage, currentPage);
  				} else if (tempMinus < 1 && currentPage == totalPages) {
 					tempMinus = 1;
-					if (currentPage != tempMinus)  createPageLink(tempMinus, totalPages+1, currentPage);
+					if (currentPage != tempMinus)  createPageLink(tempMinus, totalPages, currentPage);
  				} else if (tempMinus != currentPage && currentPage == totalPages) {
  					createPageLink(tempMinus, totalPages, currentPage);
  				}

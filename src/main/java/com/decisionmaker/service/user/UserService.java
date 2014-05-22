@@ -201,6 +201,11 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	public void sendFriendRequest(FriendRequest friendRequest) {
 		friendRequestRepository.saveEntity(friendRequest);
 	}
+	
+	@Override
+	public void cancelFriendRequest(Long userId, Long cancelId) throws EntityDoesNotExistException {
+		userRepository.cancelFriendRequest(userId, cancelId);
+	}
 
 	@Override
 	public List<User> getUsersWhoArentFriends(Long id, String name, int page, int count) {

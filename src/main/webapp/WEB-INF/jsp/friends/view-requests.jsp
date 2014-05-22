@@ -26,11 +26,33 @@
 				}
 			});
 		});
+		$(".rejectreq").click(function() {
+			var friendId = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+			$.ajax({
+				type : "post",
+				url : "/decision-maker/friends/request/reject",
+				data : "friendId="+friendId,
+				success : function(response) {
+					location.reload();
+				}, error : function(xhr) {
+					console.log(xhr);
+					console.log("FAIL");
+				}
+			});
+		});
 		$(".cancelreq").click(function() {
-			var id = $(this).closest("tr").find("td:nth-child(1)").text().trim();
-			console.log("id: " + id);
-			var username = $(this).closest("tr").find("td:nth-child(2)").text().trim();
-			console.log("username: " + username);
+			var friendId = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+			$.ajax({
+				type : "post",
+				url : "/decision-maker/friends/request/cancel",
+				data : "friendId="+friendId,
+				success : function(response) {
+					location.reload();
+				}, error : function(xhr) {
+					console.log(xhr);
+					console.log("FAIL");
+				}
+			});
 		});
 	});
 </script>
@@ -52,7 +74,7 @@
 						<td>${request.id.userId}</td>
 						<td>${request.userUsername}</td>
 						<td>${request.requestStated}</td>
-						<td><a href="javascript:void(0);" class="acceptreq">Yes</a></td>
+						<td><a href="javascript:void(0);" class="acceptreq">Yes</a> / <a href="javascript:void(0);" class="rejectreq">No</a></td>
 					</tr>
 				</c:forEach>
 			</c:if>

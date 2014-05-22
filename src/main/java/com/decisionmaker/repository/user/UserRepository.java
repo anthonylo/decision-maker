@@ -210,6 +210,36 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 
 	@Override
+	public List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.not(Restrictions.eq("id", id)));
+
+		List<Long> friendIds = friendshipRepository.retrieveFriendIds(id);
+		if (!friendIds.isEmpty()) {
+			criteria.add(Restrictions.not(Restrictions.in("id", friendIds)));
+		}
+		
+		List<Long> knownFriendRequests = friendRequestRepository.retrievePossibleUsersRelatedToFriendRequest(id);
+		if (!knownFriendRequests.isEmpty()) {
+			criteria.add(Restrictions.not(Restrictions.in("id", knownFriendRequests)));
+		}
+		
+		List<User> result = (List<User>) criteria
+				.add(Restrictions.ilike("acc.username", username, MatchMode.ANYWHERE))
+				.setFirstResult(startIdx).setMaxResults(count)
+				.addOrder(Order.asc("id"))
+				.list();
+		return result;
+	}
+	
+	@Override
+	public void cancelFriendRequest(Long userId, Long cancelId) throws EntityDoesNotExistException {
+		FriendshipPK id = FriendshipFactory.newPKInstance(userId, cancelId);
+		friendRequestRepository.deleteEntityById(id);
+	}
+	
+	@Override
 	public boolean isUserLoggedIn(Long userId) {
 		Boolean loggedIn = (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.createAlias("account", "acc")
@@ -255,6 +285,29 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		}
 	}
 	
+	@Override
+	public boolean isUserAdmin(String username) {
+		return (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("acc.username", username))
+				.setProjection(Projections.property("acc.admin"))
+				.uniqueResult();
+	}
+	
+	@Override
+	public void giveAdminPrivileges(String username) {
+		String adminHql = "update Account a "
+				+ "set a.admin = true "
+				+ "where a.username = :username";
+		sessionFactory.getCurrentSession().createQuery(adminHql)
+				.setParameter("username", username).executeUpdate();
+	}
+
+	@Override
+	protected void setClazz() {
+		this.clazz = User.class;
+	}
+
 	private String retrieveHashedPasswordByUsername(String username) {
 		return (String) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.createAlias("account", "acc")
@@ -293,26 +346,6 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		}
 	}
 	
-	private User handleFriends(User user) {
-		Long id = user.getId();
-		Set<Friendship> friendIds = friendshipRepository.discoverFriendsOfUserId(id);
-		if (friendIds != null && !friendIds.isEmpty()) {
-			Set<User> friends = new HashSet<User>();
-			for (Friendship friendship : friendIds) {
-				Long friendId = friendship.getId().getUserId();
-				User friend = retrieveBareboneUserById(friendId);
-				friend.setFriendshipStarted(friendship.getFriendshipStarted());
-				friends.add(friend);
-			}
-			user.setFriends(friends);
-		}
-		Set<FriendRequest> friendRequesters = friendRequestRepository.retrieveFriendRequestsRetrievedById(id);
-		Set<FriendRequest> friendRequestees = friendRequestRepository.retrieveFriendRequestsSentById(id);
-		user.setFriendRequested(friendRequestees);
-		user.setFriendRequesters(friendRequesters);
-		return user;
-	}
-	
 	/**
 	 * Should retrieve the messages that a user has sent/received.
 	 * 
@@ -342,51 +375,24 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		return user;
 	}
 	
-	@Override
-	protected void setClazz() {
-		this.clazz = User.class;
-	}
-
-	@Override
-	public List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz)
-				.createAlias("account", "acc")
-				.add(Restrictions.not(Restrictions.eq("id", id)));
-
-		List<Long> friendIds = friendshipRepository.retrieveFriendIds(id);
-		if (!friendIds.isEmpty()) {
-			criteria.add(Restrictions.not(Restrictions.in("id", friendIds)));
+	private User handleFriends(User user) {
+		Long id = user.getId();
+		Set<Friendship> friendIds = friendshipRepository.discoverFriendsOfUserId(id);
+		if (friendIds != null && !friendIds.isEmpty()) {
+			Set<User> friends = new HashSet<User>();
+			for (Friendship friendship : friendIds) {
+				Long friendId = friendship.getId().getUserId();
+				User friend = retrieveBareboneUserById(friendId);
+				friend.setFriendshipStarted(friendship.getFriendshipStarted());
+				friends.add(friend);
+			}
+			user.setFriends(friends);
 		}
-		
-		List<Long> knownFriendRequests = friendRequestRepository.retrievePossibleUsersRelatedToFriendRequest(id);
-		if (!knownFriendRequests.isEmpty()) {
-			criteria.add(Restrictions.not(Restrictions.in("id", knownFriendRequests)));
-		}
-		
-		List<User> result = (List<User>) criteria
-				.add(Restrictions.ilike("acc.username", username, MatchMode.ANYWHERE))
-				.setFirstResult(startIdx).setMaxResults(count)
-				.addOrder(Order.asc("id"))
-				.list();
-		return result;
-	}
-	
-	@Override
-	public boolean isUserAdmin(String username) {
-		return (Boolean) sessionFactory.getCurrentSession().createCriteria(clazz)
-				.createAlias("account", "acc")
-				.add(Restrictions.eq("acc.username", username))
-				.setProjection(Projections.property("acc.admin"))
-				.uniqueResult();
-	}
-	
-	@Override
-	public void giveAdminPrivileges(String username) {
-		String adminHql = "update Account a "
-				+ "set a.admin = true "
-				+ "where a.username = :username";
-		sessionFactory.getCurrentSession().createQuery(adminHql)
-				.setParameter("username", username).executeUpdate();
+		Set<FriendRequest> friendRequesters = friendRequestRepository.retrieveFriendRequestsRetrievedById(id);
+		Set<FriendRequest> friendRequestees = friendRequestRepository.retrieveFriendRequestsSentById(id);
+		user.setFriendRequested(friendRequestees);
+		user.setFriendRequesters(friendRequesters);
+		return user;
 	}
 	
 }

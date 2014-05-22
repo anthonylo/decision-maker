@@ -70,11 +70,6 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 		FriendshipPK id = FriendshipFactory.newPKInstance(userId, possibleFriendId);
 		FriendshipPK reverseId = FriendshipFactory.newPKInstance(possibleFriendId, userId);
 		
-		try{
-			friendRequestRepository.deleteEntityById(id);
-		} catch(EntityDoesNotExistException e) {
-		}
-		
 		if (doesEntityExistById(id) || doesEntityExistById(reverseId)) {
 			throw new AlreadyFriendsException("The users: { " + id.toString() +" } are already friends");
 		}
@@ -84,6 +79,11 @@ public class FriendshipRepository extends AbstractDecisionMakerRepository<Friend
 		
 		Friendship reverseFriendship = FriendshipFactory.newInstance(reverseId);
 		saveEntity(reverseFriendship);
+		
+		try{
+			friendRequestRepository.deleteEntityById(id);
+		} catch(EntityDoesNotExistException e) {
+		}
 	}
 
 	@Override

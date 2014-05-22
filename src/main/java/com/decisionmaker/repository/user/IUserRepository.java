@@ -41,16 +41,24 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;
 	
+	/* MESSAGES */
 	void sendMessage(Long userId, Message message) 
 			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException;
 	
-	boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId);
-	
+	/* FRIENDS */
 	void addFriend(Long userId, Long friendId) 
 			throws AlreadyFriendsException, EntityDoesNotExistException, IllegalFriendException;
 
 	void removeFriend(Long userId, Long friendId) throws EntityDoesNotExistException;
+
+	void cancelFriendRequest(Long userId, Long cancelId) throws EntityDoesNotExistException;
 	
+	boolean checkIfUsersAreFriends(Long userId, Long possibleFriendId);
+	
+	List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count);
+
+	
+	/* ACCOUNT RELATED */
 	boolean isUserLoggedIn(Long userId);
 	
 	void logOut(User user) throws EntityDoesNotExistException, AlreadyLoggedOutException;
@@ -63,7 +71,5 @@ public interface IUserRepository extends IRepository<User, Long> {
 	boolean isUserAdmin(String username);
 	
 	void giveAdminPrivileges(String username);
-
-	List<User> getUsersWhoArentFriends(Long id, String username, Integer startIdx, Integer count);
 	
 }

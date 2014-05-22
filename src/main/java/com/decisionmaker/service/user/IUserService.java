@@ -29,6 +29,8 @@ public interface IUserService extends IService<User, Long> {
 
 	void sendFriendRequest(FriendRequest friendRequest);
 	
+	void cancelFriendRequest(Long userId, Long cancelId) throws EntityDoesNotExistException;
+	
 	User retrieveUserByUsername(String username) throws EntityDoesNotExistException;
 	
 	User retrieveRandomUser();
