@@ -82,6 +82,11 @@ public class UserService extends AbstractDecisionMakerService<User, Long> implem
 	public List<User> retrieveEntitiesByPageAndCount(int page, int count) {
 		return userRepository.retrieveSubsetOfEndpoint(page*count, count);
 	}
+	
+	@Override
+	public Long retrieveIdByUsername(String username) throws EntityDoesNotExistException {
+		return userRepository.retrieveIdByUsername(username);
+	}
 
 	@Override
 	public User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException {

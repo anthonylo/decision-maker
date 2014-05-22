@@ -37,6 +37,8 @@ public interface IUserRepository extends IRepository<User, Long> {
 	
 	Set<User> retrieveFriendsById(Long id) throws NotImplementedException;
 	
+	Long retrieveIdByUsername(String username) throws EntityDoesNotExistException;
+	
 	boolean checkIfUsernameExists(String username);
 	
 	void deleteEntityByUsername(String username) throws EntityDoesNotExistException;

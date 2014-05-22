@@ -39,6 +39,8 @@ public interface IUserService extends IService<User, Long> {
 	
 	Set<User> retrieveSimilarUsersByUsername(String username);
 	
+	Long retrieveIdByUsername(String friendUsername) throws EntityDoesNotExistException;
+	
 	boolean checkIfUserExistsByUsername(String username);
 	
 	boolean checkIfUsersAreFriends(Long userId, Long friendId);

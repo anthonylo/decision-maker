@@ -17,6 +17,7 @@
 				var requestJson = ( ' { "id" : { "userId" : ' + userId
 					+ ', "friendId" : ' + friendId + ' }, "userUsername" : "' + userUsername
 					+ '", "friendUsername" : "' + friendUsername + '" } ' );
+				$(this).closest("tr").remove();
 				$.ajax({
 					type : "post",
 					url : "/decision-maker/friends/request/" + userId,
@@ -77,10 +78,10 @@
 					url : "/decision-maker/friends/name/"+friendName,
 					type : "get",
 				    success : function(response) {
+						$("#possible-friends").empty();
 				    	if (response.length == 0) {
 				    		$(".error").text("There is no one with that has a name related to '" + friendName + "'");
 				    	} else {
-							$("#possible-friends").empty();
 							generate_quick_user_table(response, friendName);
 				    	}
 				    }
@@ -116,9 +117,6 @@
 				});
 				$("#empty").click(function() {
 					$("#possible-friends").empty();
-				});
-				$(".addfriend").bind("click", function() {
-					console.log("42");
 				});
 			});
 		</script>

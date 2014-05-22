@@ -27,6 +27,24 @@
 		</td>
 	</c:if>
 	
+	<c:if test="${not empty sessionScope.user.friendRequesters}">
+		<tr>
+			<td><b><br/>Friend Requests</b></td>
+		</tr>
+		<tr>
+			<td><b>Requester</b></td>
+			<td><b>Requested On</b></td>
+			<td><b>Accept</b></td>
+		</tr>
+		<c:forEach items="${sessionScope.user.friendRequesters}" var="request">
+			<tr>
+				<td>${request.userUsername}</td>
+				<td>${request.requestStated}</td>
+				<td><a href="javascript:void(0);" class="acceptreq">Yes</a> / <a href="javascript:void(0);" class="rejectreq">No</a></td>
+			</tr>
+		</c:forEach>
+	</c:if>
+	
 </tr>
 
 <tr>

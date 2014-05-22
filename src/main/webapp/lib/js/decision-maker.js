@@ -78,3 +78,49 @@ function generateQuickUserTable(users) {
 	userTable += "</table>";
 	return userTable;
 }
+
+$(document).ready(function() {
+	// Friend Request Events
+	$(".acceptreq").click(function() {
+		var friendUsername = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+		$.ajax({
+			type : "post",
+			url : "/decision-maker/friends/request/accept",
+			data : "friendUsername="+friendUsername,
+			success : function(response) {
+				location.reload();
+			}, error : function(xhr) {
+				console.log(xhr);
+				console.log("FAIL");
+			}
+		});
+	});
+	$(".rejectreq").click(function() {
+		var friendUsername = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+		$.ajax({
+			type : "post",
+			url : "/decision-maker/friends/request/reject",
+			data : "friendUsername="+friendUsername,
+			success : function(response) {
+				location.reload();
+			}, error : function(xhr) {
+				console.log(xhr);
+				console.log("FAIL");
+			}
+		});
+	});
+	$(".cancelreq").click(function() {
+		var friendUsername = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+		$.ajax({
+			type : "post",
+			url : "/decision-maker/friends/request/cancel",
+			data : "friendUsername="+friendUsername,
+			success : function(response) {
+				location.reload();
+			}, error : function(xhr) {
+				console.log(xhr);
+				console.log("FAIL");
+			}
+		});
+	});
+});

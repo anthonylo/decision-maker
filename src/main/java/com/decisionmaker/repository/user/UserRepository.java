@@ -102,6 +102,15 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 	}
 
 	@Override
+	public Long retrieveIdByUsername(String username) throws EntityDoesNotExistException {
+		return (Long) sessionFactory.getCurrentSession().createCriteria(clazz)
+				.createAlias("account", "acc")
+				.add(Restrictions.eq("acc.username", username))
+				.setProjection(Projections.property("id"))
+				.uniqueResult();
+	}
+	
+	@Override
 	public boolean checkIfUsernameExists(String username) {
 		Long count = (Long) sessionFactory.getCurrentSession().createCriteria(clazz)
 				.createAlias("account", "acc")

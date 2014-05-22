@@ -39,6 +39,15 @@ public class FriendsController {
 		return new ModelAndView("friends/add");
 	}
 	
+	@RequestMapping(value = "remove/{friendUsername:.+}", method=RequestMethod.GET)
+	public @ResponseBody String removeFriend(HttpServletRequest request, @PathVariable String friendUsername) throws EntityDoesNotExistException {
+		User user = (User) request.getSession().getAttribute("user");
+		Long id = user.getId();
+		Long friendId = userService.retrieveIdByUsername(friendUsername);
+		userService.removeFriend(id, friendId);
+		return "The friend was successfully removed";
+	}
+	
 	@RequestMapping(value = "view")
 	public ModelAndView viewFriends(HttpServletRequest request, ModelMap map) {
 		User user = (User) request.getSession().getAttribute("user");
@@ -64,12 +73,12 @@ public class FriendsController {
 	}
 
 	@RequestMapping(value = "/request/accept", method = RequestMethod.POST)
-	public @ResponseBody String acceptFriendRequest(@RequestParam String friendUsername, 
-			@RequestParam Long friendId, HttpServletRequest request) 
+	public @ResponseBody String acceptFriendRequest(@RequestParam String friendUsername, HttpServletRequest request) 
 					throws DecisionMakerException, EntityDoesNotExistException,
 						AlreadyFriendsException, IllegalFriendException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
+		Long friendId = userService.retrieveIdByUsername(friendUsername);
 		userService.addFriend(friendId, user.getId());
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
@@ -77,11 +86,12 @@ public class FriendsController {
 	}
 
 	@RequestMapping(value = "/request/reject", method = RequestMethod.POST)
-	public @ResponseBody String rejectFriendRequest(@RequestParam Long friendId, 
+	public @ResponseBody String rejectFriendRequest(@RequestParam String friendUsername, 
 			HttpServletRequest request) throws DecisionMakerException, EntityDoesNotExistException, 
 						AlreadyFriendsException, IllegalFriendException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
+		Long friendId = userService.retrieveIdByUsername(friendUsername);
 		userService.cancelFriendRequest(friendId, user.getId());
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
@@ -89,11 +99,12 @@ public class FriendsController {
 	}
 	
 	@RequestMapping(value = "/request/cancel", method = RequestMethod.POST)
-	public @ResponseBody String cancelFriendRequest(@RequestParam Long friendId, 
+	public @ResponseBody String cancelFriendRequest(@RequestParam String friendUsername, 
 			HttpServletRequest request) throws DecisionMakerException, EntityDoesNotExistException, 
 						AlreadyFriendsException, IllegalFriendException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
+		Long friendId = userService.retrieveIdByUsername(friendUsername);
 		userService.cancelFriendRequest(user.getId(), friendId);
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
