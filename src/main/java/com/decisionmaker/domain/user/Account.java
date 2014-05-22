@@ -54,7 +54,7 @@ public class Account extends AbstractDecisionMakerObject<Long> {
 	private Boolean active;
 	
 	@Type(type = "org.hibernate.type.NumericBooleanType")
-	@Column(name = "dm_admin", insertable = true, updatable = true)
+	@Column(name = "dm_admin", insertable = false, updatable = true)
 	private Boolean admin;
 
 	public Account() {

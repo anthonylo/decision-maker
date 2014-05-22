@@ -43,8 +43,9 @@
  					}
  					createPageLink(tempMinus, currentPage, currentPage);
  				} else if (tempMinus < 1 && currentPage == totalPages) {
- 					createPageLink(1, totalPages+1, currentPage);
- 				} else if (currentPage == totalPages) {
+					tempMinus = 1;
+					if (currentPage != tempMinus)  createPageLink(tempMinus, totalPages+1, currentPage);
+ 				} else if (tempMinus != currentPage && currentPage == totalPages) {
  					createPageLink(tempMinus, totalPages, currentPage);
  				}
 			}
