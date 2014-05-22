@@ -150,12 +150,23 @@ public class UserRepository extends AbstractDecisionMakerRepository<User, Long> 
 		
 		return user;
 	}
-	
+
 	@Override
 	public Set<User> retrieveBareboneUsersFromListOfIds(List<Long> uIds) {
 		Set<User> bareboneUsers = new LinkedHashSet<User>();
 		for (Long uId : uIds) {
 			User bareboneUser = retrieveBareboneUserById(uId);
+			bareboneUsers.add(bareboneUser);
+		}
+		return bareboneUsers;
+	}
+	
+	@Override
+	public Set<User> retrieveBareboneUsersFromListOfUsernames(List<String> usernames) throws EntityDoesNotExistException {
+		Set<User> bareboneUsers = new LinkedHashSet<User>();
+		for (String username : usernames) {
+			Long id = retrieveIdByUsername(username);
+			User bareboneUser = retrieveBareboneUserById(id);
 			bareboneUsers.add(bareboneUser);
 		}
 		return bareboneUsers;

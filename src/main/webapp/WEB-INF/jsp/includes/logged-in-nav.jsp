@@ -11,7 +11,6 @@
 		<a href='/decision-maker/friends/view'>View Friends</a><br/>
 		<a href='/decision-maker/friends/view/requests'>View Friend Requests</a><br/>
 		<a href='/decision-maker/friends/add'>Add Friends</a><br/>
-		<a href='/decision-maker/friends/message/send'>Send Message</a><br/>
 	</td>
 	
 	<c:if test="${username == 'anthony.lo' and not sessionScope.user.account.admin}">
@@ -45,6 +44,16 @@
 		</c:forEach>
 	</c:if>
 	
+</tr>
+
+<tr>
+	<td>
+		<br/><b>Messages</b><br/>
+		
+		<a href='/decision-maker/message/read/received'>Read Received Message</a><br/>
+		<a href='/decision-maker/message/read/sent'>Read Sent Messages</a><br/>
+		<a href='/decision-maker/message/send'>Send Message</a><br/>
+	</td>
 </tr>
 
 <tr>

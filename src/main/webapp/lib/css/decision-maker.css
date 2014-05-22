@@ -8,6 +8,10 @@
 	color: green;
 }
 
+.tr-header {
+	font-weight: bold;
+}
+
 .dm-tr {
 	padding: 5em;
 	border-top: 1px solid #008999;

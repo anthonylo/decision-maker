@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.message.MessageRequestBody;
 import com.decisionmaker.domain.message.MessageType;
 import com.decisionmaker.domain.user.User;
 import com.decisionmaker.exception.EntityDoesNotExistException;
@@ -70,5 +71,17 @@ public interface IMessageRepository extends IRepository<Message, Long> {
 	 * @param userId - The User ID that is ordering the delete.
 	 */
 	void deleteMessagesByUserId(Long userId);
+
+	/**
+	 * Send messages to any friends of the user.
+	 * 
+	 * @param senderId - The sender.
+	 * @param sendingMessage - The {@link com.decisionmaker.domain.message.MessageRequestBody} that was passed from the web.
+	 * @throws EntityDoesNotExistException - In case a user does not exist.
+	 * @throws NoRecipientsException - If there were no recipients of the message.
+	 * @throws IllegalRecipientException - If the sender is one of the recipients.
+	 */
+	void sendMessageToFriends(Long senderId, MessageRequestBody sendingMessage) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException;
 
 }

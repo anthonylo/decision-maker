@@ -30,8 +30,10 @@ public interface IUserRepository extends IRepository<User, Long> {
 	User retrieveRandom();
 	
 	User retrieveBareboneUserById(Long id) throws EntityDoesNotExistException;
-	
+
 	Set<User> retrieveBareboneUsersFromListOfIds(List<Long> ids);
+	
+	Set<User> retrieveBareboneUsersFromListOfUsernames(List<String> usernames) throws EntityDoesNotExistException;
 	
 	Set<User> retrieveSimilarUsersByUsername(String username);
 	

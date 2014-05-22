@@ -7,7 +7,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - View Friends</title>
-		<link rel="stylesheet" href="<c:url value='../lib/css/decision-maker.css'/>"/>
+		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
 		<script src="<c:url value='/lib/js/decision-maker.js'/>"></script>
 		<script type="text/javascript">
@@ -43,7 +43,7 @@
 		<div id="friendsDiv">
 			<c:if test="${not empty friends }">
 				<table class="dm-table">
-					<tr class="dm-tr">
+					<tr class="dm-tr tr-header">
 						<td>Name</td>
 						<td>Age</td>
 						<td>Username</td>

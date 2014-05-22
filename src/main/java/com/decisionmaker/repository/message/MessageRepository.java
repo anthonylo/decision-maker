@@ -1,5 +1,6 @@
 package com.decisionmaker.repository.message;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.message.MessageRequestBody;
 import com.decisionmaker.domain.message.MessageType;
 import com.decisionmaker.domain.message.MessageUser;
 import com.decisionmaker.domain.message.key.MessageUserPK;
@@ -35,6 +37,18 @@ public class MessageRepository extends AbstractDecisionMakerRepository<Message, 
 	
 	@Value("${message.delete.userid}")
 	private String deleteByUserId;
+	
+	@Override
+	public void sendMessageToFriends(Long senderId, MessageRequestBody sendingMessage) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
+		String[] recipientUsernames = sendingMessage.getRecipients();
+		Set<User> recipients = userRepository.retrieveBareboneUsersFromListOfUsernames(Arrays.asList(recipientUsernames));
+		Message message = new Message();
+		message.setMessage(sendingMessage.getMessage());
+		message.setSenderId(senderId);
+		message.setRecipients(recipients);
+		this.saveMessage(message);
+	}
 	
 	@Override
 	public void saveMessage(Message message) throws NoRecipientsException, IllegalRecipientException {

@@ -43,7 +43,7 @@
 	</head>
 	<body>
 		<h2>Index Page</h2>
-		<p>This is the entry point of the Decision Maker application.</p>
+		<p>Decision Maker - V.1.0</p>
 		<div>
 			<span><b>Links</b></span>
 			<c:if test="${not loggedIn}">

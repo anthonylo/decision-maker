@@ -9,9 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.decisionmaker.domain.message.Message;
+import com.decisionmaker.domain.message.MessageRequestBody;
 import com.decisionmaker.domain.message.MessageType;
 import com.decisionmaker.exception.DecisionMakerException;
 import com.decisionmaker.exception.EntityDoesNotExistException;
+import com.decisionmaker.exception.IllegalRecipientException;
+import com.decisionmaker.exception.NoRecipientsException;
 import com.decisionmaker.repository.message.IMessageRepository;
 import com.decisionmaker.service.AbstractDecisionMakerService;
 
@@ -72,6 +75,12 @@ public class MessageService extends AbstractDecisionMakerService<Message, Long> 
 	public void deleteEntityById(Long id) throws EntityDoesNotExistException,
 			DecisionMakerException {
 		messageRepository.deleteEntityById(id);
+	}
+
+	@Override
+	public void sendMessageToFriends(Long senderId, MessageRequestBody message) 
+			throws EntityDoesNotExistException, NoRecipientsException, IllegalRecipientException {
+		messageRepository.sendMessageToFriends(senderId, message);
 	}
 
 }

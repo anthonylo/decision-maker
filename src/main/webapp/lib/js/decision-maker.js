@@ -83,6 +83,8 @@ $(document).ready(function() {
 	// Friend Request Events
 	$(".acceptreq").click(function() {
 		var friendUsername = $(this).closest("tr").find("td:nth-child(1)").text().trim();
+		console.log("here");
+		
 		$.ajax({
 			type : "post",
 			url : "/decision-maker/friends/request/accept",

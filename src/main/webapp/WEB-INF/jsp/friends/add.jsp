@@ -7,7 +7,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Decision Maker - Add Friends</title>
-		<link rel="stylesheet" href="<c:url value='../lib/css/decision-maker.css'/>"/>
+		<link rel="stylesheet" href="<c:url value='/lib/css/decision-maker.css'/>"/>
 		<script src="<c:url value='/lib/js/jquery-1.11.0.min.js'/>"></script>
 		<script src="<c:url value='/lib/js/decision-maker.js'/>"></script>
 		<script type="text/javascript">
@@ -36,12 +36,12 @@
 			function generate_quick_user_table(response, origQuery) {
 				$(function() {
 					var table = $("<table></table>").addClass("dm-table");
-					var row = $("<tr></tr>").addClass("dm-tr");
-	                var idCell = $("<td><b>ID</b></td>");
-	                var nameCell = $("<td><b>Full name</b></td>");
-	                var usernameCell = $("<td><b>Username</b></td>");
-	                var emailCell = $("<td><b>Action</b></td>");
-	                var action = $("<td><b>Action</b></td>");
+					var row = $("<tr class='tr-header'></tr>").addClass("dm-tr");
+	                var idCell = $("<td>ID</td>");
+	                var nameCell = $("<td>Full name</td>");
+	                var usernameCell = $("<td>Username</td>");
+	                var emailCell = $("<td>Email</td>");
+	                var action = $("<td>Action</td>");
 	
 	                table.append(row);
 	                row.append(idCell);
