@@ -28,7 +28,7 @@
 					<!-- http port -->
 					<port>8080</port>
 					<!-- application path always starts with / -->
-					<path>/</path>
+					<path>/decision-maker</path>
 					<!-- optional path to a context file -->
 					<contextFile>${tomcatContextXml}</contextFile>
 					<!-- optional system propoerties you want to add -->

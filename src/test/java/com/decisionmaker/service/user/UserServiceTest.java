@@ -52,9 +52,9 @@ public class UserServiceTest {
 	@Test
 	public void save_user_and_pass() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
-		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
+		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false, null);
 		ContactInfo mockContactInfo = new ContactInfo(0L, "5421@test.com", "54321");
-		User mockUser = new User(0L, "test", "guy" , 22, mockContactInfo, mockAccount, null, null, null, null, null);
+		User mockUser = new User(0L, "test", "guy" , 22, null, mockContactInfo, mockAccount, null, null, null, null, null, null);
 		
 		// When
 
@@ -66,8 +66,8 @@ public class UserServiceTest {
 	@Test
 	public void try_to_save_user_that_already_exists_in_database() throws DecisionMakerException, NoSuchAlgorithmException, InvalidKeySpecException {
 		// Given
-		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false);
-		User mockUser = new User(0L, "test", "guy" , 22, null, mockAccount, null, null, null, null, null);
+		Account mockAccount = new Account(0L, "test.guy", "54321", "bleh", "green", new Date(), false, null);
+		User mockUser = new User(0L, "test", "guy" , 22, null, null, mockAccount, null, null, null, null, null, null);
 		
 		// When
 		when(userRepository.checkIfUsernameExists(mockAccount.getUsername())).thenReturn(true);

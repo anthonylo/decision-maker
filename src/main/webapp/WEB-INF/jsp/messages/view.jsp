@@ -14,7 +14,9 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$(".deleteMessage").click(function() {
-					console.log("do something");
+					var id = $(this).closest("tr").find("td:first").text().trim();
+					var username = $(this).closest("tr").find("td:eq(1)").text().trim();
+					console.log("id: " + id + "; username: " + username);
 				});
 			});
 		</script>
@@ -32,47 +34,41 @@
 						<tr class="dm-tr tr-header">
 							<td>ID</td>
 							<td>
-								<c:if test="${received}">
-									Sender
-								</c:if>
-								<c:if test="${sent}">
-									Receiver
-								</c:if>
+								<c:if test="${received}">Sender</c:if>
+								<c:if test="${sent}">Receiver</c:if>
 							</td>
 							<td>Message</td>
 							<td>Date</td>
 							<td>Action</td>
 							<td>Delete</td>
 						</tr>
-						<c:forEach items="${messages }" var="message">
-							<tr class="dm-tr">
-								<td>${message.id}</td>
-								<td>
-									<c:if test="${received}">
-										${message.sender.account.username}
-									</c:if>
-									<c:if test="${sent}">  
-						                <c:forEach items="${message.recipients}" var="recipient" varStatus="loop">
-											${recipient.account.username}<br/>
-										</c:forEach>
-									</c:if>
-								</td>
-								<td>${message.message}</td>
-								<td>${message.datePosted}</td>
-								<td>
-									<c:if test="${received}">
-										Send Reply
-									</c:if>
-									<c:if test="${sent}">
-										<c:forEach items="${message.recipients}" var="recipient">
-											${recipient.account.username} - View Reply<br/>
-										</c:forEach>
-									</c:if>
-								</td>
-								<td>
-									<a href="javascript:void(0);" class="deleteMessage">[X]</a>
-								</td>
-							</tr>
+						<c:forEach items="${messages}" var="message">
+							<c:if test="${received}">
+								<tr class="dm-tr">
+									<td>${message.id}</td>
+									<td>${message.sender.account.username}</td>
+									<td>${message.message}</td>
+									<td>${message.datePosted}</td>
+									<td><a href="javascript:void(0);" class="sendReply">Send Reply</a><br/></td>
+									<td><a href="javascript:void(0);" class="deleteMessage">[ X ]</a></td>
+									<td>
+									</td>
+								</tr>
+							</c:if>
+							<c:if test="${sent}">
+								<c:forEach items="${message.recipients}" var="recipient">
+									<tr class="dm-tr">
+										<td>${message.id}</td>
+										<td>${recipient.account.username}<br/></td>
+										<td>${message.message}</td>
+										<td>${message.datePosted}</td>
+										<td><a href="javascript:void(0);" class="viewReply">View Reply</a></td>
+										<td><a href="javascript:void(0);" class="deleteMessage">[ X ]</a></td>
+										<td>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
 						</c:forEach>
 					</table>
 				</c:when>

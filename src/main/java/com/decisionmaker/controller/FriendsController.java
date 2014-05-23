@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +35,8 @@ public class FriendsController {
 	@Autowired
 	private IUserService userService;
 	
+	private static Logger log = Logger.getLogger(FriendsController.class);
+	
 	@RequestMapping(value = "add", method = RequestMethod.GET)
 	public ModelAndView goToAddFriendsPage() {
 		return new ModelAndView("friends/add");
@@ -45,6 +48,7 @@ public class FriendsController {
 		Long id = user.getId();
 		Long friendId = userService.retrieveIdByUsername(friendUsername);
 		userService.removeFriend(id, friendId);
+		log.debug("User " + id + " unfriended " + friendId);
 		return "The friend was successfully removed";
 	}
 	
@@ -63,6 +67,7 @@ public class FriendsController {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		if (user.getId().equals(userId)) {
+			log.debug(friendRequest.getUserUsername() + " wants to become friends with " + friendRequest.getFriendUsername());
 			userService.sendFriendRequest(friendRequest);
 			user = userService.retrieveEntityById(userId);
 			request.getSession().setAttribute("user", user);
@@ -82,6 +87,7 @@ public class FriendsController {
 		userService.addFriend(friendId, user.getId());
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
+		log.debug(friendUsername + " accepted the friend request posted by " + user.getId());
 		return "The friend request was accepted successfully";
 	}
 
@@ -95,6 +101,7 @@ public class FriendsController {
 		userService.cancelFriendRequest(friendId, user.getId());
 		user = userService.retrieveEntityById(user.getId());
 		request.getSession().setAttribute("user", user);
+		log.debug(user.getAccount().getUsername() + " accepted the friend request posted by " + friendUsername);
 		return "The friend request was accepted successfully";
 	}
 	

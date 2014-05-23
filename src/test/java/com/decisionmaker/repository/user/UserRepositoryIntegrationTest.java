@@ -64,13 +64,13 @@ public class UserRepositoryIntegrationTest {
 							
 							Boolean loggedIn = userRepository.isUserLoggedIn(id);
 							log.info(this.getName() + " is attempting to log in user: " + user.getId());
-							userRepository.logIn(id);
+							userRepository.logIn(user);
 							loggedIn = userRepository.isUserLoggedIn(id);
 							assert loggedIn;
 							log.info(this.getName() + ": User " + id + " is logged in: " + loggedIn);
 							
 							log.info(this.getName() + " is attempting to log out user: " + user.getId());
-							userRepository.logOut(id);
+							userRepository.logOut(user);
 							loggedIn = userRepository.isUserLoggedIn(id);
 							assert !loggedIn;
 							log.info(this.getName() + " finished log out user: " + user.getId());

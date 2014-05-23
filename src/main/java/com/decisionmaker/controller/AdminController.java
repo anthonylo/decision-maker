@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,6 +31,8 @@ public class AdminController {
 
 	@Autowired
 	private IUserService userService;
+	
+	private static Logger log = Logger.getLogger(AdminController.class);
 
 	@RequestMapping(value = "/viewusers")
 	public ModelAndView viewUsers(HttpServletRequest request, @RequestParam(required=false) Integer page, ModelMap map) {
@@ -58,6 +61,7 @@ public class AdminController {
 			throws NotAdministratorException, EntityDoesNotExistException, DecisionMakerException {
 		boolean isAdmin = userService.checkIfUserIsAnAdmin(username);
 		if (!isAdmin) {
+			log.error(username + " tried to delete a user but was not an administrator");
 			throw new NotAdministratorException("You are not an administrator");
 		}
 		userService.deleteUserByUsername(toDelete);
@@ -69,6 +73,7 @@ public class AdminController {
 			throws EntityDoesNotExistException, DecisionMakerException {
 		
 		userService.deleteEntityById(id);
+		log.debug("Deleted user " + id);
 		return new ModelAndView("redirect:/admin/viewusers");
 	}
 
@@ -77,6 +82,7 @@ public class AdminController {
 			throws EntityDoesNotExistException, DecisionMakerException {
 		User user = userService.retrieveEntityById(id);
 		map.put("user", user);
+		log.debug("Edited user " + id);
 		return new ModelAndView("admin-edit", map);
 	}
 	
@@ -92,12 +98,15 @@ public class AdminController {
 					User user = DecisionMakerUtils.randomUser();
 					userService.saveEntity(user);
 					pass = true;
+					log.debug("Created random user: " + user.getFirstName() + " " + user.getLastName());
 					return (user.getFirstName() + " " + user.getLastName() + " was created successfully");
 				} catch (DecisionMakerException e) {
 					pass = false;
 				}
 			} while (!pass);
 		} else {
+			log.error("User " + admin.getAccount().getUsername() + " tried to "
+					+ "create a random user but couldn't because they aren't an administrator");
 			return "You are not an administrator";
 		}
 		return "";
@@ -118,6 +127,7 @@ public class AdminController {
 		userService.makeUserAdministrator(username);
 		User user = userService.retrieveUserByUsername(username);
 		request.getSession().setAttribute("user", user);
+		log.debug(username + " became an administrator");
 		return new ModelAndView("redirect:/");
 	}
 	
